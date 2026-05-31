@@ -31,18 +31,6 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
-      - name: Install backend dependencies
-        run: npm ci
-        working-directory: backend
-
-      - name: Install frontend dependencies
-        run: npm ci
-        working-directory: frontend
-
-      - name: Install infra dependencies
-        run: npm ci
-        working-directory: infra
-
       - name: Lint backend
         run: npm run lint
         working-directory: backend

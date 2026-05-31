@@ -1,0 +1,12 @@
+# Perseus Clew: local development backend
+# Runs the HTTP wrapper around the Lambda handler.
+# Not used in production (Lambda runtime handles that).
+
+FROM node:20-slim
+WORKDIR /app
+COPY backend/package.json ./
+RUN npm install
+COPY backend/src ./src
+COPY backend/scripts ./scripts
+EXPOSE 3001
+CMD ["node", "scripts/local-server.js"]

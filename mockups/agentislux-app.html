@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentisLux — App UI Mockup</title>
+<meta name="description" content="Product UI mockup: scan input, scanning state, results dashboard, finding detail, errors, social card.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   DESIGN TOKENS — matching perseus-final.html exactly
+   =========================================================================== */
+:root {
+  --cream: #f1ebdc;
+  --cream-warm: #ebe3ce;
+  --teal-mid: #1b6d74;
+  --teal-deep: #0f3d42;
+  --orange: #e85416;
+  --ochre: #d4a43c;
+  --muted: #5a5548;
+  --arc-op: 0.4;
+
+  --font-display: 'Archivo Black', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-body: 'Archivo', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--cream); color: var(--teal-deep); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+
+/* Mockup shell: show each view as a stacked "screen" with a label */
+.mockup-shell { max-width: 1400px; margin: 0 auto; padding: 64px 24px 128px; }
+.mockup-header { text-align: center; margin-bottom: 56px; padding: 32px 24px; border: 2px solid var(--teal-deep); background: var(--cream-warm); }
+.mockup-header h1 { font-family: var(--font-display); font-size: clamp(28px, 3vw, 40px); text-transform: uppercase; letter-spacing: 0.02em; color: var(--teal-deep); margin-bottom: 8px; }
+.mockup-header h1 em { font-family: var(--font-serif); font-style: italic; font-weight: normal; color: var(--orange); text-transform: none; letter-spacing: 0; }
+.mockup-header p { font-family: var(--font-serif); font-style: italic; font-size: 20px; color: var(--muted); max-width: 640px; margin: 0 auto; }
+
+.view-section { margin-bottom: 80px; }
+.view-label {
+  font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--orange); padding: 8px 14px; background: var(--cream-warm); border: 1px solid var(--teal-deep);
+  display: inline-block; margin-bottom: 16px;
+}
+.view-label .num { color: var(--teal-deep); font-weight: 600; }
+.view-caption {
+  font-family: var(--font-serif); font-style: italic; color: var(--muted); margin-bottom: 24px; font-size: 18px;
+}
+
+/* The "app frame" — a bordered rectangle representing the product viewport */
+.app-frame {
+  background: var(--cream);
+  border: 2px solid var(--teal-deep);
+  min-height: 600px;
+  position: relative;
+  overflow: hidden;
+}
+.app-frame.tall { min-height: 800px; }
+
+/* ===========================================================================
+   SHARED APP CHROME (top nav, wordmark, footer in some views)
+   =========================================================================== */
+.app-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--teal-deep);
+  background: var(--cream);
+}
+.wordmark {
+  font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--teal-deep); text-decoration: none; display: flex; align-items: center; gap: 4px;
+}
+.wordmark .dot { color: var(--orange); margin: 0 2px; }
+.nav-right { display: flex; gap: 24px; align-items: center; }
+.nav-link { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal-deep); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
+.nav-link:hover { border-bottom-color: var(--orange); }
+.nav-link.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+/* ===========================================================================
+   VIEW 1: SCAN INPUT (landing into app)
+   =========================================================================== */
+.scan-input-view {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 600px;
+}
+.scan-input-left {
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.scan-input-right {
+  background: var(--teal-deep);
+  color: var(--cream);
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Wyman-inspired concentric arcs (signature element) */
+.arc-decoration {
+  position: absolute; top: 0; right: 0; width: 300px; height: 300px; pointer-events: none;
+}
+.arc-decoration svg { width: 100%; height: 100%; opacity: var(--arc-op); }
+.arc-decoration.bottom-left { top: auto; right: auto; bottom: 0; left: 0; transform: rotate(180deg); }
+
+.input-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--orange); margin-bottom: 20px;
+}
+.input-title {
+  font-family: var(--font-display); font-size: clamp(36px, 4.5vw, 56px);
+  line-height: 1.05; text-transform: uppercase; letter-spacing: -0.01em;
+  color: var(--teal-deep); margin-bottom: 24px;
+}
+.input-title em {
+  font-family: var(--font-serif); font-style: italic; font-weight: normal; color: var(--orange);
+  text-transform: none; letter-spacing: 0;
+}
+.input-subtitle {
+  font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--muted);
+  max-width: 440px; margin-bottom: 40px;
+}
+
+/* Input type toggle */
+.input-type-tabs {
+  display: flex; gap: 0; margin-bottom: 16px; border: 1.5px solid var(--teal-deep);
+  width: fit-content;
+}
+.tab {
+  padding: 10px 20px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.1em; cursor: pointer; border-right: 1.5px solid var(--teal-deep);
+  color: var(--muted); background: transparent;
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--teal-deep); color: var(--cream); }
+
+/* Input field */
+.scan-input-field {
+  display: flex; align-items: stretch; border: 2px solid var(--teal-deep);
+  background: var(--cream); width: 100%; max-width: 560px;
+}
+.scan-input-field input {
+  flex: 1; padding: 16px 20px; font-family: var(--font-mono); font-size: 14px; color: var(--teal-deep);
+  border: none; background: transparent; outline: none;
+}
+.scan-input-field input::placeholder { color: var(--muted); font-family: var(--font-mono); }
+.scan-btn {
+  background: var(--orange); color: var(--cream); border: none; padding: 0 28px;
+  font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em;
+  cursor: pointer; transition: background 0.18s ease;
+}
+.scan-btn:hover { background: var(--teal-deep); }
+
+.input-hint {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 14px;
+  max-width: 560px;
+}
+
+/* Right side panel: what happens next */
+.right-panel-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--ochre); margin-bottom: 24px;
+}
+.right-panel-heading {
+  font-family: var(--font-display); font-size: 28px; text-transform: uppercase; letter-spacing: 0.01em;
+  margin-bottom: 24px; line-height: 1.15;
+}
+.right-panel-heading em {
+  font-family: var(--font-serif); font-style: italic; font-weight: normal; color: var(--ochre); text-transform: none;
+}
+.right-panel-list { list-style: none; counter-reset: step; }
+.right-panel-list li {
+  padding: 18px 0 18px 52px; border-bottom: 1px solid rgba(241,235,220,0.15);
+  position: relative; counter-increment: step;
+  font-size: 15px; line-height: 1.5;
+}
+.right-panel-list li:last-child { border-bottom: none; }
+.right-panel-list li::before {
+  content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 18px;
+  font-family: var(--font-mono); color: var(--ochre); font-size: 14px; letter-spacing: 0.05em;
+}
+.right-panel-list strong {
+  display: block; font-family: var(--font-display); font-size: 14px; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 4px; color: var(--cream);
+}
+
+/* ===========================================================================
+   VIEW 2: SCANNING STATE
+   =========================================================================== */
+.scanning-view {
+  min-height: 600px; display: flex; align-items: center; justify-content: center;
+  padding: 80px 32px; position: relative; overflow: hidden;
+}
+.scanning-content { text-align: center; max-width: 640px; position: relative; z-index: 2; }
+.scanning-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--orange); margin-bottom: 20px;
+}
+.scanning-title {
+  font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); line-height: 1.1;
+  text-transform: uppercase; letter-spacing: -0.01em; color: var(--teal-deep); margin-bottom: 24px;
+}
+.scanning-title em {
+  font-family: var(--font-serif); font-style: italic; font-weight: normal; color: var(--orange); text-transform: none;
+}
+.scanning-subtitle {
+  font-family: var(--font-serif); font-style: italic; font-size: 20px; color: var(--muted); margin-bottom: 48px;
+}
+.scanning-progress {
+  display: flex; flex-direction: column; gap: 0; max-width: 420px; margin: 0 auto;
+  border: 1.5px solid var(--teal-deep);
+}
+.progress-step {
+  display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--teal-deep);
+  font-family: var(--font-mono); font-size: 13px; text-align: left;
+}
+.progress-step:last-child { border-bottom: none; }
+.progress-step .num { color: var(--orange); font-weight: 600; min-width: 32px; }
+.progress-step.done .status { color: var(--teal-mid); }
+.progress-step.active { background: var(--cream-warm); }
+.progress-step.active .status { color: var(--orange); font-weight: 600; }
+.progress-step.pending { opacity: 0.5; }
+.progress-step .status { margin-left: auto; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* Big animated arc on the scanning view */
+.scan-arc-decor {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 800px; height: 800px; pointer-events: none; opacity: 0.08;
+}
+
+/* ===========================================================================
+   VIEW 3: RESULTS DASHBOARD
+   =========================================================================== */
+.results-view { padding: 0; }
+.results-header {
+  padding: 40px 48px; border-bottom: 1.5px solid var(--teal-deep);
+  display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center;
+}
+.results-header-left h2 {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--orange); margin-bottom: 8px;
+}
+.results-url {
+  font-family: var(--font-display); font-size: 28px; text-transform: uppercase; letter-spacing: 0.01em;
+  color: var(--teal-deep); margin-bottom: 8px; word-break: break-all;
+}
+.results-meta {
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+}
+.results-meta span { margin-right: 18px; }
+
+/* The score block: ring + rating */
+.score-ring-block {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.score-ring {
+  position: relative; width: 180px; height: 180px;
+}
+.score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.score-ring-bg { fill: none; stroke: var(--cream-warm); stroke-width: 12; }
+.score-ring-fg { fill: none; stroke: var(--orange); stroke-width: 12; stroke-linecap: round; }
+.score-ring-number {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 56px; color: var(--teal-deep); line-height: 1;
+}
+.score-ring-label {
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--muted); text-align: center;
+}
+.rating-badge {
+  font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 8px 16px; border: 1.5px solid var(--teal-deep); color: var(--teal-deep);
+}
+.rating-badge.partial { border-color: var(--ochre); color: var(--ochre); }
+.rating-badge.ready { border-color: var(--teal-mid); color: var(--teal-mid); }
+
+/* Category breakdown */
+.categories-section { padding: 48px; border-bottom: 1.5px solid var(--teal-deep); }
+.section-heading {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--orange); margin-bottom: 4px;
+}
+.section-title {
+  font-family: var(--font-display); font-size: 28px; text-transform: uppercase; letter-spacing: 0.01em;
+  color: var(--teal-deep); margin-bottom: 32px;
+}
+.section-title em { font-family: var(--font-serif); font-style: italic; font-weight: normal; color: var(--orange); text-transform: none; }
+
+.category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--teal-deep); border-left: 1px solid var(--teal-deep); }
+.category-cell {
+  padding: 24px; border-right: 1px solid var(--teal-deep); border-bottom: 1px solid var(--teal-deep);
+  display: flex; flex-direction: column; gap: 12px; position: relative;
+}
+.category-num {
+  font-family: var(--font-mono); font-size: 10px; color: var(--orange); letter-spacing: 0.1em;
+}
+.category-name {
+  font-family: var(--font-display); font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--teal-deep);
+}
+.category-bar-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.category-bar-track { flex: 1; height: 8px; background: var(--cream-warm); position: relative; border: 1px solid var(--teal-deep); }
+.category-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--orange); }
+.category-score {
+  font-family: var(--font-mono); font-size: 13px; color: var(--teal-deep); min-width: 52px; text-align: right;
+}
+.category-finding-count {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.05em;
+}
+.category-finding-count a { color: var(--orange); text-decoration: none; border-bottom: 1px solid var(--orange); }
+.category-cell.zero-instance .category-bar-fill { background: var(--cream-warm); border-right: 1px solid var(--teal-deep); }
+.category-cell.zero-instance .zero-note {
+  font-family: var(--font-serif); font-style: italic; color: var(--muted); font-size: 13px; margin-top: 4px;
+}
+
+/* Layer 2 narrative block */
+.layer-2-section { padding: 48px; border-bottom: 1.5px solid var(--teal-deep); background: var(--cream-warm); }
+.layer-2-tasks { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-top: 1px solid var(--teal-deep); border-left: 1px solid var(--teal-deep); }
+.layer-2-task {
+  padding: 24px; border-right: 1px solid var(--teal-deep); border-bottom: 1px solid var(--teal-deep);
+  display: flex; flex-direction: column; gap: 12px; background: var(--cream);
+}
+.task-num { font-family: var(--font-mono); font-size: 10px; color: var(--orange); letter-spacing: 0.12em; text-transform: uppercase; }
+.task-name { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+.task-result-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 11px; padding: 4px 10px;
+  border: 1px solid var(--teal-deep); text-transform: uppercase; letter-spacing: 0.08em; align-self: flex-start;
+}
+.task-result-pill.success { background: var(--teal-deep); color: var(--cream); }
+.task-result-pill.partial { background: var(--ochre); color: var(--teal-deep); border-color: var(--ochre); }
+.task-result-pill.fail { border-color: var(--orange); color: var(--orange); }
+.task-narrative { font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--muted); line-height: 1.55; }
+.task-related { font-family: var(--font-mono); font-size: 11px; color: var(--teal-deep); margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--muted); }
+.task-related a { color: var(--orange); text-decoration: none; }
+
+/* Findings list */
+.findings-section { padding: 48px; border-bottom: 1.5px solid var(--teal-deep); }
+.findings-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--teal-deep); }
+.finding-item {
+  display: grid; grid-template-columns: 80px 1fr auto; gap: 24px; padding: 20px 0;
+  border-bottom: 1px solid var(--teal-deep); align-items: start;
+}
+.finding-id { font-family: var(--font-mono); font-size: 11px; color: var(--orange); letter-spacing: 0.1em; padding-top: 2px; }
+.finding-body { }
+.finding-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 8px; line-height: 1.35; }
+.finding-detail { font-family: var(--font-serif); font-style: italic; font-size: 16px; color: var(--muted); line-height: 1.6; }
+.finding-severity {
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 4px 10px; border: 1px solid var(--teal-deep); align-self: start;
+}
+.finding-severity.low { color: var(--muted); }
+.finding-severity.medium { color: var(--ochre); border-color: var(--ochre); }
+.finding-severity.high { color: var(--orange); border-color: var(--orange); }
+
+/* Actions footer */
+.results-footer {
+  padding: 32px 48px; display: flex; gap: 16px; justify-content: flex-end; align-items: center;
+  background: var(--cream);
+}
+.results-footer .footer-note { margin-right: auto; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.footer-btn {
+  font-family: var(--font-display); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 12px 20px; border: 1.5px solid var(--teal-deep); background: transparent; color: var(--teal-deep);
+  cursor: pointer; text-decoration: none;
+}
+.footer-btn.primary { background: var(--orange); border-color: var(--orange); color: var(--cream); }
+.footer-btn:hover { background: var(--teal-deep); color: var(--cream); border-color: var(--teal-deep); }
+.footer-btn.primary:hover { background: var(--teal-deep); border-color: var(--teal-deep); }
+
+/* ===========================================================================
+   VIEW 4: FINDING DETAIL (expanded)
+   =========================================================================== */
+.finding-detail-view { padding: 48px; }
+.fd-breadcrumb {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--muted); margin-bottom: 20px;
+}
+.fd-breadcrumb a { color: var(--orange); text-decoration: none; border-bottom: 1px solid var(--orange); }
+.fd-id {
+  font-family: var(--font-mono); font-size: 12px; color: var(--orange); letter-spacing: 0.12em; margin-bottom: 8px;
+}
+.fd-title {
+  font-family: var(--font-display); font-size: 32px; line-height: 1.15; text-transform: uppercase;
+  letter-spacing: 0; color: var(--teal-deep); margin-bottom: 24px; max-width: 720px;
+}
+.fd-detail {
+  font-family: var(--font-serif); font-style: italic; font-size: 22px; line-height: 1.55;
+  color: var(--muted); margin-bottom: 32px; max-width: 720px;
+}
+.fd-metadata {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--teal-deep);
+  margin-bottom: 32px;
+}
+.fd-meta-cell {
+  padding: 16px 20px; border-right: 1px solid var(--teal-deep);
+}
+.fd-meta-cell:last-child { border-right: none; }
+.fd-meta-label {
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted); margin-bottom: 6px;
+}
+.fd-meta-value {
+  font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--teal-deep);
+}
+.fd-location {
+  padding: 20px 24px; background: var(--cream-warm); border: 1.5px dashed var(--teal-deep); margin-bottom: 32px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--teal-deep);
+}
+.fd-location .label {
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); font-size: 10px; margin-bottom: 8px;
+}
+.fd-what-agent {
+  padding: 32px; border-left: 4px solid var(--orange); background: var(--cream-warm);
+  margin-bottom: 32px;
+}
+.fd-what-agent h3 {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--orange); margin-bottom: 12px;
+}
+.fd-what-agent p {
+  font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 1.55; color: var(--teal-deep);
+}
+
+/* ===========================================================================
+   VIEW 5: ERROR STATE
+   =========================================================================== */
+.error-view {
+  min-height: 600px; display: flex; align-items: center; justify-content: center;
+  padding: 80px 32px; position: relative;
+}
+.error-content { max-width: 560px; text-align: center; }
+.error-icon {
+  width: 80px; height: 80px; border: 2px solid var(--orange); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 32px;
+  font-family: var(--font-serif); font-style: italic; font-size: 42px; color: var(--orange);
+}
+.error-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--orange); margin-bottom: 16px;
+}
+.error-title {
+  font-family: var(--font-display); font-size: 36px; text-transform: uppercase; letter-spacing: -0.01em;
+  color: var(--teal-deep); margin-bottom: 20px; line-height: 1.15;
+}
+.error-body {
+  font-family: var(--font-serif); font-style: italic; font-size: 20px; color: var(--muted); margin-bottom: 32px;
+  line-height: 1.5;
+}
+.error-actions { display: flex; gap: 16px; justify-content: center; }
+
+/* ===========================================================================
+   VIEW 6: SOCIAL CARD (shareable image export, 1200x630)
+   ===========================================================================
+   The card is a FIXED 1200x630 artifact. We display it at that exact ratio.
+   The outer wrap scales it uniformly via transform: scale() when needed, but
+   the internal layout NEVER changes. This matches how OG images work in the wild.
+   =========================================================================== */
+
+.social-card-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 48px 32px;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+/* The scale container: responsive sizing happens here, not on internals */
+.social-card-scaler {
+  width: 1200px;
+  height: 630px;
+  transform-origin: top center;
+  position: relative;
+}
+
+/* Scale the whole card uniformly at smaller viewports */
+@media (max-width: 1280px) {
+  .social-card-scaler { transform: scale(0.85); }
+  .social-card-wrap { padding-bottom: 0; height: calc(630px * 0.85 + 96px); }
+}
+@media (max-width: 1080px) {
+  .social-card-scaler { transform: scale(0.72); }
+  .social-card-wrap { height: calc(630px * 0.72 + 96px); }
+}
+@media (max-width: 900px) {
+  .social-card-scaler { transform: scale(0.6); }
+  .social-card-wrap { height: calc(630px * 0.6 + 96px); }
+}
+@media (max-width: 720px) {
+  .social-card-scaler { transform: scale(0.48); }
+  .social-card-wrap { height: calc(630px * 0.48 + 96px); }
+}
+@media (max-width: 560px) {
+  .social-card-scaler { transform: scale(0.36); }
+  .social-card-wrap { height: calc(630px * 0.36 + 96px); }
+}
+
+/* The card itself: always exactly 1200x630 */
+.social-card {
+  width: 1200px;
+  height: 630px;
+  background: var(--cream);
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  border: 4px solid var(--teal-deep);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* LEFT: identity + scanned target. Fixed width. */
+.social-left {
+  width: 720px;
+  padding: 52px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative arc — bottom-left, subtle, behind content */
+.social-arc {
+  position: absolute;
+  bottom: -180px;
+  left: -180px;
+  width: 580px;
+  height: 580px;
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top block: identity row */
+.social-identity {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+.social-wordmark {
+  font-family: var(--font-display);
+  font-size: 38px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--teal-deep);
+  line-height: 1;
+  white-space: nowrap;
+}
+.social-wordmark .dot {
+  color: var(--orange);
+  font-size: 42px;
+  line-height: 1;
+  display: inline-block;
+  transform: translateY(-1px);
+}
+.social-url-top {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Middle block: the scanned domain as hero */
+.social-scanned-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+.social-scanned-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--orange);
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+.social-domain {
+  font-family: var(--font-display);
+  font-size: 72px;
+  line-height: 1;
+  text-transform: lowercase;
+  letter-spacing: -0.02em;
+  color: var(--teal-deep);
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.social-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 24px;
+  color: var(--muted);
+  line-height: 1.3;
+  max-width: 580px;
+  margin-top: 6px;
+}
+
+/* Bottom block: methodology + modes pill */
+.social-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1.5px solid var(--teal-deep);
+  padding-top: 20px;
+  position: relative;
+  z-index: 2;
+}
+.social-footer-left {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.social-footer-left .accent {
+  color: var(--orange);
+  font-weight: 500;
+}
+.social-scan-modes-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 7px 13px;
+  border: 1.5px solid var(--teal-deep);
+  color: var(--teal-deep);
+  white-space: nowrap;
+}
+
+/* RIGHT: score ring + rating. Fixed width. */
+.social-right {
+  width: 480px;
+  background: var(--teal-deep);
+  color: var(--cream);
+  padding: 52px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.social-right-arc {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  opacity: 0.09;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.social-score-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ochre);
+  position: relative;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.social-score-ring {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+.social-score-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  display: block;
+}
+.social-ring-bg {
+  fill: none;
+  stroke: rgba(241,235,220,0.14);
+  stroke-width: 18;
+}
+.social-ring-fg {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 18;
+  stroke-linecap: round;
+}
+.social-ring-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.social-ring-number .num {
+  font-family: var(--font-display);
+  font-size: 128px;
+  color: var(--cream);
+  line-height: 0.9;
+}
+.social-ring-number .out-of {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(241,235,220,0.5);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.social-rating {
+  font-family: var(--font-display);
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ochre);
+  position: relative;
+  z-index: 2;
+  padding: 10px 20px;
+  border: 1.5px solid var(--ochre);
+  white-space: nowrap;
+}
+
+/* Responsive for mockup viewer */
+@media (max-width: 900px) {
+  .scan-input-view { grid-template-columns: 1fr; }
+  .scan-input-left, .scan-input-right { padding: 48px 32px; }
+  .results-header { grid-template-columns: 1fr; text-align: left; }
+  .category-grid { grid-template-columns: 1fr; }
+  .layer-2-tasks { grid-template-columns: 1fr; }
+  .fd-metadata { grid-template-columns: repeat(2, 1fr); }
+  .finding-item { grid-template-columns: 1fr; gap: 8px; }
+  .finding-severity { justify-self: start; }
+}
+</style>
+</head>
+<body>
+
+<div class="mockup-shell">
+
+  <!-- Header banner -->
+  <header class="mockup-header">
+    <h1>Agentis<em>·</em>Lux <em>app UI mockup</em></h1>
+    <p>Six views of the product UI. Wyman-inspired design language. Locked visual direction. Every view matches the landing page palette and typography.</p>
+  </header>
+
+  <!-- ==============================================
+       VIEW 1: SCAN INPUT
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">01 / </span>Scan Input View</span>
+    <p class="view-caption">The landing screen users arrive at. URL, repo, or spec upload. Three-step preview on the right sets expectations.</p>
+    <div class="app-frame">
+      <nav class="app-nav">
+        <a class="wordmark" href="#" aria-label="AgentisLux home"><span>Agentis<span class="dot">·</span>Lux</span></a>
+        <div class="nav-right">
+          <a class="nav-link active" href="#">Scan</a>
+          <a class="nav-link" href="#">Methodology</a>
+          <a class="nav-link" href="#">Benchmark</a>
+          <a class="nav-link" href="#">About</a>
+        </div>
+      </nav>
+      <div class="scan-input-view">
+        <div class="scan-input-left">
+          <div class="arc-decoration" aria-hidden="true">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+              <g fill="none" stroke="#e85416" stroke-width="2.5">
+                <path d="M 300 300 A 280 280 0 0 0 20 20"></path>
+                <path d="M 300 300 A 220 220 0 0 0 80 80"></path>
+                <path d="M 300 300 A 160 160 0 0 0 140 140"></path>
+                <path d="M 300 300 A 100 100 0 0 0 200 200"></path>
+                <path d="M 300 300 A 60 60 0 0 0 240 240"></path>
+              </g>
+            </svg>
+          </div>
+          <div class="input-eyebrow">Scan · Layer 1 + Layer 2</div>
+          <h1 class="input-title">See what AI agents <em>experience</em> on your site.</h1>
+          <p class="input-subtitle">Paste a URL, connect a GitHub repo, or upload an API spec. Findings only. No fixes suggested.</p>
+
+          <div class="input-type-tabs" role="tablist">
+            <button class="tab active" role="tab" aria-selected="true">URL</button>
+            <button class="tab" role="tab" aria-selected="false">GitHub repo</button>
+            <button class="tab" role="tab" aria-selected="false">API spec upload</button>
+          </div>
+          <div class="scan-input-field">
+            <input type="text" placeholder="https://your-site.com" aria-label="Enter URL to scan">
+            <button class="scan-btn">Scan</button>
+          </div>
+          <p class="input-hint">By scanning, you confirm you have the right to test this URL. AgentisLux reads raw HTML. It does not execute JavaScript. Scans are ephemeral and not stored.</p>
+        </div>
+        <div class="scan-input-right">
+          <div class="arc-decoration bottom-left" aria-hidden="true">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+              <g fill="none" stroke="#d4a43c" stroke-width="2.5">
+                <path d="M 300 300 A 280 280 0 0 0 20 20"></path>
+                <path d="M 300 300 A 220 220 0 0 0 80 80"></path>
+                <path d="M 300 300 A 160 160 0 0 0 140 140"></path>
+                <path d="M 300 300 A 100 100 0 0 0 200 200"></path>
+              </g>
+            </svg>
+          </div>
+          <div class="right-panel-eyebrow">What happens when you scan</div>
+          <h2 class="right-panel-heading">Three steps. <em>One report.</em></h2>
+          <ol class="right-panel-list">
+            <li>
+              <strong>Fetch and parse</strong>
+              We fetch your HTML (no JavaScript execution). If an OpenAPI spec is auto-discovered, we parse it alongside.
+            </li>
+            <li>
+              <strong>Layer 1 — deterministic scan</strong>
+              Six frontend categories. Six API categories if a spec is present. Pattern matching, no AI. Same input, same score, every time.
+            </li>
+            <li>
+              <strong>Layer 2 — agent simulation</strong>
+              Six tasks attempted against your site as an agent would. Claude Haiku reports what it could and could not do. Linked back to Layer 1 findings.
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       VIEW 2: SCANNING STATE
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">02 / </span>Scanning State</span>
+    <p class="view-caption">Transitional state during the scan. Progress shows Layer 1 then Layer 2 sequentially. Typically under 15 seconds end-to-end.</p>
+    <div class="app-frame">
+      <nav class="app-nav">
+        <a class="wordmark" href="#" aria-label="AgentisLux home"><span>Agentis<span class="dot">·</span>Lux</span></a>
+        <div class="nav-right">
+          <a class="nav-link active" href="#">Scan</a>
+          <a class="nav-link" href="#">Methodology</a>
+          <a class="nav-link" href="#">Benchmark</a>
+          <a class="nav-link" href="#">About</a>
+        </div>
+      </nav>
+      <div class="scanning-view">
+        <div class="scan-arc-decor" aria-hidden="true">
+          <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="#0f3d42" stroke-width="3">
+              <path d="M 800 800 A 760 760 0 0 0 40 40"></path>
+              <path d="M 800 800 A 620 620 0 0 0 180 180"></path>
+              <path d="M 800 800 A 480 480 0 0 0 320 320"></path>
+              <path d="M 800 800 A 340 340 0 0 0 460 460"></path>
+              <path d="M 800 800 A 200 200 0 0 0 600 600"></path>
+            </g>
+          </svg>
+        </div>
+        <div class="scanning-content">
+          <div class="scanning-eyebrow">Scanning · agentislux.io</div>
+          <h1 class="scanning-title">Asking the <em>agent</em> what it sees.</h1>
+          <p class="scanning-subtitle">This typically takes about 12 seconds. We are not storing the result.</p>
+          <div class="scanning-progress" role="status" aria-live="polite">
+            <div class="progress-step done">
+              <span class="num">01</span>
+              <span>Fetching HTML</span>
+              <span class="status">Done</span>
+            </div>
+            <div class="progress-step done">
+              <span class="num">02</span>
+              <span>Parsing DOM</span>
+              <span class="status">Done</span>
+            </div>
+            <div class="progress-step active">
+              <span class="num">03</span>
+              <span>Running Layer 1 checks (4 of 6)</span>
+              <span class="status">Active</span>
+            </div>
+            <div class="progress-step pending">
+              <span class="num">04</span>
+              <span>Layer 2 agent simulation</span>
+              <span class="status">Pending</span>
+            </div>
+            <div class="progress-step pending">
+              <span class="num">05</span>
+              <span>Assembling report</span>
+              <span class="status">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       VIEW 3: RESULTS DASHBOARD
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">03 / </span>Results Dashboard</span>
+    <p class="view-caption">The main report view. Score + rating, six-category breakdown, Layer 2 narratives, detailed findings list, export actions.</p>
+    <div class="app-frame tall">
+      <nav class="app-nav">
+        <a class="wordmark" href="#" aria-label="AgentisLux home"><span>Agentis<span class="dot">·</span>Lux</span></a>
+        <div class="nav-right">
+          <a class="nav-link active" href="#">Scan</a>
+          <a class="nav-link" href="#">Methodology</a>
+          <a class="nav-link" href="#">Benchmark</a>
+          <a class="nav-link" href="#">About</a>
+        </div>
+      </nav>
+
+      <div class="results-view">
+        <!-- Header with URL + score ring -->
+        <div class="results-header">
+          <div class="results-header-left">
+            <h2>Scan result · Methodology v1.1.0</h2>
+            <div class="results-url">example.com</div>
+            <div class="results-meta">
+              <span>Scanned Apr 18 2026 7:42pm PT</span>
+              <span>1,247ms</span>
+              <span>Frontend only</span>
+            </div>
+          </div>
+          <div class="score-ring-block">
+            <div class="score-ring">
+              <svg viewBox="0 0 180 180">
+                <circle cx="90" cy="90" r="78" class="score-ring-bg"></circle>
+                <circle cx="90" cy="90" r="78" class="score-ring-fg" stroke-dasharray="490" stroke-dashoffset="137"></circle>
+              </svg>
+              <div class="score-ring-number">72</div>
+            </div>
+            <div class="score-ring-label">of 100</div>
+            <div class="rating-badge partial">Partially Ready</div>
+          </div>
+        </div>
+
+        <!-- Six-category breakdown -->
+        <div class="categories-section">
+          <div class="section-heading">Six categories · Layer 1</div>
+          <h3 class="section-title">Category <em>breakdown.</em></h3>
+          <div class="category-grid">
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 01 · WEIGHT 25</span>
+              <span class="category-name">Semantic HTML</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:84%"></div></div>
+                <span class="category-score">21 / 25</span>
+              </div>
+              <span class="category-finding-count">3 findings · <a href="#">view details →</a></span>
+            </div>
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 02 · WEIGHT 20</span>
+              <span class="category-name">Form Accessibility</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:60%"></div></div>
+                <span class="category-score">12 / 20</span>
+              </div>
+              <span class="category-finding-count">5 findings · <a href="#">view details →</a></span>
+            </div>
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 03 · WEIGHT 15</span>
+              <span class="category-name">ARIA &amp; Accessibility</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:93%"></div></div>
+                <span class="category-score">14 / 15</span>
+              </div>
+              <span class="category-finding-count">1 finding · <a href="#">view details →</a></span>
+            </div>
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 04 · WEIGHT 15</span>
+              <span class="category-name">Structured Data</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:40%"></div></div>
+                <span class="category-score">6 / 15</span>
+              </div>
+              <span class="category-finding-count">2 findings · <a href="#">view details →</a></span>
+            </div>
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 05 · WEIGHT 15</span>
+              <span class="category-name">Content in HTML</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:87%"></div></div>
+                <span class="category-score">13 / 15</span>
+              </div>
+              <span class="category-finding-count">2 findings · <a href="#">view details →</a></span>
+            </div>
+
+            <div class="category-cell">
+              <span class="category-num">CATEGORY 06 · WEIGHT 10</span>
+              <span class="category-name">Link &amp; Navigation</span>
+              <div class="category-bar-row">
+                <div class="category-bar-track"><div class="category-bar-fill" style="width:60%"></div></div>
+                <span class="category-score">6 / 10</span>
+              </div>
+              <span class="category-finding-count">3 findings · <a href="#">view details →</a></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 2 narratives -->
+        <div class="layer-2-section">
+          <div class="section-heading">Layer 2 · Agent simulation</div>
+          <h3 class="section-title">What the <em>agent</em> actually did.</h3>
+          <div class="layer-2-tasks">
+
+            <div class="layer-2-task">
+              <span class="task-num">FE-01</span>
+              <span class="task-name">Find the primary CTA</span>
+              <span class="task-result-pill success">Completed</span>
+              <p class="task-narrative">The agent identified the checkout action but reported it as a styled div rather than a semantic button. It was not fully confident the element was clickable from markup alone.</p>
+              <div class="task-related">Related: <a href="#">SEM-001</a>, <a href="#">SEM-003</a></div>
+            </div>
+
+            <div class="layer-2-task">
+              <span class="task-num">FE-02</span>
+              <span class="task-name">Identify page purpose</span>
+              <span class="task-result-pill success">Completed</span>
+              <p class="task-narrative">The agent determined the page is an e-commerce product detail view. Schema.org Product markup confirmed the category. Purpose clear.</p>
+              <div class="task-related">Related: <a href="#">SD-002</a></div>
+            </div>
+
+            <div class="layer-2-task">
+              <span class="task-num">FE-03</span>
+              <span class="task-name">Attempt form submission</span>
+              <span class="task-result-pill partial">Partial</span>
+              <p class="task-narrative">The agent located the email signup form but could not determine from markup alone what format the phone field expected. Labels were placeholder-only.</p>
+              <div class="task-related">Related: <a href="#">FORM-001</a>, <a href="#">FORM-004</a></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Findings list -->
+        <div class="findings-section">
+          <div class="section-heading">All findings · 16 total</div>
+          <h3 class="section-title">The <em>detailed</em> findings.</h3>
+          <div class="findings-list">
+
+            <div class="finding-item">
+              <span class="finding-id">SEM-001</span>
+              <div class="finding-body">
+                <h4 class="finding-title">Primary CTA is a styled div, not a button element</h4>
+                <p class="finding-detail">An agent landing on this page cannot confirm the checkout action is a button. The element has a click handler but uses a generic div tag, making it indistinguishable from static content in the DOM.</p>
+              </div>
+              <span class="finding-severity high">High</span>
+            </div>
+
+            <div class="finding-item">
+              <span class="finding-id">FORM-001</span>
+              <div class="finding-body">
+                <h4 class="finding-title">Phone input relies on placeholder for guidance</h4>
+                <p class="finding-detail">The phone field uses a placeholder attribute as its only indicator of expected format. An agent reading the form cannot determine the required format once a value is entered, because placeholders disappear on focus.</p>
+              </div>
+              <span class="finding-severity medium">Medium</span>
+            </div>
+
+            <div class="finding-item">
+              <span class="finding-id">SD-001</span>
+              <div class="finding-body">
+                <h4 class="finding-title">Page missing JSON-LD structured data</h4>
+                <p class="finding-detail">No JSON-LD script tag is present on the page. An agent cannot use Schema.org structured data to confirm the page type, product details, or business identity. This makes the page harder to categorize without interpreting visible text.</p>
+              </div>
+              <span class="finding-severity medium">Medium</span>
+            </div>
+
+            <div class="finding-item">
+              <span class="finding-id">NAV-002</span>
+              <div class="finding-body">
+                <h4 class="finding-title">Breadcrumb nav uses custom list markup</h4>
+                <p class="finding-detail">The breadcrumb navigation uses div elements with visual separators rather than a semantic ol or nav with aria-label. An agent parsing navigation hierarchy must infer the relationship from visual cues that are not present in raw HTML.</p>
+              </div>
+              <span class="finding-severity low">Low</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Actions footer -->
+        <div class="results-footer">
+          <span class="footer-note">Scan complete · Not stored server-side</span>
+          <a class="footer-btn" href="#">Download report</a>
+          <a class="footer-btn" href="#">Share card</a>
+          <a class="footer-btn primary" href="#">Scan another</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       VIEW 4: FINDING DETAIL (expanded)
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">04 / </span>Finding Detail View</span>
+    <p class="view-caption">Expanded view of a single finding. Opens from the findings list. Agent-perspective prose in the pull-quote treatment.</p>
+    <div class="app-frame">
+      <nav class="app-nav">
+        <a class="wordmark" href="#" aria-label="AgentisLux home"><span>Agentis<span class="dot">·</span>Lux</span></a>
+        <div class="nav-right">
+          <a class="nav-link active" href="#">Scan</a>
+          <a class="nav-link" href="#">Methodology</a>
+          <a class="nav-link" href="#">Benchmark</a>
+          <a class="nav-link" href="#">About</a>
+        </div>
+      </nav>
+      <div class="finding-detail-view">
+        <div class="fd-breadcrumb"><a href="#">← Back to results</a>  ·  Semantic HTML  ·  SEM-001</div>
+        <div class="fd-id">Finding SEM-001 · Layer 1 · Semantic HTML</div>
+        <h1 class="fd-title">Primary call-to-action uses a styled div, not a semantic button element.</h1>
+        <p class="fd-detail">An agent landing on this page cannot confirm the checkout action is a button. The clickable element uses a generic div tag with a JavaScript click handler, not a button or a tag. Agents identify interactive elements by tag name. A styled div is indistinguishable from static content in the DOM.</p>
+
+        <div class="fd-metadata">
+          <div class="fd-meta-cell">
+            <div class="fd-meta-label">Severity</div>
+            <div class="fd-meta-value">High</div>
+          </div>
+          <div class="fd-meta-cell">
+            <div class="fd-meta-label">Confidence</div>
+            <div class="fd-meta-value">High</div>
+          </div>
+          <div class="fd-meta-cell">
+            <div class="fd-meta-label">Points deducted</div>
+            <div class="fd-meta-value">-4 of 25</div>
+          </div>
+          <div class="fd-meta-cell">
+            <div class="fd-meta-label">Category weight</div>
+            <div class="fd-meta-value">25 points</div>
+          </div>
+        </div>
+
+        <div class="fd-location">
+          <div class="label">Location in markup</div>
+          <div>Selector: <code>.checkout-cta</code></div>
+          <div>Line: 247</div>
+          <div>Method: Element is rendered as <code>&lt;div class="checkout-cta"&gt;Continue to checkout&lt;/div&gt;</code></div>
+        </div>
+
+        <div class="fd-what-agent">
+          <h3>What the agent experienced</h3>
+          <p>I could see a cream-colored region containing the text "Continue to checkout." The element had associated styles suggesting interactivity, but without a button or a tag I could not confirm whether clicking it would navigate, submit, or do nothing. I attempted to proceed anyway by evaluating adjacent elements for confirmation.</p>
+        </div>
+
+        <p style="font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.05em;">Methodology reference: SCORING.md v1.1.0 · Semantic HTML category · Published in repo</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       VIEW 5: ERROR STATE
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">05 / </span>Error State</span>
+    <p class="view-caption">One of several error states. This example: URL returned 403 (site blocks automated access). Always tell the user what happened and what they can do.</p>
+    <div class="app-frame">
+      <nav class="app-nav">
+        <a class="wordmark" href="#" aria-label="AgentisLux home"><span>Agentis<span class="dot">·</span>Lux</span></a>
+        <div class="nav-right">
+          <a class="nav-link active" href="#">Scan</a>
+          <a class="nav-link" href="#">Methodology</a>
+          <a class="nav-link" href="#">Benchmark</a>
+          <a class="nav-link" href="#">About</a>
+        </div>
+      </nav>
+      <div class="error-view">
+        <div class="scan-arc-decor" aria-hidden="true">
+          <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="#0f3d42" stroke-width="3">
+              <path d="M 800 800 A 760 760 0 0 0 40 40"></path>
+              <path d="M 800 800 A 620 620 0 0 0 180 180"></path>
+              <path d="M 800 800 A 480 480 0 0 0 320 320"></path>
+            </g>
+          </svg>
+        </div>
+        <div class="error-content">
+          <div class="error-icon">!</div>
+          <div class="error-eyebrow">Scan could not complete · 403 response</div>
+          <h2 class="error-title">The site blocked automated access.</h2>
+          <p class="error-body">The URL returned a 403 response, which typically means the site is configured to block automated requests. AgentisLux respects these signals and does not attempt to work around them. The same block likely affects AI agents trying to use this site.</p>
+          <div class="error-actions">
+            <a class="footer-btn" href="#">Try a different URL</a>
+            <a class="footer-btn primary" href="#">Read about robots.txt</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       VIEW 6: SOCIAL CARD
+       ============================================== -->
+  <section class="view-section">
+    <span class="view-label"><span class="num">06 / </span>Social Card (1200 × 630)</span>
+    <p class="view-caption">Shareable card exported server-side or via html2canvas. Open Graph preview. Fixed 1200×630 dimensions, scaled uniformly for preview. Neutral visual treatment at any score.</p>
+    <div class="social-card-wrap">
+      <div class="social-card-scaler">
+        <div class="social-card">
+
+          <div class="social-left">
+            <!-- Arc decoration, bottom-left, behind content -->
+            <div class="social-arc" aria-hidden="true">
+              <svg viewBox="0 0 580 580" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke="#e85416" stroke-width="3.5">
+                  <path d="M 0 580 A 560 560 0 0 1 560 20"></path>
+                  <path d="M 0 580 A 460 460 0 0 1 460 120"></path>
+                  <path d="M 0 580 A 360 360 0 0 1 360 220"></path>
+                  <path d="M 0 580 A 260 260 0 0 1 260 320"></path>
+                  <path d="M 0 580 A 160 160 0 0 1 160 420"></path>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Identity (top) -->
+            <div class="social-identity">
+              <div class="social-wordmark">Agentis<span class="dot">·</span>Lux</div>
+              <div class="social-url-top">agentislux.io</div>
+            </div>
+
+            <!-- Hero scanned domain (middle) -->
+            <div class="social-scanned-block">
+              <div class="social-scanned-label">Agent readiness scan</div>
+              <div class="social-domain">example.com</div>
+              <p class="social-tagline">See what AI agents experience on your site.</p>
+            </div>
+
+            <!-- Footer metadata -->
+            <div class="social-footer">
+              <div class="social-footer-left">
+                Methodology <span class="accent">v1.1.0</span>
+                <span style="margin: 0 10px;">·</span>
+                Apr 18 2026
+              </div>
+              <div class="social-scan-modes-pill">Frontend · Layer 1 + 2</div>
+            </div>
+          </div>
+
+          <div class="social-right">
+            <!-- Subtle arc -->
+            <div class="social-right-arc" aria-hidden="true">
+              <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke="#f1ebdc" stroke-width="3">
+                  <path d="M 400 0 A 380 380 0 0 1 20 380"></path>
+                  <path d="M 400 0 A 300 300 0 0 1 100 300"></path>
+                  <path d="M 400 0 A 220 220 0 0 1 180 220"></path>
+                </g>
+              </svg>
+            </div>
+
+            <div class="social-score-label">Agent readiness score</div>
+
+            <div class="social-score-ring">
+              <svg viewBox="0 0 320 320">
+                <circle cx="160" cy="160" r="142" class="social-ring-bg"></circle>
+                <circle cx="160" cy="160" r="142" class="social-ring-fg" stroke-dasharray="892" stroke-dashoffset="250"></circle>
+              </svg>
+              <div class="social-ring-number">
+                <span class="num">72</span>
+                <span class="out-of">of 100</span>
+              </div>
+            </div>
+
+            <div class="social-rating">Partially Ready</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer note -->
+  <footer style="margin-top: 80px; padding: 32px; text-align: center; border-top: 1px solid var(--teal-deep); font-family: var(--font-serif); font-style: italic; color: var(--muted);">
+    All mockups preserve the Wyman-inspired visual language from the landing page. Design tokens, typography, and color palette are identical. Component patterns here translate to React in FRONTEND-SPEC.md.
+    <br><br>
+    <span style="font-family: var(--font-mono); font-style: normal; font-size: 11px; letter-spacing: 0.08em;">AI assisted. Human approved. Powered by NLP.</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

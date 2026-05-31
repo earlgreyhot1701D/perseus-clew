@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentisLux : Agent-readiness, observed</title>
+<meta name="description" content="AgentisLux scans websites and API specs and tells developers what AI agents experience when they try to use them. See what AI agents experience on your site.">
+<link rel="canonical" href="https://agentislux.io/">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20fill%3D%27%23f1ebdc%27%2F%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23e85416%27%20stroke-width%3D%274%27%3E%3Cpath%20d%3D%27M%20100%2095%20A%2095%2095%200%200%200%205%200%27%2F%3E%3Cpath%20d%3D%27M%20100%2078%20A%2078%2078%200%200%200%2022%200%27%2F%3E%3Cpath%20d%3D%27M%20100%2061%20A%2061%2061%200%200%200%2039%200%27%2F%3E%3Cpath%20d%3D%27M%20100%2044%20A%2044%2044%200%200%200%2056%200%27%2F%3E%3Cpath%20d%3D%27M%20100%2027%20A%2027%2027%200%200%200%2073%200%27%2F%3E%3Cpath%20d%3D%27M%20100%2010%20A%2010%2010%200%200%200%2090%200%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<meta property="og:image" content="https://agentislux.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AgentisLux : Agent-readiness, observed">
+<meta property="og:description" content="A scanner that tells you what AI agents experience when they try to use your product. Findings only. Methodology published.">
+<meta property="og:url" content="https://agentislux.io/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d6d51957-06e4-4cb0-aacc-70d1c596fb28") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5b5d4228-86c6-4621-b6e9-2bf26d5ccdb0") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("55891afc-63c0-4f6c-a315-22d34b13681c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d6d51957-06e4-4cb0-aacc-70d1c596fb28") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5b5d4228-86c6-4621-b6e9-2bf26d5ccdb0") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("55891afc-63c0-4f6c-a315-22d34b13681c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d6d51957-06e4-4cb0-aacc-70d1c596fb28") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5b5d4228-86c6-4621-b6e9-2bf26d5ccdb0") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("55891afc-63c0-4f6c-a315-22d34b13681c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d6d51957-06e4-4cb0-aacc-70d1c596fb28") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5b5d4228-86c6-4621-b6e9-2bf26d5ccdb0") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("55891afc-63c0-4f6c-a315-22d34b13681c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo Black';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1315f571-2ce3-4e89-b198-d38fe215149e") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo Black';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("533d231d-2f59-4a89-bb19-19d635b4fcd9") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("abe9259d-b825-4675-9299-ef34aca25490") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a7cf7c60-8d08-47ba-9566-6e28e0ec6cbc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("0bfe9cd5-bfe6-4ab1-9872-e205c1822582") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2cbdbfe5-094f-4f20-b433-32f4b073b6da") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fa4d56d1-60f6-40df-8316-596c16f2a111") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ddf420f9-a84d-4408-bf17-6e8c4084df76") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("b7627463-4d4e-4d1d-ab61-eb8ab7f29ce6") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("bd284b9f-2040-4d37-9e0d-e5a1c6a80c21") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("99b32ffc-fc35-47af-a21b-9eac5e2afe6a") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d855c42c-1ed6-4037-98c7-11fb5629689a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fa4d56d1-60f6-40df-8316-596c16f2a111") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("ddf420f9-a84d-4408-bf17-6e8c4084df76") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b7627463-4d4e-4d1d-ab61-eb8ab7f29ce6") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("bd284b9f-2040-4d37-9e0d-e5a1c6a80c21") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("99b32ffc-fc35-47af-a21b-9eac5e2afe6a") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d855c42c-1ed6-4037-98c7-11fb5629689a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AgentisLux",
+  "description": "A scanner that tells you what AI agents experience when they try to use your website or API.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any (web-based)",
+  "url": "https://agentislux.io/",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --cream: #f1ebdc;
+    --cream-warm: #ebe3ce;
+    --teal-mid: #1b6d74;
+    --teal-deep: #0f3d42;
+    --orange: #e85416;
+    --ochre: #d4a43c;
+    --muted: #5a5548;
+    --arc-op: 0.4;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--teal-deep);
+    font-family: "Archivo", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  input { font-family: inherit; }
+
+  ::selection { background: var(--orange); color: var(--cream); }
+
+  :focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+  }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .display { font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 900; letter-spacing: -0.01em; text-transform: uppercase; }
+  .italic-serif { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--orange); }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(241,235,220,0.86);
+    backdrop-filter: saturate(130%) blur(10px);
+    -webkit-backdrop-filter: saturate(130%) blur(10px);
+    border-bottom: 1.5px solid var(--teal-deep);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .wordmark {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Archivo Black"; font-size: 18px; letter-spacing: 0.02em; text-transform: uppercase;
+    color: var(--teal-deep); position: relative;
+  }
+  .wordmark .dot { color: var(--orange); transform: translateY(-2px); display: inline-block; }
+  .wordmark .arc-punct {
+    width: 34px; height: 34px; flex: 0 0 34px; display: inline-block; margin-right: 2px;
+  }
+  .version-badge {
+    margin-left: 10px; padding-left: 12px; border-left: 1px solid var(--teal-deep);
+    font-family: "JetBrains Mono"; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--teal-deep);
+  }
+  .topnav { display: flex; gap: 28px; }
+  .topnav a {
+    font-weight: 500; font-size: 14px; letter-spacing: 0.02em;
+    padding: 6px 0; position: relative;
+  }
+  .topnav a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 2px; background: var(--orange);
+    transform: scaleX(0); transform-origin: left; transition: transform 180ms ease;
+  }
+  .topnav a:hover::after, .topnav a[aria-current="page"]::after { transform: scaleX(1); }
+
+  /* ============ HERO ============ */
+  .hero { position: relative; overflow: hidden; }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.15fr 0.85fr;
+    gap: 64px; align-items: start;
+    padding: 72px 0 40px;
+    position: relative;
+  }
+  .hero-anchor {
+    position: absolute; pointer-events: none;
+    width: 460px; height: 460px;
+    left: 50%; top: -40px; transform: translateX(-50%);
+    opacity: calc(var(--arc-op, 0.4) * 0.55);
+    z-index: 0;
+  }
+  @media (min-width: 1200px) {
+    .hero-anchor { width: 520px; height: 520px; top: -60px; opacity: calc(var(--arc-op, 0.4) * 0.6); }
+  }
+  @media (min-width: 1400px) {
+    .hero-anchor { width: 560px; height: 560px; opacity: calc(var(--arc-op, 0.4) * 0.65); }
+  }
+  .hero-left, .hero-right { position: relative; z-index: 1; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: "JetBrains Mono"; font-size: 12px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--orange);
+  }
+  .eyebrow::before {
+    content: ""; width: 28px; height: 2px; background: var(--orange); display: inline-block;
+  }
+
+  .hero h1 {
+    font-family: "Archivo Black";
+    font-size: clamp(64px, 8.2vw, 118px);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 22px 0 28px;
+    color: var(--teal-deep);
+  }
+  .hero h1 .line { display: block; text-transform: uppercase; }
+  .hero h1 .line.italic {
+    font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    color: var(--orange); text-transform: none !important;
+    font-size: 0.86em; letter-spacing: 0;
+    padding: 6px 0 8px 6px;
+  }
+
+  .lede {
+    max-width: 520px;
+    font-size: 18px; line-height: 1.55;
+    color: var(--teal-deep);
+  }
+  .lede::first-letter {
+    font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    color: var(--orange);
+    font-size: 4.2em; line-height: 0.85;
+    float: left; padding: 8px 10px 0 0; margin-top: 4px;
+  }
+
+  .meta-row {
+    margin-top: 36px; border-top: 1.5px solid var(--teal-deep);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; padding-top: 16px; max-width: 620px;
+  }
+  .meta-item .lbl {
+    font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px;
+  }
+  .meta-item .val { font-weight: 500; font-size: 14px; color: var(--teal-deep); }
+
+  .issue-row {
+    margin-top: 28px; display: flex; justify-content: space-between;
+    font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
+    max-width: 620px;
+  }
+
+  /* ============ SCAN CARD ============ */
+  .scan-card {
+    position: relative;
+    background: var(--teal-mid);
+    color: var(--cream);
+    padding: 34px 32px 28px;
+    overflow: hidden;
+    border-top: 5px solid var(--orange);
+    isolation: isolate;
+  }
+  .scan-card .card-arcs {
+    position: absolute; top: -10px; right: -10px;
+    width: 280px; height: 280px; pointer-events: none;
+    opacity: calc(var(--arc-op, 0.4) * 1.05); z-index: 0;
+  }
+  .scan-card > * { position: relative; z-index: 1; }
+
+  .scan-eyebrow {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(241,235,220,0.85);
+    margin-bottom: 24px;
+  }
+  .scan-eyebrow .status { display: inline-flex; align-items: center; gap: 8px; }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--orange); display: inline-block;
+    box-shadow: 0 0 0 0 rgba(232,84,22,0.7);
+  }
+
+  .scan-card h2 {
+    font-family: "Archivo Black"; font-size: clamp(36px, 4.2vw, 52px);
+    line-height: 0.95; text-transform: uppercase; letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .scan-card h2 .ital {
+    display: block; font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    color: var(--orange); text-transform: none; font-size: 1.02em; letter-spacing: 0;
+    padding-top: 4px;
+  }
+  .scan-sub {
+    font-size: 13px; color: rgba(241,235,220,0.78);
+    margin: 10px 0 22px; max-width: 340px;
+  }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tab {
+    font-family: "Archivo"; font-weight: 500; font-size: 13px;
+    color: rgba(241,235,220,0.68);
+    padding: 8px 4px 10px;
+    position: relative;
+    margin-right: 18px;
+    letter-spacing: 0.02em;
+  }
+  .tab[aria-selected="true"] { color: var(--cream); }
+  .tab[aria-selected="true"]::after {
+    content: ""; position: absolute; left: 0; right: 8px; bottom: 2px; height: 2px;
+    background: var(--orange);
+  }
+
+  .input-row { position: relative; margin-bottom: 14px; }
+  .prefix {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    font-family: "JetBrains Mono"; font-size: 13px; color: #8a9a9d; pointer-events: none;
+  }
+  .url-input {
+    width: 100%; background: var(--cream); color: var(--teal-deep);
+    border: 0; height: 48px; font-size: 15px;
+    padding: 0 14px 0 70px;
+    font-family: "JetBrains Mono"; letter-spacing: 0.01em;
+    box-shadow: inset 0 0 0 0 var(--orange);
+    transition: box-shadow 160ms ease;
+  }
+  .url-input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--orange); }
+  .url-input::placeholder { color: #8a9a9d; }
+  .visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  .cta {
+    width: 100%; background: var(--orange); color: var(--cream);
+    font-family: "Archivo"; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; font-size: 14px;
+    padding: 16px 18px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    transition: background 160ms ease;
+  }
+  .cta:hover { background: #d24912; }
+  .cta .arrow { display: inline-block; transition: transform 180ms ease; }
+  .cta:hover .arrow { transform: translateX(6px); }
+
+  .card-foot {
+    margin-top: 16px;
+    font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(241,235,220,0.7);
+    text-align: center;
+  }
+
+  /* scan panel states */
+  .scan-panel[hidden] { display: none; }
+
+  /* ============ MANIFESTO MARQUEE ============ */
+  .manifesto {
+    background: var(--teal-deep); color: var(--cream);
+    border-top: 3px solid var(--orange);
+    overflow: hidden; position: relative;
+  }
+  .marquee-track {
+    display: flex; gap: 48px; padding: 22px 0;
+    white-space: nowrap; width: max-content;
+  }
+  .marquee-track .item {
+    font-family: "Archivo Black"; text-transform: uppercase; font-size: 18px; letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 48px;
+  }
+  .marquee-track .item .ital { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; color: var(--orange); text-transform: none; font-size: 1.1em; margin: 0 4px; }
+  .marquee-dot { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; display: inline-block; flex: 0 0 8px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-track { animation: marquee 44s linear infinite; }
+    .manifesto:hover .marquee-track, .manifesto:focus-within .marquee-track { animation-play-state: paused; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse-dot { animation: pulse 1.6s ease-out infinite; }
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(232,84,22,0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(232,84,22,0); }
+    100% { box-shadow: 0 0 0 0 rgba(232,84,22,0); }
+  }
+
+  /* ============ EDITORIAL ============ */
+  .editorial { position: relative; padding: 88px 0; overflow: hidden; }
+  .editorial-arcs {
+    position: absolute; top: 32px; right: -60px;
+    width: 240px; height: 240px; opacity: calc(var(--arc-op, 0.4) * 0.8); pointer-events: none;
+  }
+  .editorial-grid {
+    display: grid; grid-template-columns: 200px 1fr; gap: 56px; position: relative; z-index: 1;
+  }
+  .editorial aside {
+    position: sticky; top: 96px; align-self: start;
+  }
+  .section-marker { font-family: "Archivo"; font-weight: 500; font-size: 20px; color: var(--orange); margin: 0 0 14px; letter-spacing: 0.02em; }
+  .sidebar-title {
+    font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--teal-deep);
+    padding-bottom: 16px; border-bottom: 1px solid var(--teal-deep); margin-bottom: 18px;
+  }
+  .byline .date { font-weight: 500; font-size: 14px; color: var(--teal-deep); margin-bottom: 6px; }
+  .byline .writer { font-family: "JetBrains Mono"; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); line-height: 1.5; }
+
+  .editorial h2 {
+    font-family: "Archivo Black"; text-transform: uppercase;
+    font-size: clamp(36px, 4.4vw, 56px); line-height: 1.0;
+    letter-spacing: -0.01em; margin: 0 0 40px; max-width: 900px;
+    color: var(--teal-deep);
+  }
+  .editorial h2 .ital { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; color: var(--orange); text-transform: none; font-size: 1.02em; letter-spacing: 0; }
+
+  .columns { column-count: 2; column-gap: 40px; max-width: 900px; }
+  .columns p { margin: 0 0 18px; font-size: 15px; line-height: 1.65; color: var(--teal-deep); break-inside: avoid-column; }
+  .columns p:first-of-type::first-letter {
+    font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    color: var(--teal-deep);
+    font-size: 4.2em; line-height: 0.85;
+    float: left; padding: 6px 10px 0 0;
+  }
+
+  .pullquote {
+    margin: 36px 0 10px; padding: 18px 0;
+    font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    font-size: clamp(22px, 2.2vw, 32px); line-height: 1.25;
+    color: var(--teal-deep); max-width: 760px;
+    position: relative;
+    break-inside: avoid-column;
+  }
+  .triple-rule {
+    height: 7px; position: relative;
+  }
+  .triple-rule::before, .triple-rule::after, .triple-rule span {
+    content: ""; position: absolute; left: 0; right: 0; height: 1px; background: var(--orange); display: block;
+  }
+  .triple-rule::before { top: 0; }
+  .triple-rule span { top: 3px; }
+  .triple-rule::after { top: 6px; }
+  .triple-rule.teal::before, .triple-rule.teal::after, .triple-rule.teal span { background: var(--teal-deep); }
+
+  .pullquote .tr-top { margin-bottom: 14px; }
+  .pullquote .tr-bot { margin-top: 14px; }
+  .pullquote .hl { color: var(--orange); }
+
+  /* ============ CATEGORIES ============ */
+  .categories { padding: 72px 0; }
+  .cat-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 22px; }
+  .cat-head h2 {
+    font-family: "Archivo Black"; text-transform: uppercase;
+    font-size: clamp(32px, 3.6vw, 48px); line-height: 1; margin: 0; letter-spacing: -0.01em;
+    color: var(--teal-deep);
+  }
+  .cat-head h2 .ital { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; color: var(--orange); text-transform: none; font-size: 1em; letter-spacing: 0; }
+  .cat-meta { text-align: right; }
+  .cat-meta .top { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .cat-meta .bot { font-family: "Archivo"; font-weight: 500; font-size: 14px; color: var(--teal-deep); margin-top: 4px; }
+
+  .cat-grid {
+    margin-top: 28px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border: 1.5px solid var(--teal-deep);
+  }
+  .cat-card {
+    position: relative;
+    padding: 32px 28px 24px;
+    background: var(--cream);
+    border-right: 1.5px solid var(--teal-deep);
+    border-bottom: 1.5px solid var(--teal-deep);
+    overflow: hidden;
+    transition: background 200ms ease;
+    isolation: isolate;
+  }
+  .cat-card:nth-child(3n) { border-right: 0; }
+  .cat-card:nth-child(n+4) { }
+  .cat-card:nth-last-child(-n+3) { border-bottom: 0; }
+  .cat-card:hover { background: var(--cream-warm); }
+  .cat-card .cat-arcs {
+    position: absolute; top: -8px; right: -8px; width: 130px; height: 130px;
+    opacity: var(--arc-op, 0.4); pointer-events: none; transition: opacity 200ms ease;
+  }
+  .cat-card:hover .cat-arcs { opacity: calc(var(--arc-op, 0.4) + 0.32); }
+  .cat-card > * { position: relative; z-index: 1; }
+
+  .cat-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .cat-num { font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .cat-score {
+    font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    color: var(--orange); font-size: 68px; line-height: 0.85;
+    letter-spacing: -0.02em;
+  }
+  .cat-name {
+    font-family: "Archivo Black"; text-transform: uppercase;
+    font-size: 22px; line-height: 1.05; letter-spacing: 0.005em;
+    color: var(--teal-deep);
+    margin: 16px 0 8px;
+  }
+  .cat-under {
+    width: 0; height: 2px; background: var(--orange);
+    transition: width 260ms ease; margin-bottom: 14px;
+  }
+  .cat-card:hover .cat-under { width: 50px; }
+  .cat-desc { font-size: 13.5px; line-height: 1.55; color: var(--teal-deep); margin: 0 0 20px; }
+  .cat-foot {
+    border-top: 1px solid rgba(15,61,66,0.25);
+    padding-top: 12px;
+    font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  /* ============ FOOTER ============ */
+  footer.site {
+    background: var(--teal-deep); color: var(--cream);
+    padding: 80px 0 32px;
+    position: relative; overflow: hidden; margin-top: 40px;
+  }
+  .foot-arc-left, .foot-arc-right {
+    position: absolute; top: -20px; width: 260px; height: 260px;
+    opacity: calc(var(--arc-op, 0.4) * 0.55); pointer-events: none;
+  }
+  .foot-arc-left { left: -40px; }
+  .foot-arc-right { right: -40px; }
+
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; position: relative; z-index: 1; }
+  .foot-brand .wm {
+    font-family: "Archivo Black"; text-transform: uppercase; font-size: 40px; letter-spacing: 0.02em; color: var(--cream);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .foot-brand .wm .dot { color: var(--orange); transform: translateY(-5px); }
+  .foot-brand p { font-size: 14px; line-height: 1.6; color: rgba(241,235,220,0.78); max-width: 420px; margin: 18px 0 0; }
+
+  .foot-col h4 {
+    font-family: "JetBrains Mono"; font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange); margin: 6px 0 14px; font-weight: 500;
+  }
+  .foot-col ul { list-style: none; padding: 0; margin: 0; }
+  .foot-col li { margin-bottom: 8px; }
+  .foot-col a {
+    font-size: 13.5px; color: rgba(241,235,220,0.85);
+    transition: color 160ms ease;
+  }
+  .foot-col a:hover, .foot-col a:focus-visible { color: var(--orange); }
+
+  .foot-bar {
+    margin-top: 64px; padding-top: 22px;
+    border-top: 1px solid rgba(241,235,220,0.2);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono"; font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(241,235,220,0.75);
+    position: relative; z-index: 1;
+  }
+  .foot-bar .r .sep { color: var(--orange); margin: 0 6px; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px) {
+    .wrap { padding: 0 22px; }
+    .topnav { gap: 16px; }
+    .topnav a { font-size: 13px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; padding: 48px 0 24px; }
+    .hero-anchor { left: -120px; top: -80px; width: 380px; height: 380px; opacity: 0.18; }
+    .meta-row { grid-template-columns: repeat(2, 1fr); }
+    .editorial-grid { grid-template-columns: 1fr; gap: 24px; }
+    .editorial aside { position: static; }
+    .columns { column-count: 1; }
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .cat-card:nth-child(3n) { border-right: 1.5px solid var(--teal-deep); }
+    .cat-card:nth-child(2n) { border-right: 0; }
+    .cat-card:nth-last-child(-n+3) { border-bottom: 1.5px solid var(--teal-deep); }
+    .cat-card:nth-last-child(-n+2) { border-bottom: 0; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .foot-brand { grid-column: 1 / -1; }
+    .foot-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+  }
+  @media (max-width: 560px) {
+    .topnav { display: none; }
+    .hero h1 { font-size: 56px; }
+    .meta-row { grid-template-columns: 1fr 1fr; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .cat-card { border-right: 0 !important; border-bottom: 1.5px solid var(--teal-deep) !important; }
+    .cat-card:last-child { border-bottom: 0 !important; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .scan-card { padding: 26px 22px 22px; }
+  }
+
+  /* print */
+  @media print {
+    :root { --arc-op: 0.15; }
+    body { background: #fff; color: #000; }
+    .topbar, .topnav, .manifesto, .hero-right, .toast, .tweaks-panel, #tweaks-toggle { display: none !important; }
+    .hero-grid { grid-template-columns: 1fr !important; padding-top: 24px !important; }
+    .hero h1, .editorial h2, .cat-head h2, .lede, .columns p, .pullquote, .cat-card { color: #000 !important; }
+    .hero h1 .line.italic, .cat-score, .italic-serif, .pullquote .hl, .editorial h2 .ital, .cat-head h2 .ital, .hero h1 .line.italic { color: #000 !important; }
+    .scan-card, .manifesto, .marquee-track { display: none !important; }
+    .hero-anchor, .editorial-arcs, .foot-arc-left, .foot-arc-right { display: none !important; }
+    footer.site { background: #fff !important; color: #000 !important; padding: 24px 0 !important; }
+    .foot-col a, .foot-bar, .foot-brand p { color: #000 !important; }
+    .cat-grid { page-break-inside: avoid; }
+    .cat-card { break-inside: avoid; }
+    a { color: #000 !important; text-decoration: underline; }
+  }
+
+  /* tweaks panel */
+  .tweaks-panel {
+    position: fixed; right: 20px; bottom: 20px; z-index: 200;
+    background: var(--cream); border: 1.5px solid var(--teal-deep);
+    padding: 16px 18px 14px; min-width: 260px;
+    font-family: "Archivo"; font-size: 13px; color: var(--teal-deep);
+    box-shadow: 6px 6px 0 var(--teal-deep);
+    display: none;
+  }
+  .tweaks-panel.on { display: block; }
+  .tweaks-panel h5 {
+    font-family: "Archivo Black"; text-transform: uppercase; font-size: 12px;
+    letter-spacing: 0.1em; margin: 0 0 10px; color: var(--teal-deep);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tweaks-panel h5 .close { font-family: "JetBrains Mono"; font-size: 14px; cursor: pointer; color: var(--orange); border: 0; background: transparent; }
+  .tweaks-panel label {
+    display: block; font-family: "JetBrains Mono"; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .tweaks-panel input[type="range"] {
+    width: 100%; accent-color: var(--orange);
+  }
+  .tweaks-panel .val {
+    font-family: "JetBrains Mono"; font-size: 12px; color: var(--teal-deep);
+    float: right; font-weight: 500;
+  }
+  #tweaks-toggle {
+    position: fixed; right: 20px; bottom: 20px; z-index: 199;
+    background: var(--teal-deep); color: var(--cream);
+    padding: 10px 14px; font-family: "JetBrains Mono"; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+    border: 1.5px solid var(--teal-deep);
+  }
+  #tweaks-toggle:hover { background: var(--orange); border-color: var(--orange); }
+  #tweaks-toggle.hidden { display: none; }
+
+  /* small nicety: hide scrollbar on marquee */
+  .manifesto::-webkit-scrollbar { display: none; }
+
+  /* toast for scan submit */
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+    background: var(--teal-deep); color: var(--cream); padding: 14px 18px;
+    font-family: "JetBrains Mono"; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; border-left: 3px solid var(--orange);
+    box-shadow: 0 8px 30px rgba(15,61,66,0.25);
+    z-index: 100; opacity: 0; pointer-events: none; transition: opacity 200ms ease;
+  }
+  .toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+
+
+<!-- ======================================================== SVG SYMBOL DEFS ======================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- 6-arc concentric quarter circle, anchored top-right (arcs emerge from TR corner) -->
+    <symbol id="arcs-tr" viewBox="0 0 100 100" preserveAspectRatio="xMaxYMin meet">
+      <g fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M 100 95 A 95 95 0 0 0 5 0"></path>
+        <path d="M 100 78 A 78 78 0 0 0 22 0"></path>
+        <path d="M 100 61 A 61 61 0 0 0 39 0"></path>
+        <path d="M 100 44 A 44 44 0 0 0 56 0"></path>
+        <path d="M 100 27 A 27 27 0 0 0 73 0"></path>
+        <path d="M 100 10 A 10 10 0 0 0 90 0"></path>
+      </g>
+    </symbol>
+    <!-- anchored top-left -->
+    <symbol id="arcs-tl" viewBox="0 0 100 100" preserveAspectRatio="xMinYMin meet">
+      <g fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M 0 95 A 95 95 0 0 1 95 0"></path>
+        <path d="M 0 78 A 78 78 0 0 1 78 0"></path>
+        <path d="M 0 61 A 61 61 0 0 1 61 0"></path>
+        <path d="M 0 44 A 44 44 0 0 1 44 0"></path>
+        <path d="M 0 27 A 27 27 0 0 1 27 0"></path>
+        <path d="M 0 10 A 10 10 0 0 1 10 0"></path>
+      </g>
+    </symbol>
+    <!-- anchored bottom-left for hero anchor (full quadrant feel) -->
+    <symbol id="arcs-bl" viewBox="0 0 100 100" preserveAspectRatio="xMinYMax meet">
+      <g fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M 0 5 A 95 95 0 0 0 95 100"></path>
+        <path d="M 0 22 A 78 78 0 0 0 78 100"></path>
+        <path d="M 0 39 A 61 61 0 0 0 61 100"></path>
+        <path d="M 0 56 A 44 44 0 0 0 44 100"></path>
+        <path d="M 0 73 A 27 27 0 0 0 27 100"></path>
+        <path d="M 0 90 A 10 10 0 0 0 10 100"></path>
+      </g>
+    </symbol>
+    <!-- small 3-arc for wordmark punctuation -->
+    <symbol id="arcs-tr-small" viewBox="0 0 100 100" preserveAspectRatio="xMaxYMin meet">
+      <g fill="none" stroke="currentColor" stroke-width="4">
+        <path d="M 100 90 A 90 90 0 0 0 10 0"></path>
+        <path d="M 100 60 A 60 60 0 0 0 40 0"></path>
+        <path d="M 100 30 A 30 30 0 0 0 70 0"></path>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ======================================================== TOP BAR ======================================================== -->
+<header class="topbar" role="banner">
+  <div class="wrap topbar-inner">
+    <a class="wordmark" href="#" aria-label="AgentisLux home">
+      <svg class="arc-punct" aria-hidden="true" style="color: var(--orange)"><use href="#arcs-tr-small"></use></svg>
+      <span>Agentis<span class="dot">·</span>Lux</span>
+      <span class="version-badge mono">v0.1 · MVP</span>
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="#scan" aria-current="page">Scan</a>
+      <a href="#method">Method</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#notes">Field Notes</a>
+      <a href="#repo">Repo</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ======================================================== HERO ======================================================== -->
+<section class="hero" aria-labelledby="hero-h1">
+  <div class="wrap hero-grid">
+
+    <svg class="hero-anchor" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-bl"></use></svg>
+
+    <div class="hero-left">
+      <span class="eyebrow">Agent-readiness, observed</span>
+      <h1 id="hero-h1">
+        <span class="line">For your</span>
+        <span class="line italic">second</span>
+        <span class="line">Audience.</span>
+      </h1>
+      
+      <p class="lede">
+        AI agents are already browsing the web, filling out your forms, and calling your endpoints. Most products were never tested for this. AgentisLux scans your site and shows you what an agent experiences when it tries to use you.
+      </p>
+
+      <dl class="meta-row" aria-label="Product attributes">
+        <div class="meta-item"><span class="lbl">Approach</span><span class="val">Deterministic</span></div>
+        <div class="meta-item"><span class="lbl">Method</span><span class="val">Published</span></div>
+        <div class="meta-item"><span class="lbl">Tone</span><span class="val">Observational</span></div>
+        <div class="meta-item"><span class="lbl">Cost</span><span class="val">Free</span></div>
+      </dl>
+
+      <div class="issue-row">
+        <span>Issue 001 · April MMXXVI</span>
+        <span>From the Clew Suite</span>
+      </div>
+    </div>
+
+    <aside class="hero-right" id="scan" aria-label="Begin a scan">
+      <div class="scan-card">
+        <svg class="card-arcs" aria-hidden="true" style="color: var(--cream)"><use href="#arcs-tr"></use></svg>
+
+        <div class="scan-eyebrow">
+          <span>§ 01 · Begin scan</span>
+          <span class="status"><span class="pulse-dot" aria-hidden="true"></span> System ready</span>
+        </div>
+
+        <h2>
+          Paste a URL.
+          <span class="ital">Get the report.</span>
+        </h2>
+        <p class="scan-sub">Frontend scanning live. API scanning on the backend.</p>
+
+        <div class="tabs" role="tablist" aria-label="Scan input type">
+          <button class="tab" role="tab" aria-selected="true" aria-controls="panel-url" id="tab-url" tabindex="0">URL</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-github" id="tab-github" tabindex="-1">GitHub</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-api" id="tab-api" tabindex="-1">API Spec</button>
+        </div>
+
+        <form id="scan-form" novalidate="">
+          <div class="scan-panel" id="panel-url" role="tabpanel" aria-labelledby="tab-url">
+            <label class="visually-hidden" for="url-input">Website URL to scan</label>
+            <div class="input-row">
+              <span class="prefix" aria-hidden="true">https://</span>
+              <input class="url-input" id="url-input" name="url" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+          <div class="scan-panel" id="panel-github" role="tabpanel" aria-labelledby="tab-github" hidden="">
+            <label class="visually-hidden" for="gh-input">GitHub repository</label>
+            <div class="input-row">
+              <span class="prefix" aria-hidden="true">github.com/</span>
+              <input class="url-input" id="gh-input" name="gh" type="text" placeholder="org/repo" style="padding-left: 106px" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+          <div class="scan-panel" id="panel-api" role="tabpanel" aria-labelledby="tab-api" hidden="">
+            <label class="visually-hidden" for="api-input">OpenAPI spec URL</label>
+            <div class="input-row">
+              <span class="prefix" aria-hidden="true">spec:</span>
+              <input class="url-input" id="api-input" name="api" type="text" placeholder="openapi.yaml" style="padding-left: 58px" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <button class="cta" type="submit">
+            <span>Observe this site</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </button>
+        </form>
+
+        <p class="card-foot">No account · No tracking · ~4s scan</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ======================================================== MANIFESTO ======================================================== -->
+<section class="manifesto" aria-label="Product manifesto">
+  <div class="marquee-track" id="marquee" tabindex="0" aria-label="Scrolling manifesto. Pauses on hover or focus.">
+    <!-- Two copies for seamless loop -->
+    <div class="item">
+      <span>Not your gramma's SaaS</span><span class="marquee-dot" aria-hidden="true"></span>
+      <span>Not your gramma's <span class="ital">sass</span></span><span class="marquee-dot" aria-hidden="true"></span>
+      <span>Awareness, <span class="ital">not</span> judgment</span><span class="marquee-dot" aria-hidden="true"></span>
+      <span>Findings, <span class="ital">not</span> fixes</span><span class="marquee-dot" aria-hidden="true"></span>
+      <span>The data speaks</span><span class="marquee-dot" aria-hidden="true"></span>
+    </div>
+    <div class="item" aria-hidden="true">
+      <span>Not your gramma's SaaS</span><span class="marquee-dot"></span>
+      <span>Not your gramma's <span class="ital">sass</span></span><span class="marquee-dot"></span>
+      <span>Awareness, <span class="ital">not</span> judgment</span><span class="marquee-dot"></span>
+      <span>Findings, <span class="ital">not</span> fixes</span><span class="marquee-dot"></span>
+      <span>The data speaks</span><span class="marquee-dot"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== EDITORIAL ======================================================== -->
+<section class="editorial" id="method" aria-labelledby="thesis-h2">
+  <svg class="editorial-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+  <div class="wrap editorial-grid">
+    <aside aria-label="Thesis sidebar">
+      <p class="section-marker">§ 02</p>
+      <p class="sidebar-title">The Thesis · In Plain View</p>
+      <div class="byline">
+        <div class="date">17 April 2026</div>
+        <div class="writer">Scanner named for Perseus<br>Tool named for agents</div>
+      </div>
+    </aside>
+    <article>
+      <h2 id="thesis-h2">
+        Accessibility and agent-readiness are the <span class="ital">same work.</span> The tools haven't caught up.
+      </h2>
+
+      <div class="columns">
+        <p>The internet was built for human eyes. Websites use visual layouts, styled divs, and JavaScript-rendered content that humans navigate by sight. Agents don't have eyes. They parse the DOM. When a button is a styled div instead of a button element, an agent literally cannot find it.</p>
+
+        <p>This is not a future problem. Production agents browse the web right now. ChatGPT visits URLs. Perplexity reads pages. Google's AI overviews pull from live sites. Shopping agents fill out forms. Coding agents call endpoints. Most products were built for humans and never tested for this second audience.</p>
+
+        <figure class="pullquote" role="group">
+          <div class="triple-rule tr-top"><span></span></div>
+          "An agent landing on this page cannot identify the checkout button <span class="hl">because it is a styled div,</span> not a button element."
+          <div class="triple-rule tr-bot"><span></span></div>
+        </figure>
+
+        <p>AgentisLux scans your site and reports what an agent experiences. Six categories of deterministic checks. Findings written from the agent's perspective. No fixes suggested, because suggesting fixes implies we know your codebase, your constraints, and your reasons. We don't. We know what an agent sees.</p>
+
+        <p>The overlap with WCAG accessibility is not a coincidence. It's the thesis. Semantic HTML, proper labels, ARIA roles, heading hierarchy, structured data: all of this helps screen readers and agents alike. Build for accessibility, build for agents. Same work.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======================================================== CATEGORIES ======================================================== -->
+<section class="categories" id="benchmark" aria-labelledby="cats-h2">
+  <div class="wrap">
+    <header class="cat-head">
+      <h2 id="cats-h2">Six Categories. <span class="ital">One hundred points.</span></h2>
+      <div class="cat-meta">
+        <div class="top">Frontend Scoring · MVP</div>
+        <div class="bot">Live in the free tier</div>
+      </div>
+    </header>
+    <div class="triple-rule teal" aria-hidden="true"><span></span></div>
+
+    <div class="cat-grid">
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">01 / 06</span>
+          <span class="cat-score">25</span>
+        </div>
+        <h3 class="cat-name">Semantic<br>HTML</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether interactive elements use semantic tags instead of styled divs. Agents identify elements by tag name. A div is not a button.</p>
+        <div class="cat-foot">Weight · 25 pts</div>
+      </article>
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">02 / 06</span>
+          <span class="cat-score">20</span>
+        </div>
+        <h3 class="cat-name">Form<br>Accessibility</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether inputs have labels, validation signals, and structure. A placeholder is not a label. Agents need to know what each field expects.</p>
+        <div class="cat-foot">Weight · 20 pts</div>
+      </article>
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">03 / 06</span>
+          <span class="cat-score">15</span>
+        </div>
+        <h3 class="cat-name">ARIA &amp;<br>Accessibility</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether dynamic widgets have correct roles and states. Agents use ARIA like screen readers do. Dynamic components need help.</p>
+        <div class="cat-foot">Weight · 15 pts</div>
+      </article>
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">04 / 06</span>
+          <span class="cat-score">15</span>
+        </div>
+        <h3 class="cat-name">Structured<br>Data</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether the page declares what it is. JSON-LD, microdata, schema markup. Agents use this to know a page without parsing visual layout.</p>
+        <div class="cat-foot">Weight · 15 pts</div>
+      </article>
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">05 / 06</span>
+          <span class="cat-score">15</span>
+        </div>
+        <h3 class="cat-name">Content<br>in HTML</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether content is in the initial HTML or waiting for JavaScript. Many agents do not execute JS. A page that needs JS is invisible to them.</p>
+        <div class="cat-foot">Weight · 15 pts</div>
+      </article>
+
+      <article class="cat-card">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">06 / 06</span>
+          <span class="cat-score">10</span>
+        </div>
+        <h3 class="cat-name">Link &amp;<br>Navigation</h3>
+        <div class="cat-under" aria-hidden="true"></div>
+        <p class="cat-desc">Whether links have href attributes and descriptive text. Agents traverse a site through links the way they would read a sitemap.</p>
+        <div class="cat-foot">Weight · 10 pts</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== REPORT PREVIEW ======================================================== -->
+<section class="categories" aria-labelledby="preview-h2" style="padding-top:24px; padding-bottom:72px">
+  <div class="wrap">
+    <header class="cat-head">
+      <h2 id="preview-h2" style="font-size:clamp(24px,2.4vw,32px)">Report Preview. <span class="ital">Post-scan state.</span></h2>
+      <div class="cat-meta">
+        <div class="top">Component Study · 01</div>
+        <div class="bot">Not shown on live page</div>
+      </div>
+    </header>
+    <div class="triple-rule teal" aria-hidden="true"><span></span></div>
+
+    <div class="cat-grid" style="grid-template-columns:1fr; max-width:520px; margin-top:28px">
+      <article class="cat-card" style="border-right:0; border-bottom:0">
+        <svg class="cat-arcs" aria-hidden="true" style="color: var(--teal-deep)"><use href="#arcs-tr"></use></svg>
+        <div class="cat-top">
+          <span class="cat-num">01 / 06 · Scored</span>
+          <span class="cat-score"><span style="color:var(--teal-deep)">18</span><span style="font-size:0.5em;color:var(--muted)"> / 25</span></span>
+        </div>
+        <h3 class="cat-name">Semantic<br>HTML</h3>
+        <div style="height:4px; background:rgba(15,61,66,0.12); margin:2px 0 14px; position:relative; overflow:hidden">
+          <div style="position:absolute; inset:0 28% 0 0; background:var(--orange)"></div>
+        </div>
+        <p class="cat-desc">Whether interactive elements use semantic tags instead of styled divs. Agents identify elements by tag name. A div is not a button.</p>
+        <div class="cat-foot" style="display:flex; justify-content:space-between; align-items:center">
+          <span>Score · 72% · 4 findings</span>
+          <a href="#" style="color:var(--orange); font-family:'JetBrains Mono'; text-transform:uppercase; font-size:10.5px; letter-spacing:0.12em">View findings →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================================================== FOOTER ======================================================== -->
+<footer class="site" id="repo" role="contentinfo">
+  <svg class="foot-arc-left" aria-hidden="true" style="color: var(--cream)"><use href="#arcs-tl"></use></svg>
+  <svg class="foot-arc-right" aria-hidden="true" style="color: var(--cream)"><use href="#arcs-tr"></use></svg>
+
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <div class="wm">Agentis<span class="dot">·</span>Lux</div>
+      <p>A scanner that tells you what AI agents experience when they try to use your product. Findings only. Methodology published. Not your gramma's SaaS.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#scan">Scan</a></li>
+        <li><a href="#method">Methodology</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Field Notes</h4>
+      <ul>
+        <li><a href="#">50-site study</a></li>
+        <li><a href="#">Why agents matter</a></li>
+        <li><a href="#">Measurement ethics</a></li>
+        <li><a href="#">The thesis</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Project</h4>
+      <ul>
+        <li><a href="#">GitHub</a></li>
+        <li><a href="#">License · Apache 2.0</a></li>
+        <li><a href="#">Contribute</a></li>
+        <li><a href="#">Credits</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap foot-bar">
+    <div class="l">© 2026 · Part of the Clew Suite</div>
+    <div class="r">AI Assisted<span class="sep">·</span>Human Approved<span class="sep">·</span>Powered by NLP</div>
+  </div>
+</footer>
+
+<button id="tweaks-toggle" type="button" aria-expanded="false" aria-controls="tweaks-panel">Tweaks</button>
+<aside class="tweaks-panel" id="tweaks-panel" aria-label="Design tweaks">
+  <h5>Tweaks <button class="close" id="tweaks-close" type="button" aria-label="Close tweaks">✕</button></h5>
+  <label for="arc-op">Arc opacity <span class="val" id="arc-op-val">0.40</span></label>
+  <input id="arc-op" type="range" min="0" max="1" step="0.01" value="0.4">
+  <label for="title-size" style="margin-top:14px">Headline size <span class="val" id="title-size-val">auto</span></label>
+  <input id="title-size" type="range" min="64" max="140" step="1" value="0">
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Scan queued · Observing target</div>
+
+<script>
+  // Tabs (roving tabindex, arrow keys)
+  (function(){
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+    function activate(i){
+      tabs.forEach((t, idx) => {
+        const on = idx === i;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        if (on) t.focus();
+      });
+      panels.forEach((p, idx) => { p.hidden = idx !== i; });
+    }
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', (e) => { e.preventDefault(); activate(i); });
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); activate((i+1) % tabs.length); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); activate((i-1+tabs.length) % tabs.length); }
+        else if (e.key === 'Home') { e.preventDefault(); activate(0); }
+        else if (e.key === 'End') { e.preventDefault(); activate(tabs.length-1); }
+      });
+    });
+  })();
+
+  // Scan submit toast
+  (function(){
+    const form = document.getElementById('scan-form');
+    const toast = document.getElementById('toast');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const activeTab = document.querySelector('[role="tab"][aria-selected="true"]');
+      const panelId = activeTab.getAttribute('aria-controls');
+      const input = document.querySelector('#' + panelId + ' input');
+      const val = (input && input.value.trim()) || 'yourdomain.com';
+      toast.textContent = 'Scan queued · Observing ' + val;
+      toast.classList.add('on');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(() => toast.classList.remove('on'), 2800);
+    });
+  })();
+
+  // Tweaks panel
+  (function(){
+    const toggle = document.getElementById('tweaks-toggle');
+    const panel = document.getElementById('tweaks-panel');
+    const close = document.getElementById('tweaks-close');
+    const arc = document.getElementById('arc-op');
+    const arcVal = document.getElementById('arc-op-val');
+    const ts = document.getElementById('title-size');
+    const tsVal = document.getElementById('title-size-val');
+    function openP(){ panel.classList.add('on'); toggle.classList.add('hidden'); toggle.setAttribute('aria-expanded','true'); }
+    function closeP(){ panel.classList.remove('on'); toggle.classList.remove('hidden'); toggle.setAttribute('aria-expanded','false'); }
+    toggle.addEventListener('click', openP);
+    close.addEventListener('click', closeP);
+    arc.addEventListener('input', () => {
+      document.documentElement.style.setProperty('--arc-op', arc.value);
+      arcVal.textContent = Number(arc.value).toFixed(2);
+    });
+    ts.addEventListener('input', () => {
+      const v = Number(ts.value);
+      const h1 = document.getElementById('hero-h1');
+      if (v <= 64) { h1.style.fontSize = ''; tsVal.textContent = 'auto'; }
+      else { h1.style.fontSize = v + 'px'; tsVal.textContent = v + 'px'; }
+    });
+  })();
+</script>
+
+
+</body></html>

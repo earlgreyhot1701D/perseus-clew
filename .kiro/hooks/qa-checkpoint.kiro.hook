@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "QA Checkpoint",
+  "description": "After task execution completes, force production of a five-question QA checklist: (1) files created/modified, (2) tests added, (3) test results with output, (4) manual checks the human should run with spec references, (5) related spec section. Do not declare task complete without this checklist. Wait for PASS/FAIL from the builder before proceeding.",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before declaring this task complete, produce the QA checkpoint checklist: (1) List all files created or modified with a one-line description of each change. (2) List all tests added (new test files or test cases). (3) Run the relevant test suite and paste the output showing pass/fail. (4) List 3-5 specific manual checks the human builder can perform to verify observable behavior, each referencing the spec section that defines the expected outcome. (5) Link to the related spec section. Format as the QA CHECKPOINT template. Do not proceed until the builder responds PASS or FAIL."
+  }
+}

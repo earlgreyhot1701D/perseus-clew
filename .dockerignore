@@ -1,0 +1,16 @@
+node_modules
+.next
+.vercel
+.git
+.github
+.kiro
+.vscode
+docs
+mockups
+infra
+frontend
+coverage
+cdk.out
+*.log
+*.md
+!backend/**

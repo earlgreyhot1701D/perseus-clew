@@ -1,0 +1,95 @@
+/**
+ * Agentis Lux Design Tokens
+ * Single source of truth for design values.
+ * Extracted from mockups/agentislux-landing.html and mockups/agentislux-verdict-hero.html.
+ *
+ * Palette: Wyman visual language (cream/teal/sienna)
+ * Type: Archivo, Archivo Black, Instrument Serif, JetBrains Mono
+ */
+
+:root {
+  /* Colors */
+  --cream: #f1ebdc;
+  --cream-2: #ebe3ce;
+  --teal: #0f3d42;
+  --teal-mid: #1b6d74;
+  --teal-light: #2a8f98;
+  --sienna: #e85416;
+  --sienna-deep: #d24912;
+  --ochre: #d4a43c;
+  --muted: #8a9a9d;
+  --ink: #5a5548;
+  --white: #ffffff;
+  --black: #1a1a1a;
+
+  /* Semantic colors */
+  --bg-primary: var(--cream);
+  --bg-secondary: var(--cream-2);
+  --bg-dark: var(--teal);
+  --text-primary: var(--teal);
+  --text-secondary: var(--ink);
+  --text-muted: var(--muted);
+  --accent: var(--sienna);
+  --accent-hover: var(--sienna-deep);
+  --highlight: var(--ochre);
+
+  /* Rating colors (observational, not judgmental) */
+  --rating-ready: var(--teal-mid);
+  --rating-partial: var(--ochre);
+  --rating-not-yet: var(--sienna);
+
+  /* Typography: CSS variables set by next/font in layout.tsx.
+     Fallbacks here for any context where the variable is not inherited. */
+  --font-body: var(--font-body, 'Archivo', system-ui, sans-serif);
+  --font-display: var(--font-display, 'Archivo', system-ui, sans-serif);
+  --font-serif: var(--font-serif, 'Instrument Serif', Georgia, serif);
+  --font-mono: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+
+  /* Font sizes (fluid scale) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 61, 66, 0.05);
+  --shadow-md: 0 4px 6px rgba(15, 61, 66, 0.07);
+  --shadow-lg: 0 10px 15px rgba(15, 61, 66, 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Layout */
+  --max-width: 1200px;
+  --max-width-narrow: 800px;
+  --header-height: 64px;
+}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentisLux : verdict hero study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f1ebdc;
+    --cream-2:#ebe3ce;
+    --teal:#0f3d42;
+    --teal-mid:#1b6d74;
+    --sienna:#e85416;
+    --sienna-deep:#d24912;
+    --ochre:#d4a43c;
+    --muted:#8a9a9d;
+    --ink:#5a5548;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--cream);
+    font-family:'Archivo',sans-serif;
+    color:var(--teal);
+    line-height:1.5;
+    padding:32px 20px;
+    display:flex;
+    justify-content:center;
+  }
+  .wrap{width:100%;max-width:880px;}
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+
+  /* ---- topbar ---- */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid var(--teal);
+    padding-bottom:10px;margin-bottom:0;
+  }
+  .topbar .meta{display:flex;gap:18px;align-items:center;}
+  .live{display:inline-flex;align-items:center;gap:7px;}
+  .live .dot{width:9px;height:9px;border-radius:50%;background:var(--sienna);display:inline-block;}
+
+  /* ---- hero card ---- */
+  .hero{
+    background:var(--teal);
+    color:var(--cream);
+    border-radius:2px;
+    padding:34px 36px 30px;
+    position:relative;
+    overflow:hidden;
+    margin-top:18px;
+  }
+  .hero .arcs{position:absolute;top:0;right:0;width:340px;height:100%;opacity:0.18;pointer-events:none;}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:34px;
+    align-items:center;
+    position:relative;
+    z-index:2;
+  }
+  .scoreblock{text-align:center;min-width:170px;}
+  .scoreblock .num{
+    font-family:'Instrument Serif',serif;
+    font-size:118px;
+    line-height:0.82;
+    color:var(--cream);
+    font-style:normal;
+  }
+  .scoreblock .num .denom{font-size:34px;color:var(--muted);}
+  .label{
+    margin-top:14px;
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--teal);
+    background:var(--ochre);
+    padding:6px 14px;
+    border-radius:2px;
+  }
+  .ring-track{margin-top:16px;height:5px;background:rgba(241,235,220,0.18);border-radius:3px;overflow:hidden;}
+  .ring-fill{height:100%;width:62%;background:var(--sienna);}
+
+  .narr .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+    display:flex;gap:10px;align-items:center;
+  }
+  .narr .tag .ai{color:var(--ochre);}
+  .narr p.line{
+    font-family:'Instrument Serif',serif;
+    font-size:30px;
+    font-style:italic;
+    line-height:1.28;
+    color:var(--cream);
+    margin-bottom:20px;
+  }
+  .actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:0.05em;text-transform:uppercase;
+    padding:10px 16px;border-radius:2px;cursor:pointer;border:1px solid transparent;
+    background:transparent;
+  }
+  .btn-primary{background:var(--sienna);color:var(--cream);}
+  .btn-primary:hover{background:var(--sienna-deep);}
+  .btn-ghost{border-color:rgba(241,235,220,0.35);color:var(--cream);}
+  .btn-ghost:hover{background:rgba(241,235,220,0.08);}
+
+  /* ---- categories ---- */
+  .cats-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin:26px 2px 12px;
+  }
+  .cats-head .h{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:0.02em;text-transform:uppercase;color:var(--teal);}
+  .cat{
+    background:var(--cream-2);
+    border:1px solid rgba(15,61,66,0.14);
+    border-radius:2px;
+    padding:15px 18px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;align-items:center;
+    margin-bottom:9px;
+  }
+  .cat .plain{font-size:16px;color:var(--teal);line-height:1.45;}
+  .cat .helper{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--ink);
+    white-space:nowrap;
+    text-align:right;
+  }
+  .cat .helper .cat-name{display:block;letter-spacing:0.04em;text-transform:uppercase;font-size:10px;color:var(--muted);margin-bottom:3px;}
+  .cat .helper .cat-score{font-size:15px;color:var(--teal-mid);font-weight:500;}
+
+  .footnote{
+    margin-top:18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--muted);letter-spacing:0.04em;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .study-flag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--sienna);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="meta">
+      <span class="eyebrow" style="font-weight:500;color:var(--teal);">AgentisLux</span>
+      <span class="eyebrow">Powered by the Perseus Clew engine</span>
+    </div>
+    <div class="meta">
+      <span class="eyebrow">example-shop.com</span>
+      <span class="eyebrow live"><span class="dot"></span>Scan complete</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <svg class="arcs" viewBox="0 0 340 360" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#f1ebdc" stroke-width="3">
+        <path d="M 340 360 A 300 300 0 0 0 60 70"></path>
+        <path d="M 340 360 A 235 235 0 0 0 120 120"></path>
+        <path d="M 340 360 A 170 170 0 0 0 180 180"></path>
+        <path d="M 340 360 A 105 105 0 0 0 235 250"></path>
+      </g>
+      <circle cx="300" cy="56" r="14" fill="#d4a43c"></circle>
+    </svg>
+
+    <div class="hero-grid">
+      <div class="scoreblock">
+        <div class="num">62<span class="denom">/100</span></div>
+        <div class="label">Partially Ready</div>
+        <div class="ring-track"><div class="ring-fill"></div></div>
+      </div>
+
+      <div class="narr">
+        <div class="tag"><span>What an agent experiences</span><span class="ai">&bull; AI written</span></div>
+        <p class="line">An agent visiting this page can read your product descriptions, but can't tell which button starts checkout, so it can't finish a purchase on its own.</p>
+        <div class="actions">
+          <button class="btn btn-primary">View 18 findings &rarr;</button>
+          <button class="btn btn-ghost">Share result &nearr;</button>
+          <button class="btn btn-ghost">Download report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cats-head">
+    <span class="h">Six categories</span>
+    <span class="study-flag">Plain language leads &middot; technical helper right</span>
+  </div>
+
+  <div class="cat">
+    <div class="plain">An agent can't tell your checkout button is a button. It's a styled div, so the agent skips it.</div>
+    <div class="helper"><span class="cat-name">Semantic HTML</span><span class="cat-score">18/25</span></div>
+  </div>
+  <div class="cat">
+    <div class="plain">An agent can't tell what three of your form fields expect, because they have placeholders but no labels.</div>
+    <div class="helper"><span class="cat-name">Form Accessibility</span><span class="cat-score">12/20</span></div>
+  </div>
+  <div class="cat">
+    <div class="plain">An agent can read most of your content without running JavaScript.</div>
+    <div class="helper"><span class="cat-name">Content in HTML</span><span class="cat-score">13/15</span></div>
+  </div>
+
+  <div class="footnote">
+    <span>AgentisLux &middot; for your second audience</span>
+    <span>Score is deterministic &middot; narrative is AI written, with a deterministic fallback</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Security Scan",
+  "description": "Checks for innerHTML with dynamic content, eval() calls, hardcoded secrets (AWS keys, Stripe keys, long token strings), and API keys in fetch URLs before writing to backend or frontend source files. Blocks dangerous patterns per BUILD-PRINCIPLES rule 10 and steering file rule 16-20.",
+  "version": "1",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before writing this file, check the content for security anti-patterns: (1) innerHTML assignment with dynamic content or template literals, (2) eval() calls, (3) hardcoded secrets matching patterns like sk_live_, sk_test_, AKIA followed by 16+ chars, or password/secret/api_key/token assignments with long string values, (4) API keys in fetch URLs. If any are found, STOP and report the violation with file path, line context, and the specific pattern matched. Suggest the safe alternative (textContent, structured logger, env variable via SSM). Only allow if a SECURITY-OVERRIDE comment exists on the line above."
+  }
+}

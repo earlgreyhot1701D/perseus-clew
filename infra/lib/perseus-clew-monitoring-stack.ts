@@ -1,0 +1,61 @@
+import * as cdk from 'aws-cdk-lib';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
+import * as actions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import { Construct } from 'constructs';
+
+/**
+ * Perseus Clew Monitoring Stack
+ * CloudWatch alarms, SNS topic for email alerts.
+ */
+export class PerseusClewMonitoringStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    // SNS topic for alerts
+    const alertTopic = new sns.Topic(this, 'AlertTopic', {
+      topicName: 'PerseusClew-Alerts',
+      displayName: 'Perseus Clew Alerts'
+    });
+
+    // STUB: Add email subscription after deployment
+    // alertTopic.addSubscription(new subscriptions.EmailSubscription('your-email@example.com'));
+
+    // Alarm: Scan Lambda error rate > 10%
+    const scanErrorAlarm = new cloudwatch.Alarm(this, 'ScanErrorRateAlarm', {
+      alarmName: 'PerseusClew-ScanErrorRate',
+      alarmDescription: 'Scan Lambda error rate exceeds 10%',
+      metric: new cloudwatch.Metric({
+        namespace: 'AWS/Lambda',
+        metricName: 'Errors',
+        dimensionsMap: { FunctionName: 'PerseusClew-Scan' },
+        statistic: 'Sum',
+        period: cdk.Duration.minutes(5)
+      }),
+      threshold: 5,
+      evaluationPeriods: 2,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD
+    });
+    scanErrorAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+    // Alarm: Scan Lambda duration > 15 seconds average
+    const scanDurationAlarm = new cloudwatch.Alarm(this, 'ScanDurationAlarm', {
+      alarmName: 'PerseusClew-ScanDuration',
+      alarmDescription: 'Scan Lambda average duration exceeds 15 seconds',
+      metric: new cloudwatch.Metric({
+        namespace: 'AWS/Lambda',
+        metricName: 'Duration',
+        dimensionsMap: { FunctionName: 'PerseusClew-Scan' },
+        statistic: 'Average',
+        period: cdk.Duration.minutes(5)
+      }),
+      threshold: 15000,
+      evaluationPeriods: 3,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD
+    });
+    scanDurationAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+    new cdk.CfnOutput(this, 'AlertTopicArn', { value: alertTopic.topicArn });
+  }
+}

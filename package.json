@@ -1,0 +1,14 @@
+{
+  "name": "perseus-clew",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agentis Lux agent-readiness scanner. Perseus Clew engine.",
+  "workspaces": ["backend", "frontend", "infra"],
+  "scripts": {
+    "dev": "docker compose up",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,18 @@
+Agentis Lux / Perseus Clew
+Copyright 2026 Clew Suite
+
+This product includes software developed by the Clew Suite.
+
+Derived methodology credits (see docs/SCORING.md for details):
+
+- Hermes Clew v1 frontend scanning patterns (Clew Suite, 2026)
+- "Build AI-Ready Products: API Checklist" by Emmanuel Paraskakis,
+  Level 250, Inc. (© 2026). Used per-insight where noted in SCORING.md.
+- WCAG 2.1 AA accessibility principles (W3C)
+
+Public product: Agentis Lux (agentislux.io)
+Internal engine: Perseus Clew
+Suite: Hermes, Argus, Anton, Theseus, Perseus
+
+Licensed under Apache License 2.0. See LICENSE file for details
+(LICENSE file is added during Phase 0 setup per PHASE-0-KICKOFF-CHECKLIST.md).

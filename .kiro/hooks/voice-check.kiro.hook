@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Voice Check",
+  "description": "After writing to files that contain user-facing strings (findings catalogs, error messages, components with JSX text), check for banned words: judgment words (bad, poor, weak, failing, broken, violates, wrong), prescription words (you should, fix this, we recommend, needs to), AI cliches (delve, landscape, straightforward, genuinely, honestly), and em dashes. Report violations with the specific word, line context, and a rewrite suggestion following the awareness-not-judgment pattern.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the file just written for voice violations in user-facing strings (inside quotes, JSX text nodes, template literals that render to UI). Check for: judgment words (bad, poor, weak, failing, broken, violates, wrong, incorrect), prescription words (you should, you must, we recommend, fix this, fix the, please add, needs to, should have), AI cliches (delve, landscape, straightforward, genuinely, honestly, at the end of the day), and em dashes. Skip code identifiers, log statements, and comments. If violations found, report each with the line, the banned word, and suggest a rewrite using the awareness-not-judgment pattern: describe what an agent cannot do, not what the developer did wrong. Allow if a VOICE-OVERRIDE comment exists on the line above."
+  }
+}

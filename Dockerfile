@@ -5,7 +5,8 @@
 FROM public.ecr.aws/lambda/nodejs:20 AS deps
 WORKDIR /var/task
 COPY backend/package.json ./
-RUN npm install --omit=dev
+COPY backend/package-lock.json ./
+RUN npm ci --omit=dev
 
 # Stage 2: Build source
 FROM deps AS build

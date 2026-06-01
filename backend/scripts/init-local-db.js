@@ -15,7 +15,7 @@
 import { DynamoDBClient, CreateTableCommand, UpdateTimeToLiveCommand } from '@aws-sdk/client-dynamodb';
 
 const client = new DynamoDBClient({
-  region: 'us-west-2',
+  region: 'us-east-1',
   endpoint: process.env.DYNAMODB_ENDPOINT || 'http://localhost:8000',
   credentials: { accessKeyId: 'local', secretAccessKey: 'local' }
 });

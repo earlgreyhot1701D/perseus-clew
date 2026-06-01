@@ -18,8 +18,8 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 // Minimal inline DynamoDB client for Block 0.
 // STUB: Moves to shared/scan-store.js in Block 1A.
 const dynamoConfig = process.env.DYNAMODB_ENDPOINT
-  ? { region: 'us-west-2', endpoint: process.env.DYNAMODB_ENDPOINT, credentials: { accessKeyId: 'local', secretAccessKey: 'local' } }
-  : { region: process.env.AWS_REGION || 'us-west-2' };
+  ? { region: 'us-east-1', endpoint: process.env.DYNAMODB_ENDPOINT, credentials: { accessKeyId: 'local', secretAccessKey: 'local' } }
+  : { region: process.env.AWS_REGION || 'us-east-1' };
 
 const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoConfig));
 

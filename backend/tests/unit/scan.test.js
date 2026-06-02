@@ -1,17 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
-// Mock the DynamoDB client so tests don't need a running database
-vi.mock('@aws-sdk/client-dynamodb', () => ({
-  DynamoDBClient: vi.fn().mockImplementation(() => ({}))
+// Mock scan-store at the scan handler's layer (not the AWS SDK)
+vi.mock('../../src/shared/scan-store.js', () => ({
+  writeResult: vi.fn(),
+  writeCache: vi.fn()
 }));
 
-vi.mock('@aws-sdk/lib-dynamodb', () => ({
-  DynamoDBDocumentClient: {
-    from: vi.fn().mockReturnValue({
-      send: vi.fn().mockResolvedValue({})
-    })
-  },
-  PutCommand: vi.fn()
+// Mock logger so no stdout noise in tests
+vi.mock('../../src/shared/logger.js', () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn()
+  }
 }));
 
 const { handler } = await import('../../src/handlers/scan.js');
@@ -89,5 +91,22 @@ describe('Perseus Clew scan handler (Block 0 mock)', () => {
     expect(r1.scoredViews.rawHtml.score.total).toBe(r2.scoredViews.rawHtml.score.total);
     expect(r1.scoredViews.rawHtml.score.rating).toBe(r2.scoredViews.rawHtml.score.rating);
     expect(r1.scoredViews.rawHtml.heroLine.text).toBe(r2.scoredViews.rawHtml.heroLine.text);
+  });
+
+  it('calls writeResult and writeCache after building the response', async () => {
+    const { writeResult, writeCache } = await import('../../src/shared/scan-store.js');
+    writeResult.mockClear();
+    writeCache.mockClear();
+    const event = { body: JSON.stringify({ type: 'url', target: 'https://example.com' }) };
+    await handler(event);
+
+    expect(writeResult).toHaveBeenCalledOnce();
+    expect(writeCache).toHaveBeenCalledOnce();
+
+    // writeResult receives the correct arguments
+    const resultArgs = writeResult.mock.calls[0];
+    expect(resultArgs[1]).toBe('example.com'); // domain
+    expect(resultArgs[2]).toBe(62); // score
+    expect(resultArgs[3]).toBe('Partially Ready'); // rating
   });
 });

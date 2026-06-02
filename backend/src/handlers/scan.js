@@ -5,26 +5,14 @@
  * No real checks, no target fetch, no Bedrock calls.
  *
  * After responding, writes to ScanResults (24h TTL) and ScanCache (15m TTL)
- * async and fail-soft. Killing DynamoDB must not break the response.
+ * via scan-store.js, fire-and-forget and fail-soft.
  *
- * STUB: The inline DynamoDB write moves to shared/scan-store.js in Block 1A.
- * See BUILD-PLAN.md Block 1A and BACKEND-SHARED.md scan-store module.
+ * See BACKEND-FRONTEND-CHECKS.md section 8 for the response shape.
  */
 
 import crypto from 'node:crypto';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
-
-// Minimal inline DynamoDB client for Block 0.
-// STUB: Moves to shared/scan-store.js in Block 1A.
-const dynamoConfig = process.env.DYNAMODB_ENDPOINT
-  ? { region: 'us-east-1', endpoint: process.env.DYNAMODB_ENDPOINT, credentials: { accessKeyId: 'local', secretAccessKey: 'local' } }
-  : { region: process.env.AWS_REGION || 'us-east-1' };
-
-const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoConfig));
-
-const SCAN_RESULTS_TABLE = process.env.DYNAMODB_SCAN_RESULTS_TABLE || 'PerseusClew-ScanResults';
-const SCAN_CACHE_TABLE = process.env.DYNAMODB_SCAN_CACHE_TABLE || 'PerseusClew-ScanCache';
+import { writeResult, writeCache } from '../shared/scan-store.js';
+import { logger } from '../shared/logger.js';
 
 /**
  * Build the mock report. Shape matches BACKEND-FRONTEND-CHECKS.md section 8
@@ -106,54 +94,6 @@ function extractDomain(url) {
   }
 }
 
-/**
- * Write scan result to DynamoDB (async, fail-soft).
- * STUB: This logic moves to shared/scan-store.js in Block 1A.
- */
-async function persistResult(report) {
-  const now = new Date();
-  const resultTtl = Math.floor(now.getTime() / 1000) + (24 * 60 * 60); // 24h
-  const cacheTtl = Math.floor(now.getTime() / 1000) + (15 * 60); // 15m
-  const urlHash = crypto.createHash('sha256').update(report.meta.targetDomain).digest('hex');
-
-  try {
-    // Write to ScanResults (24h TTL, shareable links)
-    await ddbClient.send(new PutCommand({
-      TableName: SCAN_RESULTS_TABLE,
-      Item: {
-        resultId: report.meta.resultId,
-        domain: report.meta.targetDomain,
-        score: report.scoredViews.rawHtml.score.total,
-        ratingLabel: report.scoredViews.rawHtml.score.rating,
-        heroLine: report.scoredViews.rawHtml.heroLine.text,
-        categoryBreakdown: report.scoredViews.rawHtml.score.breakdown,
-        createdAt: now.toISOString(),
-        ttl: resultTtl
-      }
-    }));
-  } catch (err) {
-    // Fail-soft: log, never surface to user
-    console.error(JSON.stringify({ level: 'error', module: 'scan-store', table: SCAN_RESULTS_TABLE, error: err.message }));
-  }
-
-  try {
-    // Write to ScanCache (15m TTL, dedup)
-    await ddbClient.send(new PutCommand({
-      TableName: SCAN_CACHE_TABLE,
-      Item: {
-        urlHash,
-        domain: report.meta.targetDomain,
-        result: report,
-        cachedAt: now.toISOString(),
-        ttl: cacheTtl
-      }
-    }));
-  } catch (err) {
-    // Fail-soft: log, never surface to user
-    console.error(JSON.stringify({ level: 'error', module: 'scan-store', table: SCAN_CACHE_TABLE, error: err.message }));
-  }
-}
-
 export const handler = async (event) => {
   let body;
   try {
@@ -187,6 +127,13 @@ export const handler = async (event) => {
   // Build mock report (Block 0: no real scanning)
   const report = buildMockReport(target);
 
+  logger.info('Scan completed', {
+    requestId: report.meta.requestId,
+    targetUrl: target,
+    scanType: type,
+    score: report.scoredViews.rawHtml.score.total
+  });
+
   // Return the report immediately
   const response = {
     statusCode: 200,
@@ -194,9 +141,17 @@ export const handler = async (event) => {
     body: JSON.stringify(report)
   };
 
-  // Async fail-soft write (fire-and-forget with short timeout)
-  // The user gets their report regardless of whether this succeeds.
-  persistResult(report).catch(() => {});
+  // Fire-and-forget writes. Fail-soft is inside scan-store.js.
+  const urlHash = crypto.createHash('sha256').update(report.meta.targetDomain).digest('hex');
+  writeResult(
+    report.meta.resultId,
+    report.meta.targetDomain,
+    report.scoredViews.rawHtml.score.total,
+    report.scoredViews.rawHtml.score.rating,
+    report.scoredViews.rawHtml.heroLine.text,
+    report.scoredViews.rawHtml.score.breakdown
+  );
+  writeCache(urlHash, report.meta.targetDomain, report);
 
   return response;
 };

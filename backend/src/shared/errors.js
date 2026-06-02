@@ -18,7 +18,17 @@ export class AppError extends Error {
     super(userMessage);
     this.name = 'AppError';
     this.code = code;
-    this.category = code.includes('_') ? code.split('_')[0] : code;
+
+    // Derive category from code prefix. Most codes use single-token prefix
+    // (FETCH_TIMEOUT -> FETCH). RATE_LIMIT is a two-token category.
+    const MULTI_TOKEN_CATEGORIES = ['RATE_LIMIT'];
+    const parts = code.split('_');
+    if (parts.length >= 3 && MULTI_TOKEN_CATEGORIES.includes(`${parts[0]}_${parts[1]}`)) {
+      this.category = `${parts[0]}_${parts[1]}`;
+    } else {
+      this.category = parts[0];
+    }
+
     this.userMessage = userMessage;
     this.internalDetail = internalDetail || null;
     this.timestamp = new Date().toISOString();

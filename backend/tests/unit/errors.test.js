@@ -12,7 +12,7 @@ describe('AppError', () => {
   it('derives category from the code prefix before the first underscore', () => {
     expect(new AppError('FETCH_TIMEOUT', 'msg').category).toBe('FETCH');
     expect(new AppError('VALIDATION_INVALID_URL', 'msg').category).toBe('VALIDATION');
-    expect(new AppError('RATE_LIMIT_EXCEEDED', 'msg').category).toBe('RATE');
+    expect(new AppError('RATE_LIMIT_EXCEEDED', 'msg').category).toBe('RATE_LIMIT');
     expect(new AppError('INTERNAL_UNKNOWN', 'msg').category).toBe('INTERNAL');
   });
 

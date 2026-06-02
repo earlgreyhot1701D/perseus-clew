@@ -37,7 +37,8 @@ describe('scan-store', () => {
   describe('writeResult', () => {
     it('writes a ScanResults row with a 24h TTL', async () => {
       mockSend.mockResolvedValueOnce({});
-      await writeResult('result-123', 'example.com', 62, 'Partially Ready', 'An agent can read...', { semantic_html: { earned: 18, max: 25 } });
+      const findings = { semantic_html: [{ id: 'SEM-001', text: 'test', count: 1 }] };
+      await writeResult('result-123', 'example.com', 62, 'Partially Ready', 'An agent can read...', { semantic_html: { earned: 18, max: 25 } }, findings);
 
       expect(mockSend).toHaveBeenCalledOnce();
       const putParams = mockSend.mock.calls[0][0].input;
@@ -46,6 +47,7 @@ describe('scan-store', () => {
       expect(putParams.Item.domain).toBe('example.com');
       expect(putParams.Item.score).toBe(62);
       expect(putParams.Item.ratingLabel).toBe('Partially Ready');
+      expect(putParams.Item.findings).toEqual(findings);
 
       // TTL should be ~24h from now (86400 seconds)
       const nowEpoch = Math.floor(Date.now() / 1000);
@@ -56,7 +58,7 @@ describe('scan-store', () => {
     it('logs a warning and does not throw when DynamoDB write fails', async () => {
       mockSend.mockRejectedValueOnce(new Error('Service unavailable'));
       await expect(
-        writeResult('result-123', 'example.com', 62, 'Partially Ready', 'text', {})
+        writeResult('result-123', 'example.com', 62, 'Partially Ready', 'text', {}, {})
       ).resolves.toBeUndefined();
 
       expect(mockLoggerWarn).toHaveBeenCalledOnce();

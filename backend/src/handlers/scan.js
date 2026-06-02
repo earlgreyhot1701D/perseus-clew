@@ -149,7 +149,8 @@ export const handler = async (event) => {
     report.scoredViews.rawHtml.score.total,
     report.scoredViews.rawHtml.score.rating,
     report.scoredViews.rawHtml.heroLine.text,
-    report.scoredViews.rawHtml.score.breakdown
+    report.scoredViews.rawHtml.score.breakdown,
+    report.scoredViews.rawHtml.findings
   );
   writeCache(urlHash, report.meta.targetDomain, report);
 

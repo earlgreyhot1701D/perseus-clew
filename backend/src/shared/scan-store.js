@@ -31,7 +31,7 @@ const TTL_15M_SECONDS = 15 * 60;
  * Write a scan result to ScanResults (24h TTL).
  * Fail-soft: logs on failure, never throws.
  */
-export async function writeResult(resultId, domain, score, ratingLabel, heroLine, categoryBreakdown) {
+export async function writeResult(resultId, domain, score, ratingLabel, heroLine, categoryBreakdown, findings) {
   if (!resultId || !domain) {
     throw new AppError('VALIDATION_MISSING_ARGS', 'writeResult requires resultId and domain');
   }
@@ -49,6 +49,7 @@ export async function writeResult(resultId, domain, score, ratingLabel, heroLine
         ratingLabel,
         heroLine,
         categoryBreakdown,
+        findings,
         createdAt: now.toISOString(),
         ttl
       }

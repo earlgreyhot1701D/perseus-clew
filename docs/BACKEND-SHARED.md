@@ -591,6 +591,7 @@ Takes a string that's about to be returned to the user (in a finding, in an erro
 - What-looks-like API keys or tokens: long alphanumeric strings (20+ chars) with high entropy → `[redacted-token]`
 - Credit card-shaped numbers (Luhn-valid 13-19 digit sequences) → `[redacted-card]`
 - Phone number patterns → `[redacted-phone]`
+  - Note: bare 7-digit numbers (e.g. 555-1234) are deliberately not redacted. The NNN-NNNN pattern is structurally identical to numeric ranges and error codes (e.g. 100-2000, 401-4012). Over-redacting innocent numbers is worse than missing an ambiguous phone number. Only phone numbers with enough structure to be unambiguous (area code, country code, parentheses) are redacted.
 - IP addresses → `[redacted-ip]`
 
 **The rule:** Never silently strip. Always replace with a visible placeholder. If something was sanitized, the reader can see it was, so they know something was there.
@@ -608,7 +609,7 @@ Takes a string that's about to be returned to the user (in a finding, in an erro
 
 ### Example
 
-Input: `"The placeholder text says 'email us at hello@example.com or call 555-1234'"`
+Input: `"The placeholder text says 'email us at hello@example.com or call 555-123-4567'"`
 
 Output: `"The placeholder text says 'email us at [redacted-email] or call [redacted-phone]'"`
 

@@ -109,10 +109,21 @@ describe('sanitize', () => {
 
   describe('spec worked example', () => {
     it('produces the expected placeholders from the spec example', () => {
-      const input = "The placeholder text says 'email us at hello@example.com or call 555-1234'";
+      const input = "The placeholder text says 'email us at hello@example.com or call 555-123-4567'";
       const result = sanitize(input);
       expect(result).toContain('[redacted-email]');
+      expect(result).toContain('[redacted-phone]');
       expect(result).not.toContain('hello@example.com');
+      expect(result).not.toContain('555-123-4567');
+    });
+  });
+
+  describe('no-over-redaction guarantees', () => {
+    it('does NOT redact numeric ranges that look like NNN-NNNN', () => {
+      expect(sanitize('section 401-4012')).toBe('section 401-4012');
+      expect(sanitize('range 100-2000')).toBe('range 100-2000');
+      expect(sanitize('error code 404-1500')).toBe('error code 404-1500');
+      expect(sanitize('part 250-0001')).toBe('part 250-0001');
     });
   });
 

@@ -8,7 +8,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3001
-      - AWS_REGION=us-west-2
+      - AWS_REGION=us-east-1
       - PERSEUS_USER_AGENT=Agentis Lux/0.1-dev (+http://localhost:3000)
       - CACHE_TTL_MINUTES=15
       - BEDROCK_MODEL_ID=claude-haiku-4-5-20251001

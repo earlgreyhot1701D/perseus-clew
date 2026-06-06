@@ -3,7 +3,7 @@
 > Perseus Clew system architecture.
 > How the parts fit together. How a scan flows end to end. What this system will and won't do.
 
-**Status:** v2, May 27, 2026. v1 (April 17-18) locked the AWS-only topology with a React SPA on CloudFront + S3. v2 updates the frontend topology for Path B: Next.js on Vercel with API routes that do real work (scan initiation, DynamoDB benchmark reads), entered into the H0 Hackathon (B2B track, deadline June 29). The scan engine, Bedrock simulation, and EventBridge refresh stay on AWS. Written for Kiro, future contributors, and the builder returning after a break.
+**Status:** May 27, 2026. Next.js on Vercel with API routes that do real work (scan initiation, DynamoDB benchmark reads), entered into the H0 Hackathon (B2B track, deadline June 29). The scan engine, Bedrock simulation, and EventBridge refresh stay on AWS. Written for Kiro, future contributors, and the builder returning after a break.
 
 **Naming:** Perseus Clew is the engine name used throughout this document and the rest of the engineering artifacts. The public-facing product is **Agentis Lux**, which is what end users see in the UI, on the website (agentislux.io), and in marketing. Architecture, backend specs, and code all use "Perseus Clew" because that's where the engineering identity lives. See the Project Checklist "Naming Convention" section for details.
 

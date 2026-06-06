@@ -1,0 +1,134 @@
+.footer {
+  background: var(--teal);
+  color: var(--cream);
+  padding: 80px 0 32px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 40px;
+}
+
+.footArcLeft,
+.footArcRight {
+  position: absolute;
+  top: -20px;
+  width: 260px;
+  height: 260px;
+  opacity: 0.22;
+  pointer-events: none;
+  color: var(--cream);
+}
+
+.footArcLeft { left: -40px; }
+.footArcRight { right: -40px; }
+
+.footGrid {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.footBrand .wm {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 40px;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footBrand .dot {
+  color: var(--sienna);
+  transform: translateY(-5px);
+}
+
+.footBrand p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(241, 235, 220, 0.78);
+  max-width: 420px;
+  margin: 18px 0 0;
+}
+
+.footCol h4 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sienna);
+  margin: 6px 0 14px;
+  font-weight: 500;
+}
+
+.footCol ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footCol li {
+  margin-bottom: 8px;
+}
+
+.footCol a {
+  font-size: 13.5px;
+  color: rgba(241, 235, 220, 0.85);
+  transition: color 160ms ease;
+}
+
+.footCol a:hover,
+.footCol a:focus-visible {
+  color: var(--sienna);
+}
+
+.footBar {
+  max-width: 1280px;
+  margin: 64px auto 0;
+  padding: 22px 32px 0;
+  border-top: 1px solid rgba(241, 235, 220, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(241, 235, 220, 0.75);
+  position: relative;
+  z-index: 1;
+}
+
+.sep {
+  color: var(--sienna);
+  margin: 0 6px;
+}
+
+@media (max-width: 900px) {
+  .footGrid {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 22px;
+  }
+
+  .footBrand {
+    grid-column: 1 / -1;
+  }
+
+  .footBar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 22px 22px 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .footGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Archivo, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import { Archivo, Archivo_Black, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
 
@@ -10,9 +10,9 @@ const archivo = Archivo({
   display: 'swap'
 });
 
-const archivoBlack = Archivo({
+const archivoBlack = Archivo_Black({
   subsets: ['latin'],
-  weight: ['900'],
+  weight: '400',
   variable: '--font-display',
   display: 'swap'
 });

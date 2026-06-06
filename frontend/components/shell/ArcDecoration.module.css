@@ -1,0 +1,16 @@
+/**
+ * ArcDecoration styles.
+ * Positioned absolutely by default; parent must be position:relative.
+ */
+
+.arcDecoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+}

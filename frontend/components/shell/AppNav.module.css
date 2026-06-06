@@ -1,0 +1,73 @@
+/**
+ * AppNav styles.
+ * Visual reference: mockups/agentislux-app.html .app-nav
+ * All values from tokens.css.
+ */
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--teal);
+  background: var(--bg-primary);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--text-primary);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dot {
+  color: var(--accent);
+  margin: 0 2px;
+}
+
+.navRight {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navLink {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--teal);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+  cursor: default;
+}
+
+a.navLink {
+  cursor: pointer;
+}
+
+a.navLink:hover {
+  border-bottom-color: var(--accent);
+}
+
+.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .nav {
+    padding: 16px 16px;
+  }
+
+  .navRight {
+    gap: 16px;
+  }
+}

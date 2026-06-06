@@ -43,8 +43,8 @@ describe('fetch-url', () => {
 
   beforeEach(() => {
     originalFetch = globalThis.fetch;
-    // Default: dns resolves to a public IP
-    dns.lookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
+    // Default: dns resolves to a public IP (array format for { all: true })
+    dns.lookup.mockResolvedValue([{ address: '93.184.216.34', family: 4 }]);
   });
 
   afterEach(() => {
@@ -67,7 +67,7 @@ describe('fetch-url', () => {
     });
   });
 
-  describe('SSRF protection - initial URL', () => {
+  describe('SSRF protection - initial URL (IPv4)', () => {
     it('rejects private IP 10.x on initial URL', async () => {
       await expect(fetchUrl('https://10.0.0.1/page'))
         .rejects.toThrow('private or reserved address');
@@ -89,17 +89,80 @@ describe('fetch-url', () => {
     });
 
     it('rejects DNS rebinding: public hostname resolving to private IP', async () => {
-      dns.lookup.mockResolvedValue({ address: '169.254.169.254', family: 4 });
+      dns.lookup.mockResolvedValue([{ address: '169.254.169.254', family: 4 }]);
       await expect(fetchUrl('https://evil-rebind.com/page'))
         .rejects.toThrow('private or reserved address');
+    });
+  });
+
+  describe('SSRF protection - IPv6 literals (S-1 fix)', () => {
+    it('rejects bracketed IPv6 loopback [::1]', async () => {
+      await expect(fetchUrl('https://[::1]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects bracketed IPv6 unique-local [fd00::1]', async () => {
+      await expect(fetchUrl('https://[fd00::1]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects bracketed IPv6 link-local [fe80::1]', async () => {
+      await expect(fetchUrl('https://[fe80::1]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects IPv4-mapped IPv6 [::ffff:169.254.169.254] (URL-compressed to hex)', async () => {
+      // URL parser compresses this to [::ffff:a9fe:a9fe]
+      await expect(fetchUrl('https://[::ffff:169.254.169.254]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects IPv4-mapped compressed hex form [::ffff:a9fe:a9fe]', async () => {
+      await expect(fetchUrl('https://[::ffff:a9fe:a9fe]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects IPv4-mapped private [::ffff:10.0.0.1]', async () => {
+      await expect(fetchUrl('https://[::ffff:10.0.0.1]/'))
+        .rejects.toThrow('private or reserved address');
+    });
+  });
+
+  describe('SSRF protection - IPv4-mapped via dns.lookup (dotted forms)', () => {
+    it('rejects dns.lookup resolving to dotted ::ffff:169.254.169.254', async () => {
+      dns.lookup.mockResolvedValue([{ address: '::ffff:169.254.169.254', family: 6 }]);
+      await expect(fetchUrl('https://mapped-dotted.com/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects dns.lookup resolving to dotted ::ffff:10.0.0.1', async () => {
+      dns.lookup.mockResolvedValue([{ address: '::ffff:10.0.0.1', family: 6 }]);
+      await expect(fetchUrl('https://mapped-ten.com/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('rejects dns.lookup resolving to uncompressed 0:0:0:0:0:ffff:a9fe:a9fe', async () => {
+      dns.lookup.mockResolvedValue([{ address: '0:0:0:0:0:ffff:a9fe:a9fe', family: 6 }]);
+      await expect(fetchUrl('https://mapped-uncompressed.com/'))
+        .rejects.toThrow('private or reserved address');
+    });
+
+    it('allows a legitimate public IPv6 (no over-block)', async () => {
+      dns.lookup.mockResolvedValue([{ address: '2001:4860:4860::8888', family: 6 }]);
+      globalThis.fetch = vi.fn()
+        .mockResolvedValueOnce(new Response('', { status: 404 })) // robots
+        .mockResolvedValueOnce(mockResponse('<html>public</html>'));
+
+      const result = await fetchUrl('https://public-ipv6-site.com/');
+      expect(result.html).toBe('<html>public</html>');
     });
   });
 
   describe('SSRF protection - redirect hops', () => {
     it('blocks redirect to a private IP (169.254.x)', async () => {
       dns.lookup
-        .mockResolvedValueOnce({ address: '93.184.216.34', family: 4 }) // initial
-        .mockResolvedValueOnce({ address: '169.254.169.254', family: 4 }); // redirect target
+        .mockResolvedValueOnce([{ address: '93.184.216.34', family: 4 }]) // initial
+        .mockResolvedValueOnce([{ address: '169.254.169.254', family: 4 }]); // redirect target
 
       globalThis.fetch = vi.fn()
         .mockResolvedValueOnce(new Response('', { status: 404 })) // robots.txt
@@ -112,8 +175,8 @@ describe('fetch-url', () => {
 
     it('blocks redirect to a 10.x IP', async () => {
       dns.lookup
-        .mockResolvedValueOnce({ address: '93.184.216.34', family: 4 })
-        .mockResolvedValueOnce({ address: '10.0.0.1', family: 4 });
+        .mockResolvedValueOnce([{ address: '93.184.216.34', family: 4 }])
+        .mockResolvedValueOnce([{ address: '10.0.0.1', family: 4 }]);
 
       globalThis.fetch = vi.fn()
         .mockResolvedValueOnce(new Response('', { status: 404 })) // robots.txt
@@ -131,6 +194,17 @@ describe('fetch-url', () => {
 
       await expect(fetchUrl('https://public-site.com/'))
         .rejects.toThrow('non-HTTPS address');
+    });
+  });
+
+  describe('SSRF - multi-address resolution (L-2)', () => {
+    it('rejects if ANY resolved address is private', async () => {
+      dns.lookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+        { address: '10.0.0.1', family: 4 }
+      ]);
+      await expect(fetchUrl('https://dual-record.com/'))
+        .rejects.toThrow('private or reserved address');
     });
   });
 
@@ -250,7 +324,6 @@ describe('fetch-url', () => {
 
       const result = await fetchUrl('https://example.com/');
       expect(result.metadata.robotsTxt.disallowed).toBe(true);
-      // Fetch still proceeds
       expect(result.html).toBe('<html>page</html>');
     });
 
@@ -284,7 +357,6 @@ describe('fetch-url', () => {
       const result = await fetchUrl('https://example.com/start?token=abc');
       expect(result.metadata.finalUrl).toBe('www.example.com');
       expect(result.metadata.redirectChain[0].domain).toBe('example.com');
-      // No full URLs leaked
       expect(JSON.stringify(result)).not.toContain('/start?token=abc');
       expect(JSON.stringify(result)).not.toContain('/final-path?secret=123');
     });

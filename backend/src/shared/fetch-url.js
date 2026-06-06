@@ -5,10 +5,10 @@
  * Enforces safety constraints: timeout, redirect limit, size limit,
  * content-type, robots.txt, and SSRF protection on every hop.
  *
- * SSRF defense: resolves hostname via dns.lookup and checks the resolved IP
- * against private/reserved ranges at every redirect hop, not just the initial
- * URL. This catches DNS rebinding attacks where a public-looking hostname
- * resolves to an internal IP.
+ * SSRF defense: resolves hostname via dns.lookup({ all: true }) and checks
+ * ALL resolved IPs against private/reserved ranges at every redirect hop.
+ * IPv6 literals are bracket-stripped and IPv4-mapped addresses are structurally
+ * decoded to their embedded v4 address for range checking.
  *
  * Note: there is a residual TOCTOU gap between dns.lookup and the actual TCP
  * connection (the DNS could change between resolve and connect). Full
@@ -19,6 +19,7 @@
  */
 
 import dns from 'node:dns/promises';
+import net from 'node:net';
 import { AppError } from './errors.js';
 import { logger } from './logger.js';
 
@@ -31,16 +32,19 @@ const ROBOTS_TIMEOUT_MS = 5_000;
 const USER_AGENT = process.env.PERSEUS_USER_AGENT
   || 'Agentis Lux/0.1 (+https://agentislux.io/about-scanner)';
 
-// Private/reserved IPv4 ranges
-const PRIVATE_IPV4_RANGES = [
-  { prefix: '127.', mask: null },         // loopback
-  { prefix: '10.', mask: null },          // RFC1918
-  { prefix: '0.', mask: null },           // current network
-  { prefix: '169.254.', mask: null },     // link-local (includes AWS metadata)
-  { prefix: '192.168.', mask: null },     // RFC1918
+// --- IPv4 private/reserved range checks ---
+
+const PRIVATE_IPV4_PREFIXES = [
+  '127.',       // loopback
+  '10.',        // RFC1918
+  '0.',         // current network
+  '169.254.',   // link-local (includes AWS metadata 169.254.169.254)
+  '192.168.',   // RFC1918
+  '192.0.0.',   // IETF protocol assignments
+  '198.18.',    // benchmarking
+  '198.19.',    // benchmarking
 ];
 
-// 172.16.0.0/12 needs range check (172.16-31.x.x)
 function is172Private(ip) {
   const match = ip.match(/^172\.(\d+)\./);
   if (!match) return false;
@@ -48,25 +52,114 @@ function is172Private(ip) {
   return second >= 16 && second <= 31;
 }
 
+function isCgnat(ip) {
+  const match = ip.match(/^100\.(\d+)\./);
+  if (!match) return false;
+  const second = parseInt(match[1], 10);
+  return second >= 64 && second <= 127;
+}
+
+function isMulticast(ip) {
+  const first = parseInt(ip.split('.')[0], 10);
+  return first >= 224 && first <= 239;
+}
+
+// --- IPv6 structural parsing ---
+
+/**
+ * Parse an IPv6 address string to a 16-byte Uint8Array.
+ * Handles all textual spellings: compressed (::), uncompressed,
+ * and mixed dotted-quad notation (::ffff:a.b.c.d).
+ *
+ * Key: dotted-quad tail is converted to hex groups BEFORE :: expansion
+ * so the group count is correct for all mapped-address spellings.
+ */
+function parseIpv6ToBytes(ip) {
+  let working = ip;
+
+  // Step 1: Handle dotted-quad tail BEFORE :: expansion.
+  const lastColon = working.lastIndexOf(':');
+  const tail = working.slice(lastColon + 1);
+  if (tail.includes('.')) {
+    const parts = tail.split('.').map(Number);
+    if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) return null;
+    const hi = ((parts[0] << 8) | parts[1]).toString(16);
+    const lo = ((parts[2] << 8) | parts[3]).toString(16);
+    working = working.slice(0, lastColon + 1) + hi + ':' + lo;
+  }
+
+  // Step 2: Expand :: to fill missing zero groups
+  let groups;
+  if (working.includes('::')) {
+    const [left, right] = working.split('::');
+    const leftGroups = left ? left.split(':') : [];
+    const rightGroups = right ? right.split(':') : [];
+    const missing = 8 - leftGroups.length - rightGroups.length;
+    if (missing < 0) return null;
+    groups = [...leftGroups, ...Array(missing).fill('0'), ...rightGroups];
+  } else {
+    groups = working.split(':');
+  }
+
+  if (groups.length !== 8) return null;
+
+  // Step 3: Parse each group to 2 bytes
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 8; i++) {
+    const val = parseInt(groups[i] || '0', 16);
+    if (isNaN(val) || val < 0 || val > 0xffff) return null;
+    bytes[i * 2] = (val >> 8) & 0xff;
+    bytes[i * 2 + 1] = val & 0xff;
+  }
+  return bytes;
+}
+
+/**
+ * Structurally detect IPv4-mapped IPv6 addresses (any textual spelling).
+ * If bytes 0-9 are zero and bytes 10-11 are 0xffff, extracts the embedded IPv4.
+ * Returns the IPv4 string or null.
+ */
+function extractMappedIpv4(ip) {
+  if (!net.isIPv6(ip)) return null;
+
+  const bytes = parseIpv6ToBytes(ip);
+  if (!bytes) return null;
+
+  for (let i = 0; i < 10; i++) {
+    if (bytes[i] !== 0) return null;
+  }
+  if (bytes[10] !== 0xff || bytes[11] !== 0xff) return null;
+
+  return `${bytes[12]}.${bytes[13]}.${bytes[14]}.${bytes[15]}`;
+}
+
+// --- Combined private IP check ---
+
 /**
  * Check if a resolved IP address is private or reserved.
+ * Handles IPv4, IPv6, and IPv4-mapped IPv6 (structurally decoded).
  */
 function isPrivateIp(ip) {
   if (!ip) return true; // no IP = unsafe
 
   // IPv6 checks
-  if (ip === '::1') return true;
-  if (ip.startsWith('fe80:')) return true; // link-local
+  if (ip === '::1' || ip === '::') return true;
+  if (ip.startsWith('fe80:')) return true;                   // link-local
   if (ip.startsWith('fc') || ip.startsWith('fd')) return true; // unique local
-  if (ip === '::') return true;
+
+  // IPv4-mapped IPv6: structural decode, then check embedded v4
+  const mappedV4 = extractMappedIpv4(ip);
+  if (mappedV4) return isPrivateIp(mappedV4);
 
   // IPv4 prefix checks
-  for (const range of PRIVATE_IPV4_RANGES) {
-    if (ip.startsWith(range.prefix)) return true;
+  for (const prefix of PRIVATE_IPV4_PREFIXES) {
+    if (ip.startsWith(prefix)) return true;
   }
 
-  // 172.16-31.x.x
+  // Range checks
   if (is172Private(ip)) return true;
+  if (isCgnat(ip)) return true;
+  if (isMulticast(ip)) return true;
 
   return false;
 }
@@ -82,46 +175,56 @@ function isPrivateHostname(hostname) {
 }
 
 /**
- * Resolve a hostname and check if the resolved IP is private.
- * Throws VALIDATION_INVALID_URL if the IP is private/reserved.
+ * Resolve a hostname and check if ANY resolved IP is private.
+ * Throws VALIDATION_INVALID_URL if any address is private/reserved.
+ *
+ * Uses { all: true } so a host with both public and private records
+ * is still rejected (the private record shouldn't exist if it's public).
  */
-async function validateResolvedIp(hostname, urlForError) {
-  // Skip resolution for literal IPs (just check directly)
-  if (/^\d+\.\d+\.\d+\.\d+$/.test(hostname) || hostname.includes(':')) {
-    if (isPrivateIp(hostname)) {
+async function validateResolvedIp(hostname) {
+  // Strip IPv6 brackets from URL-parsed hostnames (e.g. "[::1]" -> "::1")
+  const normalized = hostname.startsWith('[') && hostname.endsWith(']')
+    ? hostname.slice(1, -1)
+    : hostname;
+
+  // Literal IPs: check directly, skip dns.lookup
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(normalized) || net.isIPv6(normalized)) {
+    if (isPrivateIp(normalized)) {
       throw new AppError(
         'VALIDATION_INVALID_URL',
         'This URL points to a private or reserved address and cannot be scanned.',
-        { domain: hostname }
+        { domain: normalized }
       );
     }
     return;
   }
 
-  if (isPrivateHostname(hostname)) {
+  if (isPrivateHostname(normalized)) {
     throw new AppError(
       'VALIDATION_INVALID_URL',
       'This URL points to a private or reserved address and cannot be scanned.',
-      { domain: hostname }
+      { domain: normalized }
     );
   }
 
-  // Resolve and check
+  // Resolve ALL addresses and reject if ANY is private
   try {
-    const { address } = await dns.lookup(hostname);
-    if (isPrivateIp(address)) {
-      throw new AppError(
-        'VALIDATION_INVALID_URL',
-        'This URL points to a private or reserved address and cannot be scanned.',
-        { domain: hostname, resolvedIp: address }
-      );
+    const addresses = await dns.lookup(normalized, { all: true });
+    for (const { address } of addresses) {
+      if (isPrivateIp(address)) {
+        throw new AppError(
+          'VALIDATION_INVALID_URL',
+          'This URL points to a private or reserved address and cannot be scanned.',
+          { domain: normalized, resolvedIp: address }
+        );
+      }
     }
   } catch (err) {
     if (err instanceof AppError) throw err;
     throw new AppError(
       'FETCH_DNS_FAILURE',
       'This domain could not be resolved. Check the URL and try again.',
-      { domain: hostname, error: err.code || err.message }
+      { domain: normalized, error: err.code || err.message }
     );
   }
 }
@@ -190,16 +293,12 @@ async function checkRobotsTxt(origin) {
         inRelevantBlock = (agent === '*' || agent.includes('agentis') || agent.includes('perseus'));
       } else if (inRelevantBlock && trimmed.startsWith('disallow:')) {
         const path = trimmed.slice('disallow:'.length).trim();
-        if (path === '/' || path === '') {
-          // Disallow all or empty (empty means allow, but / means all)
-          if (path === '/') return { checked: true, disallowed: true };
-        }
+        if (path === '/') return { checked: true, disallowed: true };
       }
     }
 
     return { checked: true, disallowed: false };
   } catch {
-    // robots.txt fetch failed (timeout, network, etc.) -> treat as allowed
     return { checked: true, disallowed: false };
   }
 }
@@ -244,7 +343,7 @@ async function readBodyWithLimit(response) {
  */
 export async function fetchUrl(url) {
   const parsed = validateUrlFormat(url);
-  await validateResolvedIp(parsed.hostname, url);
+  await validateResolvedIp(parsed.hostname);
 
   const startTime = Date.now();
   const controller = new AbortController();
@@ -255,10 +354,8 @@ export async function fetchUrl(url) {
   let response;
 
   try {
-    // Check robots.txt before main fetch
     const robotsTxt = await checkRobotsTxt(parsed.origin);
 
-    // Fetch with manual redirect following (SSRF check on each hop)
     let hops = 0;
     while (true) {
       response = await fetch(currentUrl, {
@@ -267,7 +364,6 @@ export async function fetchUrl(url) {
         redirect: 'manual'
       });
 
-      // Handle redirects manually
       if (response.status >= 300 && response.status < 400) {
         hops++;
         if (hops > MAX_REDIRECTS) {
@@ -279,12 +375,10 @@ export async function fetchUrl(url) {
         }
 
         const location = response.headers.get('location');
-        if (!location) break; // No Location header, treat as final response
+        if (!location) break;
 
-        // Resolve relative redirects
         const redirectUrl = new URL(location, currentUrl);
 
-        // SSRF check on redirect target
         if (redirectUrl.protocol !== 'https:') {
           throw new AppError(
             'FETCH_FORBIDDEN',
@@ -292,7 +386,7 @@ export async function fetchUrl(url) {
             { domain: extractDomain(redirectUrl.href) }
           );
         }
-        await validateResolvedIp(redirectUrl.hostname, redirectUrl.href);
+        await validateResolvedIp(redirectUrl.hostname);
 
         redirectChain.push({
           domain: extractDomain(currentUrl),
@@ -303,12 +397,11 @@ export async function fetchUrl(url) {
         continue;
       }
 
-      break; // Non-redirect response, proceed
+      break;
     }
 
     clearTimeout(timeout);
 
-    // Handle error status codes
     if (response.status === 403) {
       throw new AppError(
         'FETCH_FORBIDDEN',
@@ -331,7 +424,6 @@ export async function fetchUrl(url) {
       );
     }
 
-    // Check content-type
     const contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) {
       throw new AppError(
@@ -341,9 +433,7 @@ export async function fetchUrl(url) {
       );
     }
 
-    // Stream body with size limit
     const { text: html, totalBytes } = await readBodyWithLimit(response);
-
     const fetchDurationMs = Date.now() - startTime;
 
     logger.info('URL fetched', {

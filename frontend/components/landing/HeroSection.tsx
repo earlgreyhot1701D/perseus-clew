@@ -49,7 +49,7 @@ export default function HeroSection() {
           </dl>
 
           <div className={styles.issueRow}>
-            <span>Issue 001 · April MMXXVI</span>
+            <span>Issue 001 · May MMXXVI</span>
             <span>From the Clew Suite</span>
           </div>
         </div>

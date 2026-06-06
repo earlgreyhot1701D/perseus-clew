@@ -231,3 +231,9 @@
   white-space: nowrap;
   border: 0;
 }
+
+@media (max-width: 560px) {
+  .scanCard {
+    padding: 26px 22px 22px;
+  }
+}

@@ -108,3 +108,9 @@
     font-size: 13px;
   }
 }
+
+@media (max-width: 560px) {
+  .topnav {
+    display: none;
+  }
+}

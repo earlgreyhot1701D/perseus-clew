@@ -1,0 +1,198 @@
+/**
+ * HeroSection styles.
+ * Structure matches mockups/agentislux-landing.html exactly:
+ * <section class="hero"> > <div class="wrap hero-grid"> (single element carries both).
+ *
+ * .heroGrid IS the .wrap container (max-width 1280px, centered, padded).
+ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+/* This element is BOTH .wrap AND .hero-grid from the mockup */
+.heroGrid {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 72px 0 40px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 64px;
+  align-items: start;
+  position: relative;
+}
+
+.heroAnchor {
+  position: absolute;
+  pointer-events: none;
+  width: 460px;
+  height: 460px;
+  left: 50%;
+  top: -40px;
+  transform: translateX(-50%);
+  opacity: 0.22;
+  z-index: 0;
+  color: var(--teal);
+}
+
+.heroLeft,
+.heroRight {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sienna);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: var(--sienna);
+  display: inline-block;
+}
+
+.heroH1 {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 7vw, 100px);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 22px 0 28px;
+  color: var(--teal);
+}
+
+.line {
+  display: block;
+  text-transform: uppercase;
+}
+
+.lineItalic {
+  display: block;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--sienna);
+  text-transform: none;
+  font-size: 0.86em;
+  letter-spacing: 0;
+  padding: 6px 0 8px 6px;
+}
+
+.lede {
+  max-width: 520px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--teal);
+  margin: 0;
+}
+
+.lede::first-letter {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--sienna);
+  font-size: 4.2em;
+  line-height: 0.85;
+  float: left;
+  padding: 8px 10px 0 0;
+  margin-top: 4px;
+}
+
+.metaRow {
+  margin-top: 36px;
+  border-top: 1.5px solid var(--teal);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding-top: 16px;
+  max-width: 620px;
+}
+
+.metaItem {
+  display: block;
+}
+
+.metaLbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.metaVal {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--teal);
+}
+
+.issueRow {
+  margin-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  max-width: 620px;
+}
+
+@media (min-width: 1200px) {
+  .heroAnchor {
+    width: 520px;
+    height: 520px;
+    top: -60px;
+    opacity: 0.24;
+  }
+}
+
+@media (min-width: 1400px) {
+  .heroAnchor {
+    width: 560px;
+    height: 560px;
+    opacity: 0.26;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 48px 22px 24px;
+  }
+
+  .heroAnchor {
+    left: -120px;
+    top: -80px;
+    width: 380px;
+    height: 380px;
+    opacity: 0.18;
+  }
+
+  .metaRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .heroH1 {
+    font-size: 56px;
+  }
+
+  .metaRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}

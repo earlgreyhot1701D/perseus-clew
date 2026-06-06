@@ -38,12 +38,13 @@
   --rating-partial: var(--ochre);
   --rating-not-yet: var(--sienna);
 
-  /* Typography: CSS variables set by next/font in layout.tsx.
-     Fallbacks here for any context where the variable is not inherited. */
-  --font-body: var(--font-body, 'Archivo', system-ui, sans-serif);
-  --font-display: var(--font-display, 'Archivo', system-ui, sans-serif);
-  --font-serif: var(--font-serif, 'Instrument Serif', Georgia, serif);
-  --font-mono: var(--font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+  /* Typography: font families are set by next/font via CSS variables on <html>.
+     These aliases allow components to reference fonts by role.
+     The actual font files are loaded and optimized by Next.js at build time. */
+  --font-body-fallback: 'Archivo', system-ui, sans-serif;
+  --font-display-fallback: 'Archivo', system-ui, sans-serif;
+  --font-serif-fallback: 'Instrument Serif', Georgia, serif;
+  --font-mono-fallback: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Font sizes (fluid scale) */
   --text-xs: 0.75rem;

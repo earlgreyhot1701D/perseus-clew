@@ -91,6 +91,7 @@
 
   /* Layout */
   --max-width: 1200px;
+  --max-width-wide: 1280px;
   --max-width-narrow: 800px;
   --header-height: 64px;
 }

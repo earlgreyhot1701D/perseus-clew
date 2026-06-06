@@ -107,6 +107,11 @@
   background: var(--cream-2);
 }
 
+.catCard > * {
+  position: relative;
+  z-index: 1;
+}
+
 .catArcs {
   position: absolute;
   top: -8px;
@@ -121,11 +126,6 @@
 
 .catCard:hover .catArcs {
   opacity: 0.72;
-}
-
-.catCard > * {
-  position: relative;
-  z-index: 1;
 }
 
 .catTop {

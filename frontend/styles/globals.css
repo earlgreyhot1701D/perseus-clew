@@ -26,13 +26,6 @@ body {
   min-height: 100vh;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  line-height: 1.2;
-  color: var(--text-primary);
-}
-
 a {
   color: inherit;
   text-decoration: none;
@@ -42,37 +35,28 @@ a:hover {
   color: inherit;
 }
 
-/* Focus styles (WCAG 2.1 AA) */
-:focus-visible {
-  outline: 3px solid var(--teal-mid);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* Code */
-code, pre {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-}
-
-/* Images */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Lists */
-ul, ol {
-  padding-left: var(--space-6);
-}
-
-/* Buttons base */
+/* Buttons and inputs base */
 button {
-  font-family: var(--font-body);
+  font-family: inherit;
   cursor: pointer;
-  border: none;
-  background: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--sienna);
+  color: var(--cream);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--sienna);
+  outline-offset: 2px;
 }
 
 /* Skip link (accessibility) */

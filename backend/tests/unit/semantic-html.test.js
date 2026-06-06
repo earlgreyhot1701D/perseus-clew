@@ -136,8 +136,22 @@ describe('checkSemanticHtml', () => {
       const f = result.findings.find(f => f.id === 'SEM-001');
       expect(f).toBeDefined();
       expect(f.count).toBe(4);
+      expect(f.text).toContain('elements with click handlers use');
       expect(f.examples).toBeDefined();
       expect(f.examples.length).toBeLessThanOrEqual(3);
+    });
+
+    it('SEM-001 uses singular verb for count=1', () => {
+      const html = `<!DOCTYPE html><html><head><title>One</title></head><body>
+        <div onclick="go()">Click</div>
+        <nav><a href="/">Home</a></nav><main><h1>Hi</h1></main>
+      </body></html>`;
+      const parsed = parseHtml(html);
+      const result = checkSemanticHtml(parsed);
+      const f = result.findings.find(f => f.id === 'SEM-001');
+      expect(f).toBeDefined();
+      expect(f.count).toBe(1);
+      expect(f.text).toContain('1 element with click handlers uses');
     });
 
     it('emits SEM-002 for missing nav', () => {

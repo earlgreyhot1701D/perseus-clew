@@ -124,9 +124,10 @@ function checkClickableDivSpan($) {
   });
 
   const noun = count === 1 ? 'element' : 'elements';
+  const verb = count === 1 ? 'uses' : 'use';
   return {
     id: 'SEM-001',
-    text: `${count} ${noun} with click handlers use styled div or span tags instead of the button tag. Agents identifying buttons by tag name cannot find these.`,
+    text: `${count} ${noun} with click handlers ${verb} styled div or span tags instead of the button tag. Agents identifying buttons by tag name cannot find these.`,
     count,
     examples
   };

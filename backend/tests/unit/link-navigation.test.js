@@ -540,4 +540,53 @@ describe('checkLinkNavigation', () => {
       }
     });
   });
+
+  describe('pageOrigin option', () => {
+    it('uses passed pageOrigin for external-link detection (no canonical needed)', () => {
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>No Canonical</title></head>
+<body>
+  <nav><a href="/">Home</a><a href="/about">About</a></nav>
+  <main>
+    <a href="https://other-domain.com/page">Partner</a>
+  </main>
+</body>
+</html>`;
+      const parsed = parseHtml(html);
+      const result = checkLinkNavigation(parsed, { pageOrigin: 'mysite.com' });
+      const f = result.findings.find(f => f.id === 'LINK-004');
+      expect(f).toBeDefined();
+      expect(f.count).toBe(1);
+    });
+
+    it('falls back to canonical/base when no pageOrigin is passed', () => {
+      const result = checkLinkNavigation(parseHtml(internalLinksOnly));
+      // internalLinksOnly has canonical pointing to mysite.com, links are to mysite.com
+      const f = result.findings.find(f => f.id === 'LINK-004');
+      expect(f).toBeUndefined();
+    });
+
+    it('pageOrigin takes priority over canonical', () => {
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><title>Priority</title>
+  <link rel="canonical" href="https://canonical-site.com/">
+</head>
+<body>
+  <nav><a href="/">Home</a><a href="/about">About</a></nav>
+  <main>
+    <a href="https://canonical-site.com/page">Link to canonical domain</a>
+  </main>
+</body>
+</html>`;
+      const parsed = parseHtml(html);
+      // Pass a different origin — the link to canonical-site.com should now be "external"
+      const result = checkLinkNavigation(parsed, { pageOrigin: 'real-site.com' });
+      const f = result.findings.find(f => f.id === 'LINK-004');
+      expect(f).toBeDefined();
+      expect(f.count).toBe(1);
+    });
+  });
 });

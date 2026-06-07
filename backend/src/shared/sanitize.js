@@ -110,3 +110,26 @@ export function sanitize(text, options) {
 
   return result;
 }
+
+/**
+ * HTML-escape a string for safe display as literal code.
+ *
+ * Unlike sanitize() which strips tags, this preserves the markup as
+ * visible inert text by converting special characters to HTML entities.
+ * Use for code snippets (finding examples) that should be displayed
+ * as-is in the UI without being interpreted as HTML.
+ *
+ * Order: & first (prevents double-encoding the entities that follow).
+ *
+ * @param {string} str - The string to escape
+ * @returns {string} Entity-encoded string (no raw < > & " ' remain)
+ */
+export function escapeHtml(str) {
+  if (str == null || typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '\x26amp;')
+    .replace(/</g, '\x26lt;')
+    .replace(/>/g, '\x26gt;')
+    .replace(/"/g, '\x26quot;')
+    .replace(/'/g, '\x26#x27;');
+}

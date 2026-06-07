@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, Suspense } from 'react';
+import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import AppNav from '@/components/shell/AppNav';
 import ResultHero from '@/components/ResultHero';
@@ -102,6 +103,7 @@ function ScanFlow() {
 
   async function handleScan() {
     if (!inputValue.trim()) return;
+    if (viewState === 'scanning') return;
 
     const target = inputValue.trim();
     let domain = 'unknown';

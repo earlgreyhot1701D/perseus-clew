@@ -227,8 +227,8 @@ function findTypeMismatches($, allControls) {
     // Only check type="text" or no type (defaults to text)
     if (type !== 'text') return;
 
-    const name = ($el.attr('name') || '').toLowerCase();
-    const id = ($el.attr('id') || '').toLowerCase();
+    const name = $el.attr('name') || '';
+    const id = $el.attr('id') || '';
     const autocomplete = ($el.attr('autocomplete') || '').toLowerCase();
 
     // Check autocomplete for numeric types
@@ -359,20 +359,22 @@ function buildFinding002(count) {
 
 function buildFinding003(count) {
   const noun = count === 1 ? 'input field appears' : 'input fields appear';
+  const verb = count === 1 ? 'has' : 'have';
   const pronoun = count === 1 ? 'this field' : 'these fields';
   return {
     id: 'FORM-003',
-    text: `${count} ${noun} to be required (labeled with an asterisk) but has no required attribute or aria-required. Agents determining which fields are mandatory cannot identify ${pronoun} as required.`,
+    text: `${count} ${noun} to be required (labeled with an asterisk) but ${verb} no required attribute or aria-required. Agents determining which fields are mandatory cannot identify ${pronoun} as required.`,
     count
   };
 }
 
 function buildFinding004(count) {
   const noun = count === 1 ? 'input field that accepts' : 'input fields that accept';
+  const verb = count === 1 ? 'uses' : 'use';
   const pronoun = count === 1 ? 'this field' : 'these fields';
   return {
     id: 'FORM-004',
-    text: `${count} ${noun} a specific data type (email, phone, URL) uses type="text" instead of the matching input type. Agents parsing input expectations by type cannot distinguish ${pronoun} from generic text fields.`,
+    text: `${count} ${noun} a specific data type (email, phone, URL) ${verb} type="text" instead of the matching input type. Agents parsing input expectations by type cannot distinguish ${pronoun} from generic text fields.`,
     count
   };
 }
@@ -388,9 +390,10 @@ function buildFinding005(count) {
 
 function buildFinding006(count) {
   const noun = count === 1 ? 'group' : 'groups';
+  const verb = count === 1 ? 'is not wrapped' : 'are not wrapped';
   return {
     id: 'FORM-006',
-    text: `${count} ${noun} of related inputs (radio buttons or checkboxes sharing a name) are not wrapped in a fieldset with a legend. Agents parsing form structure cannot identify these as a single choice group.`,
+    text: `${count} ${noun} of related inputs (radio buttons or checkboxes sharing a name) ${verb} in a fieldset with a legend. Agents parsing form structure cannot identify these as a single choice group.`,
     count
   };
 }

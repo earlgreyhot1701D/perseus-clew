@@ -133,6 +133,106 @@ const hiddenInputsOnly = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const camelCaseTypeHits = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CamelCase Hits</title></head>
+<body>
+  <form action="/signup">
+    <label for="ue">Email</label>
+    <input id="userEmail" type="text" name="userEmail">
+
+    <label for="up">Phone</label>
+    <input id="userPhone" type="text" name="contact_phone">
+
+    <button type="submit">Go</button>
+  </form>
+</body>
+</html>`;
+
+const camelCaseNoFalsePositive = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CamelCase Safe</title></head>
+<body>
+  <form action="/order">
+    <label for="on">Order Number</label>
+    <input id="on" type="text" name="orderNumber">
+
+    <label for="rn">Reference</label>
+    <input id="rn" type="text" name="reference_number">
+
+    <button type="submit">Find</button>
+  </form>
+</body>
+</html>`;
+
+const singleRequiredAsterisk = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Single Required</title></head>
+<body>
+  <form action="/go">
+    <label for="nm">Name *</label>
+    <input id="nm" type="text" name="name">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`;
+
+const multipleRequiredAsterisks = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Multi Required</title></head>
+<body>
+  <form action="/go">
+    <label for="nm">Name *</label>
+    <input id="nm" type="text" name="name">
+    <label for="em">Email *</label>
+    <input id="em" type="text" name="email">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`;
+
+const singleTypeMismatch = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Single Type</title></head>
+<body>
+  <form action="/go">
+    <label for="em">Email</label>
+    <input id="em" type="text" name="email">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`;
+
+const singleLooseGroup = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Single Group</title></head>
+<body>
+  <form action="/go">
+    <label for="nm">Name</label>
+    <input id="nm" type="text" name="name">
+    <input type="radio" name="pref" value="a">
+    <input type="radio" name="pref" value="b">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`;
+
+const multipleLooseGroups = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Multi Groups</title></head>
+<body>
+  <form action="/go">
+    <label for="nm">Name</label>
+    <input id="nm" type="text" name="name">
+    <input type="radio" name="color" value="r">
+    <input type="radio" name="color" value="g">
+    <input type="checkbox" name="opts" value="a">
+    <input type="checkbox" name="opts" value="b">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`;
+
 // --- Tests ---
 
 describe('checkFormAccessibility', () => {
@@ -365,6 +465,118 @@ describe('checkFormAccessibility', () => {
       } catch (e) {
         expect(e.code).toBe('CHECK_MODULE_ERROR');
       }
+    });
+  });
+
+  describe('camelCase type detection (F-1 fix)', () => {
+    it('flags id="userEmail" as type mismatch', () => {
+      const result = checkFormAccessibility(parseHtml(camelCaseTypeHits));
+      const f = result.findings.find(f => f.id === 'FORM-004');
+      expect(f).toBeDefined();
+      expect(f.count).toBe(2); // userEmail + contact_phone
+    });
+
+    it('does not flag name="orderNumber" (number alone is not a type token)', () => {
+      const result = checkFormAccessibility(parseHtml(camelCaseNoFalsePositive));
+      const f = result.findings.find(f => f.id === 'FORM-004');
+      expect(f).toBeUndefined();
+    });
+
+    it('does not flag name="reference_number" (substring resistance preserved)', () => {
+      const result = checkFormAccessibility(parseHtml(camelCaseNoFalsePositive));
+      const f = result.findings.find(f => f.id === 'FORM-004');
+      expect(f).toBeUndefined();
+    });
+  });
+
+  describe('verb agreement at count=1 and count>=2', () => {
+    it('FORM-001 count=1 uses "has", count>=2 uses "have"', () => {
+      // mixedForm has no bare inputs; use a targeted fixture
+      const html1 = `<!DOCTYPE html><html><head><title>T</title></head><body>
+        <form><input type="text"><button type="submit">Go</button></form>
+      </body></html>`;
+      const r1 = checkFormAccessibility(parseHtml(html1));
+      const f1 = r1.findings.find(f => f.id === 'FORM-001');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('1 input field has');
+
+      // badForm has 5 bare inputs
+      const r2 = checkFormAccessibility(parseHtml(badForm));
+      const f2 = r2.findings.find(f => f.id === 'FORM-001');
+      expect(f2.text).toContain('input fields have');
+    });
+
+    it('FORM-002 count=1 uses "relies", count>=2 uses "rely"', () => {
+      // mixedForm has 1 placeholder-only
+      const r1 = checkFormAccessibility(parseHtml(mixedForm));
+      const f1 = r1.findings.find(f => f.id === 'FORM-002');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('1 input field relies');
+
+      // Multi placeholder fixture
+      const html2 = `<!DOCTYPE html><html><head><title>T</title></head><body>
+        <form>
+          <input type="text" placeholder="A">
+          <input type="text" placeholder="B">
+          <button type="submit">Go</button>
+        </form>
+      </body></html>`;
+      const r2 = checkFormAccessibility(parseHtml(html2));
+      const f2 = r2.findings.find(f => f.id === 'FORM-002');
+      expect(f2).toBeDefined();
+      expect(f2.text).toContain('input fields rely');
+    });
+
+    it('FORM-003 count=1 uses "has", count>=2 uses "have"', () => {
+      const r1 = checkFormAccessibility(parseHtml(singleRequiredAsterisk));
+      const f1 = r1.findings.find(f => f.id === 'FORM-003');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('but has no required');
+
+      const r2 = checkFormAccessibility(parseHtml(multipleRequiredAsterisks));
+      const f2 = r2.findings.find(f => f.id === 'FORM-003');
+      expect(f2).toBeDefined();
+      expect(f2.text).toContain('but have no required');
+    });
+
+    it('FORM-004 count=1 uses "uses", count>=2 uses "use"', () => {
+      const r1 = checkFormAccessibility(parseHtml(singleTypeMismatch));
+      const f1 = r1.findings.find(f => f.id === 'FORM-004');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('uses type="text"');
+
+      const r2 = checkFormAccessibility(parseHtml(camelCaseTypeHits));
+      const f2 = r2.findings.find(f => f.id === 'FORM-004');
+      expect(f2).toBeDefined();
+      expect(f2.text).toContain('use type="text"');
+    });
+
+    it('FORM-005 count=1 uses "has", count>=2 uses "have"', () => {
+      const r1 = checkFormAccessibility(parseHtml(badForm));
+      const f1 = r1.findings.find(f => f.id === 'FORM-005');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('1 form has');
+
+      const html2 = `<!DOCTYPE html><html><head><title>T</title></head><body>
+        <form><input type="text" name="a"></form>
+        <form><input type="text" name="b"></form>
+      </body></html>`;
+      const r2 = checkFormAccessibility(parseHtml(html2));
+      const f2 = r2.findings.find(f => f.id === 'FORM-005');
+      expect(f2).toBeDefined();
+      expect(f2.text).toContain('forms have');
+    });
+
+    it('FORM-006 count=1 uses "is not wrapped", count>=2 uses "are not wrapped"', () => {
+      const r1 = checkFormAccessibility(parseHtml(singleLooseGroup));
+      const f1 = r1.findings.find(f => f.id === 'FORM-006');
+      expect(f1).toBeDefined();
+      expect(f1.text).toContain('is not wrapped');
+
+      const r2 = checkFormAccessibility(parseHtml(multipleLooseGroups));
+      const f2 = r2.findings.find(f => f.id === 'FORM-006');
+      expect(f2).toBeDefined();
+      expect(f2.text).toContain('are not wrapped');
     });
   });
 });

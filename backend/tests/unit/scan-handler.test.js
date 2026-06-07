@@ -321,9 +321,31 @@ describe('scan handler (1E-c)', () => {
   });
 
   describe('fail-soft write', () => {
-    it('returns 200 + report even when writes throw', async () => {
+    it('returns 200 + report even when writes reject (async)', async () => {
       writeResult.mockRejectedValue(new Error('DynamoDB down'));
       writeCache.mockRejectedValue(new Error('DynamoDB down'));
+
+      const res = await handler(makeEvent({ type: 'url', target: 'https://example.com/page' }));
+
+      expect(res.statusCode).toBe(200);
+      const report = parseBody(res);
+      expect(report.scoredViews.rawHtml.score.total).toBeGreaterThanOrEqual(0);
+    });
+
+    it('returns 200 + report even when writeResult throws synchronously (F-1)', async () => {
+      writeResult.mockImplementation(() => { throw new Error('sync kaboom'); });
+      writeCache.mockResolvedValue(undefined);
+
+      const res = await handler(makeEvent({ type: 'url', target: 'https://example.com/page' }));
+
+      expect(res.statusCode).toBe(200);
+      const report = parseBody(res);
+      expect(report.scoredViews.rawHtml.score.total).toBeGreaterThanOrEqual(0);
+    });
+
+    it('returns 200 + report even when writeCache throws synchronously (F-1)', async () => {
+      writeResult.mockResolvedValue(undefined);
+      writeCache.mockImplementation(() => { throw new Error('sync kaboom'); });
 
       const res = await handler(makeEvent({ type: 'url', target: 'https://example.com/page' }));
 

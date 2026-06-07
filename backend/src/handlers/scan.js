@@ -19,8 +19,6 @@ import { AppError } from '../shared/errors.js';
 import { runScan } from '../orchestrator/flow.js';
 import { generateHeroLine } from '../orchestrator/hero-line.js';
 
-const SCAN_TIMEOUT_MS = 45_000;
-
 // --- URL normalization for cache key ---
 // v1: sort params, strip fragment, lowercase scheme+host, strip trailing slash.
 // NOTE: tracking params (utm_*, session tokens, etc.) are NOT stripped in v1.
@@ -154,23 +152,23 @@ export const handler = async (event) => {
     // Cache read failure is non-fatal; proceed with fresh scan
   }
 
-  // --- Fetch + Scan + Hero (with 45s timeout, Confirmation B) ---
+  // --- Fetch + Scan + Hero ---
+  // Timeout architecture: fetch-url has its own internal ~30s timeout,
+  // bedrock-client has its own Bedrock request timeout (~20s with retries).
+  // runScan is synchronous CPU-bound work over a size-capped (5MB) DOM.
+  // No handler-level AbortController is used because: (1) fetchUrl does not
+  // accept an abort signal, (2) sync work cannot be interrupted by signals,
+  // (3) sub-module ceilings already bound the async work.
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), SCAN_TIMEOUT_MS);
-
     let fetchResult;
     try {
       fetchResult = await fetchUrl(target);
     } catch (err) {
-      clearTimeout(timeout);
       // Amendment 2: NO writes on fetch error
       const mapped = mapFetchError(err);
       logger.info('Scan fetch failed', { domain, requestId, errorCode: err?.code });
       return jsonResponse(mapped.status, { error: mapped.error, message: mapped.message });
     }
-
-    clearTimeout(timeout);
 
     const { html, metadata: fetchMetadata } = fetchResult;
 
@@ -226,25 +224,28 @@ export const handler = async (event) => {
     const response = jsonResponse(200, report);
 
     // --- Async fail-soft write (Amendment 2: only on success-on-miss) ---
-    writeResult(
-      resultId,
-      domain,
-      report.scoredViews.rawHtml.score.total,
-      report.scoredViews.rawHtml.score.rating,
-      heroLine.text,
-      report.scoredViews.rawHtml.score.breakdown,
-      report.scoredViews.rawHtml.findings
-    );
-    writeCache(urlHash, domain, report);
+    // F-1: Guarded so neither a sync throw nor a rejection affects the response.
+    // scan-store is internally try/caught (rejects, not throws), but this is
+    // defensive depth against any unexpected sync throw reaching the outer catch.
+    try {
+      writeResult(
+        resultId,
+        domain,
+        report.scoredViews.rawHtml.score.total,
+        report.scoredViews.rawHtml.score.rating,
+        heroLine.text,
+        report.scoredViews.rawHtml.score.breakdown,
+        report.scoredViews.rawHtml.findings
+      );
+      writeCache(urlHash, domain, report);
+    } catch {
+      // Swallowed intentionally: response is already assembled. scan-store
+      // logs its own WARN on failure; this catch is purely for sync throws.
+    }
 
     return response;
   } catch (err) {
-    // Catch-all for unexpected errors (scan module crash, timeout, etc.)
-    if (err.name === 'AbortError') {
-      logger.warn('Scan timeout', { domain, requestId, durationMs: Date.now() - startTime });
-      return jsonResponse(504, { error: 'SCAN_TIMEOUT', message: 'The scan took too long to complete. Try again.' });
-    }
-
+    // Catch-all for unexpected errors (scan module crash, etc.)
     logger.error('Scan unexpected error', {
       domain,
       requestId,

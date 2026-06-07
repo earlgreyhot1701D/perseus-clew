@@ -31,14 +31,24 @@ function getRatingColor(rating: string): string {
   switch (rating) {
     case 'Agent-Ready': return 'var(--teal-mid)';
     case 'Partially Ready': return 'var(--ochre)';
-    case 'Not Yet Readable': return 'var(--sienna)';
+    case 'Not Yet Readable': return 'var(--sienna-darker)';
     default: return 'var(--ochre)';
+  }
+}
+
+function getRatingTextColor(rating: string): string {
+  switch (rating) {
+    case 'Agent-Ready': return 'var(--cream)';
+    case 'Partially Ready': return 'var(--teal)';
+    case 'Not Yet Readable': return 'var(--cream)';
+    default: return 'var(--teal)';
   }
 }
 
 export default function ResultHero({ score, heroLine }: ResultHeroProps) {
   const fillWidth = `${score.total}%`;
   const ratingColor = getRatingColor(score.rating);
+  const ratingTextColor = getRatingTextColor(score.rating);
 
   return (
     <section className={styles.hero} aria-label="Scan result summary">
@@ -56,7 +66,7 @@ export default function ResultHero({ score, heroLine }: ResultHeroProps) {
           <div className={styles.scoreNum}>
             {score.total}<span className={styles.scoreDenom}>/100</span>
           </div>
-          <div className={styles.ratingBadge} style={{ backgroundColor: ratingColor }}>
+          <div className={styles.ratingBadge} style={{ backgroundColor: ratingColor, color: ratingTextColor }}>
             {score.rating}
           </div>
           <div className={styles.ringTrack}>
@@ -69,6 +79,9 @@ export default function ResultHero({ score, heroLine }: ResultHeroProps) {
             <span>What an agent experiences</span>
             {heroLine.source === 'ai' && (
               <span className={styles.aiTag}>AI written</span>
+            )}
+            {heroLine.source === 'template' && (
+              <span className={styles.templateTag}>Generated summary</span>
             )}
           </div>
           <p className={styles.narrativeLine}>{heroLine.text}</p>

@@ -58,7 +58,6 @@
   font-size: 13px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--teal);
   padding: 6px 14px;
   border-radius: 2px;
 }
@@ -96,6 +95,10 @@
 
 .aiTag {
   color: var(--ochre);
+}
+
+.templateTag {
+  color: var(--muted);
 }
 
 .narrativeLine {

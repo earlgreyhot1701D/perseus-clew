@@ -4,10 +4,7 @@ import path from 'path';
 export default defineConfig({
   test: {
     globals: false,
-    // STUB: Switch environment to 'jsdom' and add jsdom devDep when
-    // component tests land in Block 1B/1D.
-    // See BUILD-PLAN.md Block 1B and FRONTEND-SPEC.md.
-    environment: 'node',
+    environment: 'jsdom',
     passWithNoTests: true
   },
   resolve: {

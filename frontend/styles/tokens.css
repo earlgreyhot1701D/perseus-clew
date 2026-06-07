@@ -16,6 +16,7 @@
   --teal-light: #2a8f98;
   --sienna: #e85416;
   --sienna-deep: #d24912;
+  --sienna-darker: #a5370e;
   --ochre: #d4a43c;
   --muted: #8a9a9d;
   --ink: #5a5548;
@@ -36,7 +37,7 @@
   /* Rating colors (observational, not judgmental) */
   --rating-ready: var(--teal-mid);
   --rating-partial: var(--ochre);
-  --rating-not-yet: var(--sienna);
+  --rating-not-yet: var(--sienna-darker);
 
   /* Typography: font families are set by next/font via CSS variables on <html>.
      These aliases allow components to reference fonts by role.

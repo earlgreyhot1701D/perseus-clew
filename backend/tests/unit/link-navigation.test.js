@@ -390,17 +390,19 @@ describe('checkLinkNavigation', () => {
       expect(f2.text).toContain('anchor elements use placeholder hrefs');
     });
 
-    it('LINK-003 count=1 uses "uses", count>=2 uses "use"', () => {
+    it('LINK-003 count=1 uses "uses" and "its", count>=2 uses "use" and "their"', () => {
       const r1 = checkLinkNavigation(parseHtml(singleGeneric));
       const f1 = r1.findings.find(f => f.id === 'LINK-003');
       expect(f1).toBeDefined();
       expect(f1.count).toBe(1);
       expect(f1.text).toContain('1 link uses generic text');
+      expect(f1.text).toContain('as its entire accessible name');
 
       const r2 = checkLinkNavigation(parseHtml(multipleGeneric));
       const f2 = r2.findings.find(f => f.id === 'LINK-003');
       expect(f2).toBeDefined();
       expect(f2.text).toContain('links use generic text');
+      expect(f2.text).toContain('as their entire accessible name');
     });
 
     it('LINK-004 count=1 uses "has", count>=2 uses "have"', () => {
@@ -424,17 +426,19 @@ describe('checkLinkNavigation', () => {
       expect(f.text).toContain('No skip-to-content link');
     });
 
-    it('LINK-006 count=1 uses "shares", count>=2 uses "share"', () => {
+    it('LINK-006 count=1 uses "shares" and "points", count>=2 uses "share" and "point"', () => {
       const r1 = checkLinkNavigation(parseHtml(singleDupeGroup));
       const f1 = r1.findings.find(f => f.id === 'LINK-006');
       expect(f1).toBeDefined();
       expect(f1.count).toBe(1);
       expect(f1.text).toContain('1 group of links shares');
+      expect(f1.text).toContain('but points to different');
 
       const r2 = checkLinkNavigation(parseHtml(multipleDupeGroups));
       const f2 = r2.findings.find(f => f.id === 'LINK-006');
       expect(f2).toBeDefined();
       expect(f2.text).toContain('groups of links share');
+      expect(f2.text).toContain('but point to different');
       expect(f2.count).toBe(2);
     });
   });

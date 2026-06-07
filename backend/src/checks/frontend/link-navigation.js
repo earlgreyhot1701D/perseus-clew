@@ -337,10 +337,11 @@ function buildFinding002(count) {
 
 function buildFinding003(count) {
   const noun = count === 1 ? 'link uses generic text' : 'links use generic text';
+  const possessive = count === 1 ? 'its' : 'their';
   const pronoun = count === 1 ? 'this link leads' : 'these links lead';
   return {
     id: 'LINK-003',
-    text: `${count} ${noun} (such as "click here" or "read more") as its entire accessible name with no additional context. Agents parsing link intent from text alone cannot determine where ${pronoun}.`,
+    text: `${count} ${noun} (such as "click here" or "read more") as ${possessive} entire accessible name with no additional context. Agents parsing link intent from text alone cannot determine where ${pronoun}.`,
     count
   };
 }
@@ -365,10 +366,11 @@ function buildFinding005() {
 
 function buildFinding006(count) {
   const noun = count === 1 ? 'group of links shares' : 'groups of links share';
+  const verb = count === 1 ? 'points' : 'point';
   const pronoun = count === 1 ? 'each instance leads' : 'each instance leads';
   return {
     id: 'LINK-006',
-    text: `${count} ${noun} identical text but points to different destinations. Agents distinguishing links by text alone cannot determine where ${pronoun}.`,
+    text: `${count} ${noun} identical text but ${verb} to different destinations. Agents distinguishing links by text alone cannot determine where ${pronoun}.`,
     count
   };
 }

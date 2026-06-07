@@ -1,14 +1,14 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     globals: false,
-    // STUB: Switch environment to 'jsdom' and add jsdom devDep when
-    // component tests land in Block 1B/1D.
-    // See BUILD-PLAN.md Block 1B and FRONTEND-SPEC.md.
-    environment: 'node',
-    passWithNoTests: true
+    environment: 'jsdom',
+    passWithNoTests: false,
+    setupFiles: ['./tests/setup.ts']
   },
   resolve: {
     alias: {

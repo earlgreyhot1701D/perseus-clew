@@ -38,9 +38,10 @@ const GENERIC_PHRASES = new Set([
  * @param {{ $: import('cheerio').CheerioAPI, metadata: object }} parsedHtml
  * @returns {{ passed: number, total: number, findings: Array }}
  */
-export function checkLinkNavigation(parsedHtml) {
+export function checkLinkNavigation(parsedHtml, options = {}) {
   try {
     const { $ } = parsedHtml;
+    const { pageOrigin } = options;
     let passed = 0;
     let total = 0;
     const findings = [];
@@ -87,7 +88,7 @@ export function checkLinkNavigation(parsedHtml) {
 
     // Sub-check 4: External links distinguishable (LINK-004) — only if origin determinable
     if (hasAnchors) {
-      const externals = checkExternalLinks($, anchors);
+      const externals = checkExternalLinks($, anchors, pageOrigin);
       if (externals.applicable) {
         total++;
         if (externals.count > 0) {
@@ -188,10 +189,10 @@ function countGenericText($, anchors) {
 
 // --- Check 4: External links without rel ---
 
-function checkExternalLinks($, anchors) {
-  // Determine page origin from canonical or base
-  const pageOrigin = getPageOrigin($);
-  if (!pageOrigin) {
+function checkExternalLinks($, anchors, pageOrigin) {
+  // Determine page origin: prefer passed origin, fall back to canonical/base
+  const origin = pageOrigin || getPageOrigin($);
+  if (!origin) {
     return { applicable: false, count: 0 };
   }
 
@@ -209,7 +210,7 @@ function checkExternalLinks($, anchors) {
       return; // malformed URL, skip
     }
 
-    if (linkHost === pageOrigin) return; // internal
+    if (linkHost === origin) return; // internal
 
     hasExternals = true;
     const rel = $(el).attr('rel');

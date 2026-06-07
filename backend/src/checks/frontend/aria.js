@@ -304,7 +304,6 @@ function checkButtonLabels($) {
   const buttons = $('button, [role="button"]');
   buttons.each((_, el) => {
     const $el = $(el);
-    applicable = true;
 
     // Has text content?
     const text = $el.text().trim();
@@ -316,6 +315,8 @@ function checkButtonLabels($) {
     // Has title?
     if ($el.attr('title')) return;
 
+    // This button has no accessible name — it's a candidate that could fail
+    applicable = true;
     count++;
   });
 
@@ -391,10 +392,11 @@ function buildFinding001(count) {
 
 function buildFinding002(count) {
   const noun = count === 1 ? 'element with an interactive ARIA role is' : 'elements with interactive ARIA roles are';
+  const possessive = count === 1 ? 'its' : 'their';
   const pronoun = count === 1 ? 'this control' : 'these controls';
   return {
     id: 'ARIA-002',
-    text: `${count} ${noun} missing its required companion attribute (e.g. aria-selected for tabs, aria-checked for checkboxes). Agents reading widget state cannot determine the current state of ${pronoun}.`,
+    text: `${count} ${noun} missing ${possessive} required companion attribute (e.g. aria-selected for tabs, aria-checked for checkboxes). Agents reading widget state cannot determine the current state of ${pronoun}.`,
     count
   };
 }
@@ -431,10 +433,10 @@ function buildFinding005(count) {
 
 function buildFinding006(count) {
   const noun = count === 1 ? 'element has' : 'elements have';
-  const pronoun = count === 1 ? 'this element receives' : 'these elements receive';
+  const pronoun = count === 1 ? 'this element' : 'these elements';
   return {
     id: 'ARIA-006',
-    text: `${count} ${noun} conflicting ARIA (presentation role on a semantic tag, or aria-hidden on a container with focusable children). Agents interpreting ${pronoun} contradictory signals.`,
+    text: `${count} ${noun} conflicting ARIA (presentation role on a semantic tag, or aria-hidden on a container with focusable children). Agents interpreting ${pronoun} receive contradictory signals.`,
     count
   };
 }

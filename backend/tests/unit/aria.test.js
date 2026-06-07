@@ -143,12 +143,11 @@ const singleFindingFixtures = {
 
 describe('checkAria', () => {
   describe('plain semantic page (no custom widgets)', () => {
-    it('returns no findings and is not penalized (total equals passed)', () => {
+    it('returns passed:0, total:0, findings:[] (not penalized)', () => {
       const result = checkAria(parseHtml(plainSemanticPage));
+      expect(result.passed).toBe(0);
+      expect(result.total).toBe(0);
       expect(result.findings).toEqual([]);
-      expect(result.passed).toBe(result.total);
-      // Check 4 is applicable (buttons exist) but passes (button has text).
-      // All other checks are N/A (no custom widgets, no ARIA roles, no conflicts).
     });
   });
 
@@ -272,16 +271,18 @@ describe('checkAria', () => {
       }
     });
 
-    it('ARIA-002 count=1 uses "is", count>=2 uses "are"', () => {
+    it('ARIA-002 count=1 uses "its", count>=2 uses "their"', () => {
       const r1 = checkAria(parseHtml(singleFindingFixtures.aria002));
       const f1 = r1.findings.find(f => f.id === 'ARIA-002');
       expect(f1).toBeDefined();
       expect(f1.text).toContain('1 element with an interactive ARIA role is');
+      expect(f1.text).toContain('missing its required');
 
       const r2 = checkAria(parseHtml(badAriaPage));
       const f2 = r2.findings.find(f => f.id === 'ARIA-002');
       expect(f2).toBeDefined();
       expect(f2.text).toContain('elements with interactive ARIA roles are');
+      expect(f2.text).toContain('missing their required');
     });
 
     it('ARIA-003 count=1 uses "has", count>=2 uses "have"', () => {
@@ -332,16 +333,18 @@ describe('checkAria', () => {
       expect(f2.text).toMatch(/elements .+ have no aria-live/);
     });
 
-    it('ARIA-006 count=1 uses "has", count>=2 uses "have"', () => {
+    it('ARIA-006 count=1 uses "has" and "receive", count>=2 uses "have" and "receive"', () => {
       const r1 = checkAria(parseHtml(singleFindingFixtures.aria006));
       const f1 = r1.findings.find(f => f.id === 'ARIA-006');
       expect(f1).toBeDefined();
       expect(f1.text).toContain('1 element has');
+      expect(f1.text).toContain('this element receive contradictory');
 
       const r2 = checkAria(parseHtml(badAriaPage));
       const f2 = r2.findings.find(f => f.id === 'ARIA-006');
       expect(f2).toBeDefined();
       expect(f2.text).toContain('elements have');
+      expect(f2.text).toContain('these elements receive contradictory');
     });
   });
 

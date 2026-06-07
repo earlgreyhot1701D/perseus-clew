@@ -142,7 +142,7 @@ describe('runScan (deterministic flow)', () => {
       expect(report.meta.scanType).toBe('url');
       expect(report.meta.targetDomain).toBe('example.com');
       expect(report.meta.fromCache).toBe(false);
-      expect(report.meta.methodologyVersion).toBe('1.0.0');
+      expect(report.meta.methodologyVersion).toBe('1.1.1');
       expect(report.meta.requestId).toBeNull();
       expect(report.meta.resultId).toBeNull();
       expect(report.meta.durationMs).toBeNull();
@@ -306,9 +306,9 @@ describe('runScan (deterministic flow)', () => {
       expect(report.meta.targetDomain).toBe('sub.example.com');
     });
 
-    it('methodologyVersion is 1.0.0', () => {
+    it('methodologyVersion is 1.1.1', () => {
       const report = runScan(wellBuiltPage, 'https://example.com/');
-      expect(report.meta.methodologyVersion).toBe('1.0.0');
+      expect(report.meta.methodologyVersion).toBe('1.1.1');
     });
 
     it('handles malformed targetUrl gracefully', () => {

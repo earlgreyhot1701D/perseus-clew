@@ -22,7 +22,7 @@ import { checkContentHtml } from '../checks/frontend/content-html.js';
 import { checkLinkNavigation } from '../checks/frontend/link-navigation.js';
 import { calculateScore } from '../checks/frontend/scoring.js';
 
-const METHODOLOGY_VERSION = '1.0.0';
+const METHODOLOGY_VERSION = '1.1.1';
 
 /**
  * Run the deterministic scan pipeline.

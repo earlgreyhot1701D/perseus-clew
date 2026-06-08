@@ -107,12 +107,19 @@ export function checkNamingDescriptions(parsedSpec) {
 
     // Sub-check 4: Schema property clarity (API-ND-004)
     // Scored once per named schema via registry-key membership
-    const sc4 = checkSchemaPropertyClarity(spec);
-    total++;
-    if (sc4) {
-      findings.push(sc4);
-    } else {
-      passed++;
+    // Applicability gate: only counted when schemas with properties exist
+    const schemas = spec.components?.schemas;
+    const hasSchemaProperties = schemas && Object.values(schemas).some(
+      s => s && typeof s === 'object' && s.properties && Object.keys(s.properties).length > 0
+    );
+    if (hasSchemaProperties) {
+      const sc4 = checkSchemaPropertyClarity(spec);
+      total++;
+      if (sc4) {
+        findings.push(sc4);
+      } else {
+        passed++;
+      }
     }
 
     // Sub-check 5: info.description present (API-ND-005)
@@ -125,12 +132,16 @@ export function checkNamingDescriptions(parsedSpec) {
     }
 
     // Sub-check 6: Tag descriptions (API-ND-006)
-    const sc6 = checkTagDescriptions(spec);
-    total++;
-    if (sc6) {
-      findings.push(sc6);
-    } else {
-      passed++;
+    // Applicability gate: only counted when tags exist
+    const hasTags = Array.isArray(spec.tags) && spec.tags.length > 0;
+    if (hasTags) {
+      const sc6 = checkTagDescriptions(spec);
+      total++;
+      if (sc6) {
+        findings.push(sc6);
+      } else {
+        passed++;
+      }
     }
 
     return { passed, total, findings };
@@ -179,9 +190,10 @@ function checkOperationDescriptions(operations) {
 
   const examples = missing.slice(0, 3);
   const noun = missing.length === 1 ? 'operation has' : 'operations have';
+  const ref = missing.length === 1 ? 'this endpoint does' : 'these endpoints do';
   return {
     id: 'API-ND-001',
-    text: `${missing.length} ${noun} no summary or description. An agent reading this spec cannot determine what these endpoints do without additional context.`,
+    text: `${missing.length} ${noun} no summary or description. An agent reading this spec cannot determine what ${ref} without additional context.`,
     count: missing.length,
     examples
   };
@@ -203,10 +215,11 @@ function checkDescriptionLength(operations) {
   if (tooShort.length === 0) return null;
 
   const examples = tooShort.slice(0, 3);
-  const noun = tooShort.length === 1 ? 'operation has' : 'operations have';
+  const noun = tooShort.length === 1 ? 'operation has a' : 'operations have';
+  const descRef = tooShort.length === 1 ? 'this description' : 'these descriptions';
   return {
     id: 'API-ND-002',
-    text: `${tooShort.length} ${noun} descriptions shorter than ${MIN_DESCRIPTION_LENGTH} characters. An agent relying on these descriptions does not receive enough context to understand the endpoint behavior.`,
+    text: `${tooShort.length} ${noun} description shorter than ${MIN_DESCRIPTION_LENGTH} characters. An agent relying on ${descRef} does not receive enough context to understand the endpoint behavior.`,
     count: tooShort.length,
     examples
   };
@@ -227,9 +240,10 @@ function checkOperationId(operations) {
 
   const examples = missing.slice(0, 3);
   const noun = missing.length === 1 ? 'operation' : 'operations';
+  const ref = missing.length === 1 ? 'this endpoint' : 'these endpoints';
   return {
     id: 'API-ND-003',
-    text: `${missing.length} ${noun} without an operationId. An agent referencing these endpoints has no stable identifier and must construct method+path strings.`,
+    text: `${missing.length} ${noun} without an operationId. An agent referencing ${ref} has no stable identifier and must construct method+path strings.`,
     count: missing.length,
     examples
   };
@@ -289,9 +303,10 @@ function checkSchemaPropertyClarity(spec) {
   );
 
   const schemaNoun = unclearSchemas.length === 1 ? 'schema has' : 'schemas have';
+  const fieldRef = totalUnclear === 1 ? 'this field' : 'these fields';
   return {
     id: 'API-ND-004',
-    text: `${unclearSchemas.length} ${schemaNoun} properties with names that are not self-explaining and no descriptions. An agent receiving responses with these fields cannot determine their purpose from the spec alone.`,
+    text: `${unclearSchemas.length} ${schemaNoun} properties with names that are not self-explaining and no descriptions. An agent receiving responses with ${fieldRef} cannot determine their purpose from the spec alone.`,
     count: totalUnclear,
     examples
   };

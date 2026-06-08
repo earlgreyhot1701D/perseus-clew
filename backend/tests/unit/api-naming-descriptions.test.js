@@ -574,4 +574,331 @@ describe('checkNamingDescriptions', () => {
       }
     });
   });
+
+  describe('F-1: per-sub-check applicability gating', () => {
+    it('does not count sub-check 4 (schema clarity) when no schemas exist', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'listUsers',
+              summary: 'List all users with optional filtering and pagination support.'
+            }
+          }
+        },
+        components: { schemas: {} },
+        tags: []
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      // Sub-checks 1,2,3,5 apply (4 total). Sub-check 4 (no schemas) and 6 (no tags) skipped.
+      expect(result.total).toBe(4);
+    });
+
+    it('does not count sub-check 6 (tags) when no tags exist', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'listUsers',
+              summary: 'List all users with optional filtering and pagination support.'
+            }
+          }
+        },
+        components: {
+          schemas: {
+            User: {
+              type: 'object',
+              properties: {
+                email: { type: 'string', description: 'Primary email address' }
+              }
+            }
+          }
+        },
+        tags: []
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      // Sub-checks 1,2,3,4,5 apply (5 total). Sub-check 6 (no tags) skipped.
+      expect(result.total).toBe(5);
+    });
+
+    it('counts all 6 sub-checks when schemas and tags both exist', () => {
+      const parsedSpec = makeParsedSpec({
+        info: {
+          title: 'API',
+          description: 'A fully populated API for testing all sub-check applicability.',
+          version: '1.0.0'
+        },
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'listUsers',
+              summary: 'List all users in the system with optional filtering by status.'
+            }
+          }
+        },
+        components: {
+          schemas: {
+            User: {
+              type: 'object',
+              properties: {
+                email: { type: 'string', description: 'Primary email address' }
+              }
+            }
+          }
+        },
+        tags: [
+          { name: 'Users', description: 'User management operations and profile access.' }
+        ]
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      expect(result.total).toBe(6);
+      expect(result.passed).toBe(6);
+    });
+
+    it('sub-check 5 (info.description) always applies even without schemas/tags', () => {
+      // info.description is always-applicable: every spec has info
+      const parsedSpec = makeParsedSpec({
+        info: { title: 'API', version: '1.0.0' },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'test',
+              summary: 'A test endpoint that returns sample data for validation purposes.'
+            }
+          }
+        },
+        components: { schemas: {} },
+        tags: []
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      // Sub-checks 1,2,3,5 counted (4 total). info.description missing = finding.
+      expect(result.total).toBe(4);
+      const finding = result.findings.find(f => f.id === 'API-ND-005');
+      expect(finding).toBeDefined();
+    });
+  });
+
+  describe('L-2: full-sentence grammar agreement at count=1 and count>=2', () => {
+    it('API-ND-001 at count=1: singular primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/sync': {
+            post: { operationId: 'syncData' }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-001');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(1);
+      // Primary: "1 operation has"
+      expect(finding.text).toContain('1 operation has');
+      // Secondary: "this endpoint does" (singular)
+      expect(finding.text).toContain('this endpoint does');
+      // Must NOT contain plural forms
+      expect(finding.text).not.toContain('these endpoints');
+      expect(finding.text).not.toContain('operations have');
+    });
+
+    it('API-ND-001 at count>=2: plural primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/sync': {
+            post: { operationId: 'syncData' }
+          },
+          '/refresh': {
+            post: { operationId: 'refreshData' }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-001');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(2);
+      // Primary: "2 operations have"
+      expect(finding.text).toContain('2 operations have');
+      // Secondary: "these endpoints do" (plural)
+      expect(finding.text).toContain('these endpoints do');
+      // Must NOT contain singular forms
+      expect(finding.text).not.toContain('1 operation has');
+      expect(finding.text).not.toContain('this endpoint does');
+    });
+
+    it('API-ND-002 at count=1: singular primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: { operationId: 'listUsers', summary: 'Gets users' }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-002');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(1);
+      // Primary: "1 operation has a description"
+      expect(finding.text).toContain('1 operation has a');
+      // Secondary: "this description" (singular noun, verb is "does not" on "An agent")
+      expect(finding.text).toContain('this description does not');
+      // Must NOT contain plural forms
+      expect(finding.text).not.toContain('operations have');
+      expect(finding.text).not.toContain('these descriptions');
+    });
+
+    it('API-ND-002 at count>=2: plural primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: { operationId: 'listUsers', summary: 'Gets users' }
+          },
+          '/orders': {
+            get: { operationId: 'listOrders', summary: 'Get orders' }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-002');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(2);
+      // Primary: "2 operations have"
+      expect(finding.text).toContain('2 operations have');
+      // Secondary: "these descriptions" (plural noun, verb is "does not" on "An agent")
+      expect(finding.text).toContain('these descriptions does not');
+      // Must NOT contain singular forms
+      expect(finding.text).not.toContain('1 operation has a');
+      expect(finding.text).not.toContain('this description');
+    });
+
+    it('API-ND-003 at count=1: singular primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: {
+              summary: 'List all users with optional filtering and pagination support.'
+            }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-003');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(1);
+      // Primary: "1 operation"
+      expect(finding.text).toContain('1 operation without');
+      // Secondary: "this endpoint" (singular)
+      expect(finding.text).toContain('this endpoint');
+      // Must NOT contain plural forms
+      expect(finding.text).not.toContain('operations without');
+      expect(finding.text).not.toContain('these endpoints');
+    });
+
+    it('API-ND-003 at count>=2: plural primary and secondary clause', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/users': {
+            get: {
+              summary: 'List all users with optional filtering and pagination support.'
+            }
+          },
+          '/orders': {
+            get: {
+              summary: 'List all orders with optional filtering and date range support.'
+            }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-003');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(2);
+      // Primary: "2 operations"
+      expect(finding.text).toContain('2 operations without');
+      // Secondary: "these endpoints" (plural)
+      expect(finding.text).toContain('these endpoints');
+      // Must NOT contain singular forms
+      expect(finding.text).not.toContain('1 operation without');
+      expect(finding.text).not.toContain('this endpoint');
+    });
+
+    it('API-ND-004 at count=1: singular secondary clause (field)', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/data': {
+            get: {
+              operationId: 'getData',
+              summary: 'Retrieve processed data records from the analytics pipeline.'
+            }
+          }
+        },
+        components: {
+          schemas: {
+            Record: {
+              type: 'object',
+              properties: {
+                xq: { type: 'string' }
+              }
+            }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-004');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(1);
+      // Primary: "1 schema has"
+      expect(finding.text).toContain('1 schema has');
+      // Secondary: "this field" (singular)
+      expect(finding.text).toContain('this field');
+      // Must NOT contain plural forms
+      expect(finding.text).not.toContain('schemas have');
+      expect(finding.text).not.toContain('these fields');
+    });
+
+    it('API-ND-004 at count>=2: plural secondary clause (fields)', () => {
+      const parsedSpec = makeParsedSpec({
+        paths: {
+          '/data': {
+            get: {
+              operationId: 'getData',
+              summary: 'Retrieve processed data records from the analytics pipeline.'
+            }
+          }
+        },
+        components: {
+          schemas: {
+            Record: {
+              type: 'object',
+              properties: {
+                xq: { type: 'string' },
+                rp: { type: 'number' },
+                zz: { type: 'string' }
+              }
+            }
+          }
+        }
+      });
+
+      const result = checkNamingDescriptions(parsedSpec);
+      const finding = result.findings.find(f => f.id === 'API-ND-004');
+      expect(finding).toBeDefined();
+      expect(finding.count).toBe(3);
+      // Primary: "1 schema has" (one schema with multiple unclear props)
+      expect(finding.text).toContain('1 schema has');
+      // Secondary: "these fields" (plural, count is total unclear props)
+      expect(finding.text).toContain('these fields');
+      // Must NOT contain singular field ref
+      expect(finding.text).not.toContain('this field');
+    });
+  });
 });

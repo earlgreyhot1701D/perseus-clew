@@ -5,15 +5,22 @@
  * - Big 0-100 score (Instrument Serif italic)
  * - Rating label from the response (badge with color by band)
  * - One agent narrative line (heroLine.text)
- * - Action buttons (stubs in Block 0)
+ * - Action buttons: View findings, Download card, Download report
  *
- * Rating label comes from score.rating in the response.
- * The 80/50 threshold logic lives only in scoring.js (backend).
- * This component renders what the backend computed.
+ * Block 1I wiring: buttons call onDownloadCard and onDownloadReport
+ * callbacks from the parent. Error states render inline via role="alert"
+ * and auto-clear after 5 seconds. Results are NEVER hidden by a
+ * card/report failure.
+ *
+ * Self-scan integrity: all controls are real <button> elements,
+ * keyboard-focusable, with accessible labels.
  *
  * Visual reference: mockups/agentislux-verdict-hero.html
  */
 
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
 import styles from './ResultHero.module.css';
 
 interface ResultHeroProps {
@@ -25,6 +32,8 @@ interface ResultHeroProps {
     text: string;
     source: 'ai' | 'template';
   };
+  onDownloadReport?: () => void;
+  onDownloadCard?: () => void;
 }
 
 function getRatingColor(rating: string): string {
@@ -45,10 +54,37 @@ function getRatingTextColor(rating: string): string {
   }
 }
 
-export default function ResultHero({ score, heroLine }: ResultHeroProps) {
+export default function ResultHero({ score, heroLine, onDownloadReport, onDownloadCard }: ResultHeroProps) {
   const fillWidth = `${score.total}%`;
   const ratingColor = getRatingColor(score.rating);
   const ratingTextColor = getRatingTextColor(score.rating);
+
+  const [error, setError] = useState<string | null>(null);
+
+  // Auto-clear error after 5 seconds
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(null), 5000);
+    return () => clearTimeout(timer);
+  }, [error]);
+
+  const handleDownloadReport = useCallback(() => {
+    if (!onDownloadReport) return;
+    try {
+      onDownloadReport();
+    } catch {
+      setError('Report download unavailable. Your results are still on screen.');
+    }
+  }, [onDownloadReport]);
+
+  const handleDownloadCard = useCallback(() => {
+    if (!onDownloadCard) return;
+    try {
+      onDownloadCard();
+    } catch {
+      setError('Card download unavailable. Your results are still on screen.');
+    }
+  }, [onDownloadCard]);
 
   return (
     <section className={styles.hero} aria-label="Scan result summary">
@@ -89,13 +125,36 @@ export default function ResultHero({ score, heroLine }: ResultHeroProps) {
             <button className={`${styles.btn} ${styles.btnPrimary}`} type="button">
               View findings
             </button>
-            <button className={`${styles.btn} ${styles.btnGhost}`} type="button">
-              Share result
+            <button
+              className={`${styles.btn} ${styles.btnGhost}`}
+              type="button"
+              onClick={handleDownloadCard}
+              aria-label="Download social card image"
+            >
+              Download card
             </button>
-            <button className={`${styles.btn} ${styles.btnGhost}`} type="button">
+            <button
+              className={`${styles.btn} ${styles.btnGhost}`}
+              type="button"
+              onClick={handleDownloadReport}
+              aria-label="Download HTML report"
+            >
               Download report
             </button>
           </div>
+          {error && (
+            <p className={styles.errorMessage} role="alert">
+              {error}
+              <button
+                className={styles.errorDismiss}
+                type="button"
+                onClick={() => setError(null)}
+                aria-label="Dismiss error message"
+              >
+                Dismiss
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </section>

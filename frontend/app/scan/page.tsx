@@ -17,6 +17,8 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import AppNav from '@/components/shell/AppNav';
 import ResultHero from '@/components/ResultHero';
+import { downloadReport } from '@/lib/report-export';
+import type { ReportData } from '@/lib/report-export';
 import styles from './page.module.css';
 
 type ViewState = 'input' | 'scanning' | 'results' | 'error';
@@ -147,6 +149,49 @@ function ScanFlow() {
     setReport(null);
     setScanError(null);
     setInputValue('');
+  }
+
+  // --- Download handlers (Block 1I wiring) ---
+
+  function handleDownloadReport() {
+    if (!report) return;
+    const data: ReportData = {
+      domain: report.meta.targetDomain,
+      score: report.scoredViews.rawHtml.score.total,
+      rating: report.scoredViews.rawHtml.score.rating,
+      heroText: report.scoredViews.rawHtml.heroLine.text,
+      heroSource: report.scoredViews.rawHtml.heroLine.source,
+      breakdown: report.scoredViews.rawHtml.score.breakdown,
+      findings: report.scoredViews.rawHtml.findings,
+      simulation: report.simulation,
+      scannedAt: report.meta.scannedAt,
+      methodologyVersion: report.meta.methodologyVersion,
+    };
+    downloadReport(data);
+  }
+
+  async function handleDownloadCard() {
+    if (!report) return;
+    const domain = report.meta.targetDomain;
+    const score = report.scoredViews.rawHtml.score.total;
+    const rating = report.scoredViews.rawHtml.score.rating;
+    const hero = report.scoredViews.rawHtml.heroLine.text;
+
+    const cardUrl = `/api/og?domain=${encodeURIComponent(domain)}&score=${score}&rating=${encodeURIComponent(rating)}&hero=${encodeURIComponent(hero)}`;
+
+    const response = await fetch(cardUrl);
+    if (!response.ok) {
+      throw new Error('Card download unavailable');
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `agentislux-card-${domain.replace(/[^a-z0-9.-]/gi, '_')}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -309,6 +354,8 @@ function ScanFlow() {
           <ResultHero
             score={report.scoredViews.rawHtml.score}
             heroLine={report.scoredViews.rawHtml.heroLine}
+            onDownloadReport={handleDownloadReport}
+            onDownloadCard={handleDownloadCard}
           />
 
           {/* Category breakdown */}

@@ -147,6 +147,32 @@
   background: rgba(241, 235, 220, 0.08);
 }
 
+.errorMessage {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ochre);
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.errorDismiss {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid rgba(241, 235, 220, 0.25);
+  border-radius: 2px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.errorDismiss:hover {
+  color: var(--cream);
+  border-color: rgba(241, 235, 220, 0.5);
+}
+
 /* Mobile: stack vertically */
 @media (max-width: 680px) {
   .heroGrid {

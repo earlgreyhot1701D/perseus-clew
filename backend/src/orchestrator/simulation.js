@@ -57,6 +57,9 @@ const TASKS = [
 const MAX_HTML_CHARS = 40_000; // ~10K tokens
 const MAX_FINDINGS_IN_PROMPT = 8;
 
+// Valid task IDs (module-level, derived from TASKS library)
+const VALID_TASK_IDS = new Set(TASKS.map(t => t.taskId));
+
 // --- System prompt (fixed, page content NEVER goes here) ---
 
 const SYSTEM_PROMPT = `You are an AI agent examining raw HTML to determine what actions you could take on a page. You do not have JavaScript execution or browser rendering. You see only the HTML structure and text content.
@@ -263,6 +266,9 @@ function validateTasks(tasks, validFindingIds) {
   for (const task of tasks) {
     if (!task || typeof task !== 'object') continue;
     if (!task.taskId || typeof task.taskId !== 'string') continue;
+
+    // Reject hallucinated task IDs (same discipline as linkedFindings validation)
+    if (!VALID_TASK_IDS.has(task.taskId)) continue;
 
     const outcome = task.outcome;
     if (!['success', 'partial', 'failure'].includes(outcome)) continue;

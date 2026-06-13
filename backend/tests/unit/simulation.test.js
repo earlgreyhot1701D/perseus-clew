@@ -308,6 +308,48 @@ describe('runSimulation', () => {
       expect(result.tasks).toHaveLength(1);
       expect(result.tasks[0].taskId).toBe('SIM-FE-CTA');
     });
+
+    it('drops tasks with hallucinated taskIds not in the library', async () => {
+      const responseWithFakeTaskId = JSON.stringify({
+        tasks: [
+          {
+            taskId: 'SIM-FE-CTA',
+            outcome: 'success',
+            narrative: 'Found a button.',
+            linkedFindings: [],
+            reasoning: 'Clear button element.'
+          },
+          {
+            taskId: 'SIM-FE-INVENTED',
+            outcome: 'failure',
+            narrative: 'Invented task.',
+            linkedFindings: [],
+            reasoning: 'This task does not exist in the library.'
+          },
+          {
+            taskId: 'TOTALLY-FAKE-999',
+            outcome: 'partial',
+            narrative: 'Another fake.',
+            linkedFindings: [],
+            reasoning: 'Also hallucinated.'
+          }
+        ]
+      });
+
+      invokeBedrock.mockResolvedValue({
+        text: responseWithFakeTaskId,
+        modelId: 'claude-haiku-4-5-20251001',
+        durationMs: 1000,
+        usage: { inputTokens: 5000, outputTokens: 300 }
+      });
+
+      const result = await runSimulation(SAMPLE_HTML, 72, 'Partially Ready', SAMPLE_FINDINGS, 'example.com');
+
+      // Only SIM-FE-CTA is a valid library task; the invented ones are dropped
+      expect(result.available).toBe(true);
+      expect(result.tasks).toHaveLength(1);
+      expect(result.tasks[0].taskId).toBe('SIM-FE-CTA');
+    });
   });
 
   describe('HTML summarization', () => {

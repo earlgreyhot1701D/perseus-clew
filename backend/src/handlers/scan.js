@@ -18,6 +18,7 @@ import { logger } from '../shared/logger.js';
 import { AppError } from '../shared/errors.js';
 import { runScan } from '../orchestrator/flow.js';
 import { generateHeroLine } from '../orchestrator/hero-line.js';
+import { runSimulation } from '../orchestrator/simulation.js';
 
 // --- URL normalization for cache key ---
 // v1: sort params, strip fragment, lowercase scheme+host, strip trailing slash.
@@ -191,14 +192,24 @@ export const handler = async (event) => {
     // --- Run deterministic scan ---
     const report = runScan(html, target, { preScanFindings });
 
-    // --- Generate hero line (Bedrock, fail-soft) ---
-    const heroLine = await generateHeroLine(
-      report.scoredViews.rawHtml.score.total,
-      report.scoredViews.rawHtml.score.rating,
-      report.scoredViews.rawHtml.findings,
-      domain
-    );
+    // --- Generate hero line + simulation (Bedrock, PARALLEL, fail-soft) ---
+    const [heroLine, simulation] = await Promise.all([
+      generateHeroLine(
+        report.scoredViews.rawHtml.score.total,
+        report.scoredViews.rawHtml.score.rating,
+        report.scoredViews.rawHtml.findings,
+        domain
+      ),
+      runSimulation(
+        html,
+        report.scoredViews.rawHtml.score.total,
+        report.scoredViews.rawHtml.score.rating,
+        report.scoredViews.rawHtml.findings,
+        domain
+      )
+    ]);
     report.scoredViews.rawHtml.heroLine = heroLine;
+    report.simulation = simulation;
 
     // --- Fill handler-owned meta (Confirmation A: UTC ISO for scannedAt) ---
     const now = new Date();

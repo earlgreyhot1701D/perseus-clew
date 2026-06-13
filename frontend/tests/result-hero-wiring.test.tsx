@@ -38,12 +38,12 @@ describe('ResultHero button wiring', () => {
       expect(onDownloadReport).toHaveBeenCalledTimes(1);
     });
 
-    it('shows error message when onDownloadReport throws', () => {
+    it('shows error message when onDownloadReport throws', async () => {
       const onDownloadReport = vi.fn(() => { throw new Error('Report download failed'); });
       render(<ResultHero {...defaultProps} onDownloadReport={onDownloadReport} />);
 
       const btn = screen.getByRole('button', { name: /download html report/i });
-      fireEvent.click(btn);
+      await act(async () => { fireEvent.click(btn); });
 
       const alert = screen.getByRole('alert');
       expect(alert.textContent).toContain('Report download unavailable');
@@ -73,12 +73,27 @@ describe('ResultHero button wiring', () => {
       expect(onDownloadCard).toHaveBeenCalledTimes(1);
     });
 
-    it('shows error message when onDownloadCard throws', () => {
-      const onDownloadCard = vi.fn(() => { throw new Error('Card download unavailable'); });
+    it('shows error message when onDownloadCard rejects (async)', async () => {
+      const onDownloadCard = vi.fn(async () => { throw new Error('network failure'); });
       render(<ResultHero {...defaultProps} onDownloadCard={onDownloadCard} />);
 
       const btn = screen.getByRole('button', { name: /download social card/i });
-      fireEvent.click(btn);
+      await act(async () => { fireEvent.click(btn); });
+
+      const alert = screen.getByRole('alert');
+      expect(alert.textContent).toContain('Card download unavailable');
+    });
+
+    it('shows error when fetch returns non-OK response (response.ok = false)', async () => {
+      // Simulates the real handleDownloadCard: fetch resolves but with ok:false
+      const onDownloadCard = vi.fn(async () => {
+        const response = { ok: false, status: 500 };
+        if (!response.ok) throw new Error('Card download unavailable');
+      });
+      render(<ResultHero {...defaultProps} onDownloadCard={onDownloadCard} />);
+
+      const btn = screen.getByRole('button', { name: /download social card/i });
+      await act(async () => { fireEvent.click(btn); });
 
       const alert = screen.getByRole('alert');
       expect(alert.textContent).toContain('Card download unavailable');

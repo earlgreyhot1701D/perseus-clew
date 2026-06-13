@@ -68,19 +68,19 @@ export default function ResultHero({ score, heroLine, onDownloadReport, onDownlo
     return () => clearTimeout(timer);
   }, [error]);
 
-  const handleDownloadReport = useCallback(() => {
+  const handleDownloadReport = useCallback(async () => {
     if (!onDownloadReport) return;
     try {
-      onDownloadReport();
+      await onDownloadReport();
     } catch {
       setError('Report download unavailable. Your results are still on screen.');
     }
   }, [onDownloadReport]);
 
-  const handleDownloadCard = useCallback(() => {
+  const handleDownloadCard = useCallback(async () => {
     if (!onDownloadCard) return;
     try {
-      onDownloadCard();
+      await onDownloadCard();
     } catch {
       setError('Card download unavailable. Your results are still on screen.');
     }

@@ -42,8 +42,12 @@ export async function GET(request: NextRequest) {
     const domain = (searchParams.get('domain') || 'unknown').slice(0, 100);
     const scoreRaw = searchParams.get('score') || '0';
     const score = Math.max(0, Math.min(100, parseInt(scoreRaw, 10) || 0));
-    const rating = (searchParams.get('rating') || 'Not Yet Readable').slice(0, 30);
     const heroText = (searchParams.get('hero') || '').slice(0, 200);
+
+    // Rating whitelist (L-OG-RATING-1): only locked labels pass through
+    const VALID_RATINGS = ['Agent-Ready', 'Partially Ready', 'Not Yet Readable'];
+    const ratingParam = searchParams.get('rating') || '';
+    const rating = VALID_RATINGS.includes(ratingParam) ? ratingParam : 'Not Yet Readable';
 
     // Load fonts
     const [instrumentSerifData, archivoBlackData, jetbrainsMonoData] = await Promise.all([
@@ -160,6 +164,9 @@ export async function GET(request: NextRequest) {
           { name: 'Archivo Black', data: archivoBlackData, style: 'normal' as const, weight: 400 as const },
           { name: 'JetBrains Mono', data: jetbrainsMonoData, style: 'normal' as const, weight: 400 as const },
         ],
+        headers: {
+          'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+        },
       }
     );
   } catch {

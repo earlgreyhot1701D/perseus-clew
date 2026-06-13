@@ -87,6 +87,12 @@ export function generateReportHtml(data: ReportData): string {
   const safeScannedAt = escapeHtml(scannedAt);
   const safeVersion = escapeHtml(methodologyVersion);
 
+  // Rating badge colors (same mapping as social card route)
+  const ratingBg = rating === 'Agent-Ready' ? '#1b6d74'
+    : rating === 'Partially Ready' ? '#d4a43c'
+    : '#a5370e';
+  const ratingTextColor = rating === 'Partially Ready' ? '#0f3d42' : '#f1ebdc';
+
   const categoryRows = Object.entries(breakdown).map(([key, val]) => {
     const name = CATEGORY_NAMES[key] || key;
     const note = val.note ? ` <em>(${escapeHtml(val.note)})</em>` : '';
@@ -158,7 +164,7 @@ export function generateReportHtml(data: ReportData): string {
   .hero { background: #0f3d42; color: #f1ebdc; padding: 32px; border-radius: 4px; margin-bottom: 32px; }
   .hero .score { font-size: 3.5rem; font-style: italic; }
   .hero .score-denom { font-size: 1.5rem; color: #8a9a9d; }
-  .hero .rating { display: inline-block; font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; background: #d4a43c; color: #0f3d42; margin-top: 8px; }
+  .hero .rating { display: inline-block; font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; margin-top: 8px; }
   .hero .narrative { font-style: italic; font-size: 1.2rem; margin-top: 16px; line-height: 1.4; }
   .hero .source { font-family: 'Courier New', monospace; font-size: 0.7rem; color: #8a9a9d; margin-top: 8px; }
   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
@@ -189,7 +195,7 @@ export function generateReportHtml(data: ReportData): string {
 
   <section class="hero" aria-label="Score summary">
     <div class="score">${score}<span class="score-denom">/100</span></div>
-    <div class="rating">${safeRating}</div>
+    <div class="rating" style="background:${ratingBg};color:${ratingTextColor}">${safeRating}</div>
     <p class="narrative">${safeHeroText}</p>
     <p class="source">${heroSource === 'ai' ? 'AI written' : 'Generated summary'}</p>
   </section>

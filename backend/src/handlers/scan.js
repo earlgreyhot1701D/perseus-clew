@@ -193,20 +193,23 @@ export const handler = async (event) => {
     const report = runScan(html, target, { preScanFindings });
 
     // --- Generate hero line + simulation (Bedrock, PARALLEL, fail-soft) ---
+    // 1J: individual wrapping ensures a rejection from either (future bug in
+    // top-level code before their internal catch) cannot kill the scan.
+    // The deterministic result is already computed; AI enrichment is additive.
     const [heroLine, simulation] = await Promise.all([
       generateHeroLine(
         report.scoredViews.rawHtml.score.total,
         report.scoredViews.rawHtml.score.rating,
         report.scoredViews.rawHtml.findings,
         domain
-      ),
+      ).catch(() => ({ text: '', source: 'template', model: null })),
       runSimulation(
         html,
         report.scoredViews.rawHtml.score.total,
         report.scoredViews.rawHtml.score.rating,
         report.scoredViews.rawHtml.findings,
         domain
-      )
+      ).catch(() => ({ available: false, reason: 'simulation-error' }))
     ]);
     report.scoredViews.rawHtml.heroLine = heroLine;
     report.simulation = simulation;

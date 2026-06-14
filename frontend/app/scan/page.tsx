@@ -135,8 +135,16 @@ function ScanFlow() {
         return;
       }
 
-      const data: ScanReport = await res.json();
-      setReport(data);
+      const data = await res.json();
+
+      // 1J: validate response shape before rendering (prevents white screen on unexpected API response)
+      if (!data?.scoredViews?.rawHtml?.score || !data?.scoredViews?.rawHtml?.heroLine || !data?.meta) {
+        setScanError({ error: 'INVALID_RESPONSE', message: 'The scan completed but returned an unexpected format.', status: 200 });
+        setViewState('error');
+        return;
+      }
+
+      setReport(data as ScanReport);
       setViewState('results');
     } catch {
       setScanError({ error: 'NETWORK_ERROR', message: 'Could not connect to the scan engine. Try again.', status: 0 });

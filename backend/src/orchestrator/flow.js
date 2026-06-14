@@ -49,14 +49,29 @@ export function runScan(html, targetUrl, options = {}) {
   }
 
   // 3. Run 6 checks (fixed order matching scoring category keys)
-  const checkResults = {
-    semantic_html: checkSemanticHtml(parsedHtml),
-    form_accessibility: checkFormAccessibility(parsedHtml),
-    aria: checkAria(parsedHtml),
-    structured_data: checkStructuredData(parsedHtml),
-    content_in_html: checkContentHtml(parsedHtml),
-    link_navigation: checkLinkNavigation(parsedHtml, { pageOrigin })
-  };
+  // Per-check isolation (1J): if any single check module throws,
+  // the scan continues with a degraded result for that category.
+  // Degraded shape: {passed:0, total:1, findings:[]} — NOT total:0,
+  // which the scorer treats as zero-instance (full credit). This ensures
+  // a crashed check earns ZERO for its category, not 100%.
+  const checkResults = {};
+  const checkModules = [
+    ['semantic_html', () => checkSemanticHtml(parsedHtml)],
+    ['form_accessibility', () => checkFormAccessibility(parsedHtml)],
+    ['aria', () => checkAria(parsedHtml)],
+    ['structured_data', () => checkStructuredData(parsedHtml)],
+    ['content_in_html', () => checkContentHtml(parsedHtml)],
+    ['link_navigation', () => checkLinkNavigation(parsedHtml, { pageOrigin })]
+  ];
+
+  for (const [key, runCheck] of checkModules) {
+    try {
+      checkResults[key] = runCheck();
+    } catch {
+      // Degraded: one applicable check, zero passed. Scorer gives 0 points.
+      checkResults[key] = { passed: 0, total: 1, findings: [] };
+    }
+  }
 
   // 4. Score (deterministic)
   const score = calculateScore(checkResults);
@@ -64,7 +79,8 @@ export function runScan(html, targetUrl, options = {}) {
   // 5. Sanitize finding text, escape finding examples (clone to avoid mutating check outputs)
   const sanitizedFindings = {};
   for (const [category, result] of Object.entries(checkResults)) {
-    sanitizedFindings[category] = result.findings.map(finding => {
+    const findings = result.findings || [];
+    sanitizedFindings[category] = findings.map(finding => {
       const cleaned = {
         id: finding.id,
         text: sanitize(finding.text),

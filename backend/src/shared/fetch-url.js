@@ -307,6 +307,11 @@ async function checkRobotsTxt(origin) {
  * Stream response body with a size limit. Aborts if body exceeds MAX_BODY_BYTES.
  */
 async function readBodyWithLimit(response) {
+  // 1J: guard against null/missing body (rare: 200 + text/html + empty response)
+  if (!response.body) {
+    throw new AppError('FETCH_NOT_HTML', 'The server returned an empty response.');
+  }
+
   const reader = response.body.getReader();
   const chunks = [];
   let totalBytes = 0;

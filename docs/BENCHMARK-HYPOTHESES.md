@@ -117,6 +117,18 @@ The one thing we won't do is manufacture variance that isn't there. If the data 
 
 ---
 
+## H7. The spec is on the doorstep of the wrong house (noted post-curation, not a blind prediction).
+
+We expect the gap between "has a good API spec" and "publishes it where an agent would look" to be near-universal among API-providing companies: strong specs, almost none discoverable at the company's own door, most parked in a GitHub org an agent would not find.
+
+**Honesty note:** unlike H1 through H6, this was not a blind call. We saw the pattern during candidate selection (every confirmed spec in our pool was GitHub-hosted), so we are recording it as an expectation we already have reason to hold, not a prediction made before contact with the data.
+
+**Confidence:** pretty sure, because we have already seen it in the sample, which is exactly why it carries the caveat above.
+
+**Wrong if:** a meaningful share of these companies turn out to expose their spec at a discoverable path on their own domain after all.
+
+---
+
 ## What would make us rewrite this file
 
 Nothing, after the timestamp. If a prediction is wrong, it stays here, wrong, next to the result. That is the point.

@@ -27,7 +27,7 @@
  */
 
 import { parseSpec } from '../shared/parse-spec.js';
-import { sanitize } from '../shared/sanitize.js';
+import { sanitize, escapeHtml } from '../shared/sanitize.js';
 import { checkNamingDescriptions } from '../checks/api/naming-descriptions.js';
 import { checkErrorDesign } from '../checks/api/error-design.js';
 import { checkDiscoverability } from '../checks/api/discoverability.js';
@@ -109,16 +109,21 @@ export async function runApiScan(specText, contentType) {
   // 4. Score (deterministic)
   const score = calculateApiScore(checkResults);
 
-  // 5. Sanitize finding text
+  // 5. Sanitize finding text + escape examples (mirrors flow.js)
   const sanitizedFindings = {};
   for (const [category, result] of Object.entries(checkResults)) {
     const findings = result.findings || [];
-    sanitizedFindings[category] = findings.map(finding => ({
-      id: finding.id,
-      text: sanitize(finding.text),
-      count: finding.count,
-      ...(finding.examples ? { examples: finding.examples } : {})
-    }));
+    sanitizedFindings[category] = findings.map(finding => {
+      const cleaned = {
+        id: finding.id,
+        text: sanitize(finding.text),
+        count: finding.count
+      };
+      if (finding.examples) {
+        cleaned.examples = finding.examples.map(ex => escapeHtml(ex));
+      }
+      return cleaned;
+    });
   }
 
   // 6. Assemble report

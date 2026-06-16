@@ -10,7 +10,8 @@
     "lint": "eslint src/",
     "build": "cp -r src dist",
     "dev": "node scripts/local-server.js",
-    "init:local": "node scripts/init-local-db.js"
+    "init:local": "node scripts/init-local-db.js",
+    "benchmark": "node scripts/run-benchmark.js"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

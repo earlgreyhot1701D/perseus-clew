@@ -12,7 +12,7 @@
  * Real TTL expiry is verified in AWS only.
  */
 
-import { DynamoDBClient, CreateTableCommand, UpdateTimeToLiveCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, CreateTableCommand, UpdateTimeToLiveCommand, UpdateTableCommand } from '@aws-sdk/client-dynamodb';
 
 const client = new DynamoDBClient({
   region: 'us-east-1',
@@ -64,6 +64,31 @@ async function main() {
     BillingMode: 'PAY_PER_REQUEST'
   });
   await enableTtl('PerseusClew-ScanCache', 'ttl');
+
+  // BenchmarkScans (no TTL, retained, benchmark dataset)
+  await createTable({
+    TableName: 'PerseusClew-BenchmarkScans',
+    KeySchema: [
+      { AttributeName: 'siteId', KeyType: 'HASH' },
+      { AttributeName: 'scanTimestamp', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+      { AttributeName: 'siteId', AttributeType: 'S' },
+      { AttributeName: 'scanTimestamp', AttributeType: 'S' },
+      { AttributeName: 'vertical', AttributeType: 'S' }
+    ],
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: 'vertical-timestamp-index',
+        KeySchema: [
+          { AttributeName: 'vertical', KeyType: 'HASH' },
+          { AttributeName: 'scanTimestamp', KeyType: 'RANGE' }
+        ],
+        Projection: { ProjectionType: 'ALL' }
+      }
+    ],
+    BillingMode: 'PAY_PER_REQUEST'
+  });
 
   console.log('Local DynamoDB tables ready.');
 }

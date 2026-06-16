@@ -23,8 +23,8 @@ import { runSimulation } from '../orchestrator/simulation.js';
 import { logger } from '../shared/logger.js';
 import { writeBenchmarkResult } from './benchmark-store.js';
 
-const CONCURRENCY = 3;
-const INTER_BATCH_DELAY_MS = 2000;
+const CONCURRENCY = parseInt(process.env.BENCHMARK_CONCURRENCY, 10) || 3;
+const INTER_BATCH_DELAY_MS = parseInt(process.env.BENCHMARK_DELAY_MS, 10) || 2000;
 const METHODOLOGY_VERSION = '1.1.1';
 
 // Injected sleep for testability
@@ -75,15 +75,38 @@ async function runDoorScan(site, batchRunId) {
         report.scoredViews.rawHtml.score.rating,
         report.scoredViews.rawHtml.findings,
         domain
-      ).catch(() => ({ text: '', source: 'template', model: null })),
+      ).catch((err) => {
+        logger.warn('Benchmark hero-line fallback', {
+          siteId: site.siteId,
+          domain,
+          reason: err?.code || err?.message || 'unknown'
+        });
+        return { text: '', source: 'template', model: null, _fallback: true };
+      }),
       runSimulation(
         html,
         report.scoredViews.rawHtml.score.total,
         report.scoredViews.rawHtml.score.rating,
         report.scoredViews.rawHtml.findings,
         domain
-      ).catch(() => ({ available: false, reason: 'simulation-error' }))
+      ).catch((err) => {
+        logger.warn('Benchmark simulation fallback', {
+          siteId: site.siteId,
+          domain,
+          reason: err?.code || err?.message || 'unknown'
+        });
+        return { available: false, reason: 'simulation-error', _fallback: true };
+      })
     ]);
+
+    // Count Bedrock fallbacks for the run summary
+    let bedrockFallbacks = 0;
+    if (heroLine._fallback) bedrockFallbacks++;
+    if (simulation._fallback) bedrockFallbacks++;
+
+    // Strip internal _fallback marker before persisting
+    const { _fallback: _hf, ...cleanHeroLine } = heroLine; // eslint-disable-line no-unused-vars
+    const { _fallback: _sf, ...cleanSimulation } = simulation; // eslint-disable-line no-unused-vars
 
     const durationMs = Date.now() - startTime;
 
@@ -102,8 +125,8 @@ async function runDoorScan(site, batchRunId) {
       findings: report.scoredViews.rawHtml.findings,
       findingsCount: Object.values(report.scoredViews.rawHtml.findings)
         .reduce((sum, arr) => sum + arr.length, 0),
-      heroLine,
-      simulation,
+      heroLine: cleanHeroLine,
+      simulation: cleanSimulation,
       apiScore: null,
       apiRating: null,
       apiBreakdown: null,
@@ -111,7 +134,8 @@ async function runDoorScan(site, batchRunId) {
       apiError: null,
       durationMs,
       methodologyVersion: METHODOLOGY_VERSION,
-      batchRunId
+      batchRunId,
+      _bedrockFallbacks: bedrockFallbacks
     };
   } catch (err) {
     const durationMs = Date.now() - startTime;
@@ -190,6 +214,7 @@ async function runReferenceScan(site, batchRunId) {
         findingsCount: null,
         heroLine: null,
         simulation: null,
+        specMeta: null,
         apiScore: null,
         apiRating: null,
         apiBreakdown: null,
@@ -200,6 +225,13 @@ async function runReferenceScan(site, batchRunId) {
         batchRunId
       };
     }
+
+    // Extract spec metadata for the reference row
+    const specMeta = {
+      endpointCount: result.meta.endpointCount,
+      specTitle: result.meta.specTitle || null,
+      specVersion: result.meta.specVersion || null
+    };
 
     // Shape 2: Not Evaluable (empty spec, 0 endpoints)
     if (result.scoredViews.api.score.total === null) {
@@ -219,6 +251,7 @@ async function runReferenceScan(site, batchRunId) {
         findingsCount: null,
         heroLine: null,
         simulation: null,
+        specMeta,
         apiScore: null,
         apiRating: 'Not Evaluable',
         apiBreakdown: {},
@@ -247,6 +280,7 @@ async function runReferenceScan(site, batchRunId) {
       findingsCount: null,
       heroLine: null,
       simulation: null,
+      specMeta,
       apiScore: result.scoredViews.api.score.total,
       apiRating: result.scoredViews.api.score.rating,
       apiBreakdown: result.scoredViews.api.score.breakdown,
@@ -281,6 +315,7 @@ async function runReferenceScan(site, batchRunId) {
       findingsCount: null,
       heroLine: null,
       simulation: null,
+      specMeta: null,
       apiScore: null,
       apiRating: null,
       apiBreakdown: null,
@@ -316,7 +351,7 @@ export async function runBenchmark(options = {}) {
     subset: options.siteIds ? options.siteIds.length : null
   });
 
-  const summary = { totalSites: sites.length, completed: 0, failed: 0, notEvaluable: 0 };
+  const summary = { totalSites: sites.length, completed: 0, failed: 0, notEvaluable: 0, bedrockFallbacks: 0 };
 
   // Process in batches of CONCURRENCY
   for (let i = 0; i < sites.length; i += CONCURRENCY) {
@@ -325,6 +360,13 @@ export async function runBenchmark(options = {}) {
     const batchPromises = batch.map(async (site) => {
       // Door scan (all sites)
       const doorResult = await runDoorScan(site, batchRunId);
+
+      // Accumulate fallback count, then strip before persisting
+      if (doorResult._bedrockFallbacks) {
+        summary.bedrockFallbacks += doorResult._bedrockFallbacks;
+      }
+      delete doorResult._bedrockFallbacks;
+
       await writeBenchmarkResult(doorResult);
 
       if (doorResult.status === 'success') {

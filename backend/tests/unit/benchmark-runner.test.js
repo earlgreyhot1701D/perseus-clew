@@ -248,6 +248,18 @@ describe('Benchmark runner', () => {
       expect(refResult.apiError).toBeNull();
     });
 
+    it('reference row includes specMeta (endpointCount, specTitle, specVersion)', async () => {
+      runApiScan.mockResolvedValue(makeApiResultNormal(85, 'Agent-Ready'));
+      await runBenchmark({ siteIds: ['stripe'] });
+
+      const refResult = writeBenchmarkResult.mock.calls[1][0];
+      expect(refResult.specMeta).toEqual({
+        endpointCount: 42,
+        specTitle: null,
+        specVersion: null
+      });
+    });
+
     it('persists Not Evaluable correctly (not as zero or 100)', async () => {
       runApiScan.mockResolvedValue(makeApiResultNotEvaluable());
       await runBenchmark({ siteIds: ['stripe'] });
@@ -325,9 +337,36 @@ describe('Benchmark runner', () => {
       // Simulation falls back to unavailable
       expect(result.simulation).toEqual({ available: false, reason: 'simulation-error' });
     });
+
+    it('fallback counter is included in summary', async () => {
+      generateHeroLine.mockRejectedValue(new Error('throttled'));
+      runSimulation.mockRejectedValue(new Error('throttled'));
+
+      const summary = await runBenchmark({ siteIds: ['dan-luu', 'julia-evans'] });
+
+      // 2 sites x 2 Bedrock calls each = 4 fallbacks
+      expect(summary.bedrockFallbacks).toBe(4);
+    });
+
+    it('fallback marker is not persisted to DynamoDB', async () => {
+      generateHeroLine.mockRejectedValue(new Error('throttled'));
+
+      await runBenchmark({ siteIds: ['dan-luu'] });
+      const result = writeBenchmarkResult.mock.calls[0][0];
+
+      expect(result._bedrockFallbacks).toBeUndefined();
+    });
   });
 
   describe('Pacing', () => {
+    it('defaults to concurrency 3 and 2000ms delay when env vars unset', async () => {
+      // Env vars are not set in test environment, so defaults apply.
+      // The concurrency test below verifies max 3 concurrent.
+      // This test confirms the summary works with defaults (no crash from NaN).
+      const summary = await runBenchmark({ siteIds: ['dan-luu'] });
+      expect(summary.completed).toBe(1);
+    });
+
     it('processes sites in batches of 3 (no more than 3 concurrent)', async () => {
       let maxConcurrent = 0;
       let currentConcurrent = 0;
@@ -415,6 +454,7 @@ describe('Benchmark runner', () => {
       expect(summary.completed).toBe(1);  // stripe door
       expect(summary.failed).toBe(1);     // dan-luu door
       expect(summary.notEvaluable).toBe(1); // stripe reference
+      expect(summary.bedrockFallbacks).toBe(0); // no Bedrock failures in this test
     });
   });
 });

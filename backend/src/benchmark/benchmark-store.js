@@ -18,7 +18,10 @@ const dynamoConfig = process.env.DYNAMODB_ENDPOINT
   ? { region: 'us-east-1', endpoint: process.env.DYNAMODB_ENDPOINT, credentials: { accessKeyId: 'local', secretAccessKey: 'local' } }
   : { region: process.env.AWS_REGION || 'us-east-1' };
 
-const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoConfig));
+const ddbClient = DynamoDBDocumentClient.from(
+  new DynamoDBClient(dynamoConfig),
+  { marshallOptions: { removeUndefinedValues: true } }
+);
 
 const BENCHMARK_TABLE = process.env.DYNAMODB_BENCHMARK_TABLE || 'PerseusClew-BenchmarkScans';
 

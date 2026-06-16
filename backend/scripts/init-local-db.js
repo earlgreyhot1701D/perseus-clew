@@ -12,7 +12,7 @@
  * Real TTL expiry is verified in AWS only.
  */
 
-import { DynamoDBClient, CreateTableCommand, UpdateTimeToLiveCommand, UpdateTableCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, CreateTableCommand, UpdateTimeToLiveCommand } from '@aws-sdk/client-dynamodb';
 
 const client = new DynamoDBClient({
   region: 'us-east-1',

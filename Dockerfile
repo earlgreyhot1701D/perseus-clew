@@ -17,7 +17,7 @@ RUN cp -r src dist
 # Stage 3: Lambda runtime
 FROM public.ecr.aws/lambda/nodejs:20
 WORKDIR /var/task
-COPY --from=deps /var/task/package.json ./package.json
+COPY --from=deps /var/task/backend/package.json ./package.json
 COPY --from=deps /var/task/node_modules ./node_modules
 COPY --from=build /var/task/dist ./dist
 CMD ["dist/handlers/index.handler"]

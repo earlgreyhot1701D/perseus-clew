@@ -1,100 +1,139 @@
-# Perseus Clew Starter Kit
+# Agentis Lux
 
-> Drop-in starter package for the Agentis Lux / Perseus Clew project.
-> Everything you need to start Phase 0, in the right folder structure.
+**See what AI agents experience on your site.**
+For your second audience.
+
+Engine: Perseus Clew, part of the Clew suite. Public name: Agentis Lux. Domain: agentislux.io.
+
+> ### Status: pre-production
+> The scan engine is built, tested, and merged, with CI green. It has not been deployed yet, and it has not run against live sites. This repo is open to read, not yet to use. The benchmark predictions are pre-registered in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md), committed before any scan runs. The results will follow.
 
 ## What this is
 
-This is a starter kit that you unzip into an empty directory (or an already-initialized git repo). It contains:
+The web has a second audience now. AI agents fetch pages, read content, fill out forms, and call APIs, and most products were built and tested for people, not for them. Agents are a different audience with different needs, and most of them don't run JavaScript, so they often see far less of a page than a person does.
 
-- All spec documents (`/docs`)
-- Visual design mockups (`/mockups`)
-- Kiro steering file and five enforcement hooks (`/.kiro`)
-- Phase 0 kickoff checklist (root)
-- This README, a NOTICE file, and a .gitignore
+Agentis Lux scans a site and surfaces what an agent experiences when it tries to use it. It reports findings from the agent's point of view, like "an agent landing on this page can't tell which element starts checkout, because it's a styled div and not a button." It describes what the agent can and can't do. It does not suggest fixes, because fixes assume knowledge of your codebase. Awareness, not judgment.
 
-It does NOT contain:
+Built for the H0 Hackathon, B2B track.
 
-- Source code (that's what you build in Phase 1)
-- Node modules, Docker images, or AWS resources
-- GitHub repo configuration (that's done via `gh` CLI in the kickoff checklist)
+## What works today, and what's pending
 
-## Quick start
+Built and merged:
 
-1. **Unzip into your projects directory.** The archive extracts as a folder called `perseus-clew`.
+- Six frontend checks (semantic HTML, form accessibility, ARIA, structured data, content in HTML, link and navigation), all implemented with cheerio.
+- Six API checks (naming and descriptions, error design, discoverability, response efficiency, reliability patterns, agent integration), derived in part from Emmanuel Paraskakis's API checklist. See NOTICE.
+- Two scoring modules computing weighted scores, with ratings of Agent-Ready, Partially Ready, or Not Yet Readable.
+- An agent-simulation layer that calls AWS Bedrock (Claude Haiku) for a plain-language verdict, fail-soft if Bedrock is unavailable.
+- A benchmark batch engine that scans 50 curated sites, ten per vertical, and writes results to DynamoDB.
+- Full CI: lint, type-check, and the test suites run on every push and pull request.
 
-2. **Initialize git if you haven't already:**
-   ```bash
-   cd perseus-clew
-   git init
-   git add .
-   git commit -m "chore: initial starter kit"
-   ```
+Pending:
 
-3. **Verify Kiro picks up the steering file and hooks:**
-   ```bash
-   kiro doctor
-   ```
-   Expected: one steering file loaded, five hooks registered.
+- Deployment. The engine has not been deployed, so there is no live scan yet.
+- Input types. The public scan reads a URL today. Repo scanning and spec upload are stubbed and return "not yet available."
+- The first 50-site benchmark run. The predictions are committed. The scan has not run.
 
-4. **Read PHASE-0-KICKOFF-CHECKLIST.md** in this directory. Work through it top to bottom.
+## The bet
 
-5. **When Phase 0 is complete**, declare Block 0 to Kiro and start Phase 1.
+Before the engine scans anything, I wrote down what I expect it to find across the 50 sites, and committed it with a timestamp. Predictions first, data later. Read them in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md). The site list and the selection rationale are in [docs/BENCHMARK-SITES.md](docs/BENCHMARK-SITES.md).
 
-## Folder structure
+## Architecture
+
+Two ideas run through the whole build. The structure is deterministic, so the same input gives the same score every time. The flavor is AI, used only where judgment helps. The checks and the scoring are pattern matching, no model involved. Bedrock writes the one-line verdict and runs the agent simulation on top of that.
+
+Stack:
+
+- **Backend:** Node ESM Lambda source. Six frontend checks, six API checks, two scoring modules, two scan flows (one for frontend HTML, one for API specs), a scan handler, the simulation layer, and the benchmark engine.
+- **Frontend:** Next.js (App Router) with an `/api/scan` proxy route.
+- **Infra:** AWS CDK in TypeScript, four stacks (base, data, compute, monitoring).
+- **Containers:** Docker. The Lambdas run as container images, and the stack runs locally with Docker Compose.
+
+AWS services defined in the CDK stack:
+
+- **Lambda** (Docker image): the scan function, and a monthly benchmark-refresh function.
+- **API Gateway** (HTTP API): `POST /scan` and `GET /health`, CORS locked to agentislux.io.
+- **Bedrock:** Claude Haiku, called by the scan Lambda for the verdict and the simulation.
+- **DynamoDB:** five tables, for benchmark scans, scan counters, ephemeral results, a short-lived URL cache, and users.
+- **EventBridge:** a monthly rule to refresh the benchmark dataset.
+- **CloudWatch and SNS:** alarms on scan error rate and duration, wired to an alert topic.
+
+Everything above is defined in the stack and verified by a type-checking build in CI. None of it is deployed yet.
+
+## Project structure
 
 ```
 perseus-clew/
-├── README.md                          This file
-├── PHASE-0-KICKOFF-CHECKLIST.md       Day 1 of building. Start here.
-├── NOTICE                             Attribution for Paraskakis, Clew suite
-├── .gitignore                         Standard Node + AWS patterns
-├── docs/                              All source-of-truth documents
-│   ├── PERSEUS-CLEW-PRODUCT-REVIEW.md
-│   ├── PERSEUS-CLEW-PROJECT-CHECKLIST.md
-│   ├── BUILD-PRINCIPLES.md
-│   ├── SCORING.md
+├── backend/                  Node ESM Lambda source
+│   ├── src/
+│   │   ├── checks/           the six frontend checks and six API checks
+│   │   ├── scoring/          weighted scoring
+│   │   ├── orchestrator/     scan flows and the agent simulation
+│   │   ├── handlers/         Lambda entry points (scan, refresh)
+│   │   ├── benchmark/        the 50-site batch engine and site list
+│   │   ├── shared/           fetch, parse, sanitize, Bedrock client
+│   │   └── simulation/
+│   ├── scripts/              local DB init, local server, run-benchmark CLI
+│   └── tests/                Vitest suites (unit, integration, fixtures)
+├── frontend/                 Next.js App Router app
+│   ├── app/                  routes, including the /api/scan proxy and /scan
+│   ├── components/           landing, shell, common, ResultHero
+│   ├── lib/                  report export
+│   ├── styles/               tokens and globals
+│   └── tests/                Vitest suites
+├── infra/                    AWS CDK (TypeScript)
+│   ├── bin/app.ts
+│   └── lib/                  base, data, compute, monitoring stacks
+├── docs/                     source-of-truth specs and methodology
 │   ├── ARCHITECTURE.md
-│   ├── BACKEND-SHARED.md
+│   ├── SCORING.md
 │   ├── BACKEND-FRONTEND-CHECKS.md
 │   ├── BACKEND-API-CHECKS.md
+│   ├── BACKEND-SHARED.md
 │   ├── FRONTEND-SPEC.md
-│   ├── BUILD-PLAN.md
-│   └── BuildAIReadyProductsAPIChecklist.pdf   Paraskakis reference
-├── mockups/                           Locked visual design
-│   ├── agentislux-landing.html
-│   └── agentislux-app.html
-└── .kiro/                             Kiro configuration
-    ├── steering/
-    │   └── agentislux.md              Loaded automatically on every prompt
-    └── hooks/
-        ├── scope-guard.md
-        ├── qa-checkpoint.md
-        ├── security-scan.md
-        ├── voice-check.md
-        └── single-responsibility.md
+│   ├── BENCHMARK-HYPOTHESES.md      the pre-registered predictions
+│   ├── BENCHMARK-SITES.md           the 50 sites and selection rationale
+│   └── benchmark-candidate-pool.md
+├── mockups/                  locked visual design (landing, app, verdict hero)
+├── .kiro/                    steering file and enforcement hooks
+├── .github/workflows/        ci.yml, deploy-aws.yml, self-scan.yml
+├── Dockerfile, Dockerfile.dev, docker-compose.yml
+├── NOTICE                    attribution for Paraskakis and the Clew suite
+└── README.md
 ```
 
-## What's coming next (once you start Phase 1)
+## Running it locally
 
-The kickoff checklist will have you scaffold these additional directories:
+This is the honest way to see the engine work today, since there is no hosted scan. The test suites exercise every check against fixtures.
 
-- `/infra` (AWS CDK TypeScript)
-- `/backend` (Lambda source)
-- `/frontend` (React app)
-- `/.github/workflows` (CI)
+```
+nvm use            # Node version from .nvmrc
+npm ci             # install
+npm test           # run the Vitest suites
+```
 
-Those are Phase 0 work. This starter kit gives you the foundation to do that work against.
+Docker Compose runs the stack locally for development:
 
-## Project names
+```
+docker compose up
+```
 
-- **Agentis Lux** is the public product name. agentislux.io is the domain.
-- **Perseus Clew** is the internal engine name. Part of the Clew suite.
-- Both names are active. Use Agentis Lux for user-facing strings. Use Perseus Clew for engineering artifacts.
+There is no "paste your URL" box yet. The scan runs in the tests today, and behind the API once it's deployed.
+
+## Methodology and docs
+
+The scoring methodology is published and versioned, so anyone can audit it.
+
+- [docs/SCORING.md](docs/SCORING.md): categories, weights, and what each check looks for.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system design.
+- [docs/BACKEND-FRONTEND-CHECKS.md](docs/BACKEND-FRONTEND-CHECKS.md) and [docs/BACKEND-API-CHECKS.md](docs/BACKEND-API-CHECKS.md): the check definitions.
+- [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md): the pre-registered predictions.
+- [docs/BENCHMARK-SITES.md](docs/BENCHMARK-SITES.md): the 50 sites and why each one is in.
+
+The API checks draw in part on the "Build AI-Ready Products" API checklist by Emmanuel Paraskakis, credited in NOTICE.
 
 ## License
 
-Apache 2.0 (add LICENSE file after `git init`; the kickoff checklist has the step).
+Apache 2.0. Use it, change it, share it, say where it came from. See LICENSE.
 
 ---
 

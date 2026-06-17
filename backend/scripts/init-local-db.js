@@ -65,6 +65,31 @@ async function main() {
   });
   await enableTtl('PerseusClew-ScanCache', 'ttl');
 
+  // BenchmarkScans (no TTL, retained, benchmark dataset)
+  await createTable({
+    TableName: 'PerseusClew-BenchmarkScans',
+    KeySchema: [
+      { AttributeName: 'siteId', KeyType: 'HASH' },
+      { AttributeName: 'scanTimestamp', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+      { AttributeName: 'siteId', AttributeType: 'S' },
+      { AttributeName: 'scanTimestamp', AttributeType: 'S' },
+      { AttributeName: 'vertical', AttributeType: 'S' }
+    ],
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: 'vertical-timestamp-index',
+        KeySchema: [
+          { AttributeName: 'vertical', KeyType: 'HASH' },
+          { AttributeName: 'scanTimestamp', KeyType: 'RANGE' }
+        ],
+        Projection: { ProjectionType: 'ALL' }
+      }
+    ],
+    BillingMode: 'PAY_PER_REQUEST'
+  });
+
   console.log('Local DynamoDB tables ready.');
 }
 

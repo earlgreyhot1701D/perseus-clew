@@ -200,9 +200,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'empty-response' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'empty-response', attempt: 1 })
       );
     });
 
@@ -215,9 +216,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'too-long' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'too-long', attempt: 1 })
       );
     });
 
@@ -230,9 +232,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'multi-line-response' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'multi-line-response', attempt: 1 })
       );
     });
 
@@ -245,9 +248,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'markdown-in-response' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'markdown-in-response', attempt: 1 })
       );
     });
 
@@ -260,9 +264,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'voice-violation' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'voice-violation', attempt: 1 })
       );
     });
 
@@ -275,9 +280,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'voice-violation-em-dash' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'voice-violation-em-dash', attempt: 1 })
       );
     });
 
@@ -290,9 +296,10 @@ describe('generateHeroLine', () => {
       const result = await generateHeroLine(65, 'Partially Ready', sampleFindings, 'example.com');
 
       expect(result.source).toBe('template');
+      expect(invokeBedrock).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
-        'Hero line fallback to template',
-        expect.objectContaining({ reason: 'voice-violation' })
+        'Hero line validation failed',
+        expect.objectContaining({ reason: 'voice-violation', attempt: 1 })
       );
     });
   });

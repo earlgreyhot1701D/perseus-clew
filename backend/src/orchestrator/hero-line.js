@@ -53,7 +53,7 @@ const SYSTEM_PROMPT = `You write one-sentence summaries for Agentis Lux, an agen
 
 HARD CONSTRAINTS (violating any one makes your output unusable):
 1. EXACTLY one sentence. No line breaks.
-2. MAXIMUM 160 characters total. Count carefully. Shorter is fine.
+2. MAXIMUM 120 characters total. Count carefully. Shorter is better.
 3. No em dashes. Use commas or periods only.
 4. No markdown, no quotes, no labels. Output the bare sentence only.
 
@@ -61,11 +61,11 @@ CONTENT:
 - Describe what a web agent CAN and CANNOT do on this page.
 - Present tense. Lead with what works, then what does not.
 - Name the domain once, at the start: "An agent visiting {domain}..."
-- Pick ONE or TWO observations, not an exhaustive list.
+- Pick ONE key observation only. Be concise.
 
 BANNED WORDS (never use): ${ALL_BANNED_WORDS.join(', ')}.
 
-EXAMPLE (130 chars): "An agent visiting example.com can read article text and follow nav links, but cannot identify the search input by its label."`;
+EXAMPLE (115 chars): "An agent visiting example.com can read text and follow links, but cannot identify form inputs by label."`;
 
 // --- Deterministic templates ---
 
@@ -87,32 +87,33 @@ const TEMPLATES = {
 export async function generateHeroLine(score, rating, findings, domain) {
   try {
     const userPrompt = buildUserPrompt(score, rating, findings, domain);
-    const result = await invokeBedrock(SYSTEM_PROMPT, userPrompt, {
-      maxTokens: 100,
-      temperature: 0.4
-    });
 
-    // Strip wrapping quotes and whitespace (Amendment 3)
-    const cleaned = stripWrappingQuotes(result.text.trim());
+    // Attempt up to 2 tries (original + one retry). Fail-soft to template.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const result = await invokeBedrock(SYSTEM_PROMPT, userPrompt, {
+        maxTokens: 100,
+        temperature: attempt === 0 ? 0.4 : 0.2
+      });
 
-    // Validate the response (Amendment 2/4)
-    const validationFailure = validateResponse(cleaned);
-    if (validationFailure) {
-      logger.warn('Hero line fallback to template', {
+      const cleaned = stripWrappingQuotes(result.text.trim());
+      const validationFailure = validateResponse(cleaned);
+
+      if (!validationFailure) {
+        return { text: cleaned, source: 'ai', model: result.modelId };
+      }
+
+      // Log and retry once, or fall back after second attempt
+      logger.warn('Hero line validation failed', {
         reason: validationFailure,
+        attempt: attempt + 1,
         domain,
         score,
         rating,
         rawResponse: cleaned.slice(0, 200)
       });
-      return buildTemplateResult(rating, domain);
     }
 
-    return {
-      text: cleaned,
-      source: 'ai',
-      model: result.modelId
-    };
+    return buildTemplateResult(rating, domain);
   } catch (error) {
     // Map error code to reason
     const reason = (error && error.code && ERROR_CODE_TO_REASON[error.code])

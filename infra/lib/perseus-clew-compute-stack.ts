@@ -41,6 +41,7 @@ export class PerseusClewComputeStack extends cdk.Stack {
         DYNAMODB_BENCHMARK_TABLE: dataStack.benchmarkTable.tableName,
         DYNAMODB_COUNTERS_TABLE: dataStack.scanCountersTable.tableName,
         PERSEUS_USER_AGENT: 'Agentis Lux/0.1 (+https://agentislux.io/about-scanner)',
+        BEDROCK_MODEL_ID: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
         LOG_LEVEL: 'info'
       },
       description: 'Perseus Clew scan engine: fetch, parse, check, score, respond'
@@ -55,7 +56,10 @@ export class PerseusClewComputeStack extends cdk.Stack {
     // Grant Bedrock InvokeModel (hero-line + Layer 2 simulation)
     this.scanLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['bedrock:InvokeModel'],
-      resources: ['arn:aws:bedrock:us-east-1::foundation-model/claude-haiku-4-5-20251001']
+      resources: [
+        'arn:aws:bedrock:*:831889733571:inference-profile/us.anthropic.claude-haiku-4-5-*',
+        'arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-*'
+      ]
     }));
 
     // HTTP API (API Gateway v2)
@@ -97,6 +101,7 @@ export class PerseusClewComputeStack extends cdk.Stack {
         NODE_ENV: 'production',
         DYNAMODB_BENCHMARK_TABLE: dataStack.benchmarkTable.tableName,
         PERSEUS_USER_AGENT: 'Agentis Lux/0.1 (+https://agentislux.io/about-scanner)',
+        BEDROCK_MODEL_ID: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
         LOG_LEVEL: 'info'
       },
       description: 'Perseus Clew benchmark refresh: monthly rescan of 50 sites'
@@ -107,7 +112,10 @@ export class PerseusClewComputeStack extends cdk.Stack {
     // Grant Bedrock InvokeModel (hero-line + simulation per benchmark site)
     refreshLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['bedrock:InvokeModel'],
-      resources: ['arn:aws:bedrock:us-east-1::foundation-model/claude-haiku-4-5-20251001']
+      resources: [
+        'arn:aws:bedrock:*:831889733571:inference-profile/us.anthropic.claude-haiku-4-5-*',
+        'arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-*'
+      ]
     }));
 
     // EventBridge rule: monthly refresh (1st of month, 6am UTC)

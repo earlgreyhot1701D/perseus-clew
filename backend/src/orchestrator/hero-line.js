@@ -49,19 +49,23 @@ const ERROR_CODE_TO_REASON = {
 
 // --- System prompt ---
 
-const SYSTEM_PROMPT = `You are a concise technical writer for an agent-readiness scanner called Agentis Lux. Your task is to write ONE sentence (max 180 characters) summarizing what a web agent experiences when visiting a scanned page.
+const SYSTEM_PROMPT = `You write one-sentence summaries for Agentis Lux, an agent-readiness scanner.
 
-Rules:
-- Describe what the agent CAN and CANNOT do on this page.
-- Use present tense.
-- Lead with what works, then what does not (if anything).
-- NEVER use judgment words: ${BANNED_JUDGMENT.join(', ')}.
-- NEVER suggest fixes: ${BANNED_PRESCRIPTION.join(', ')}.
-- NEVER use severity words: ${BANNED_SEVERITY.join(', ')}.
-- NEVER blame the developer: ${BANNED_BLAME.join(', ')}.
-- NEVER use em dashes.
-- NEVER use these words: ${BANNED_CLICHES.join(', ')}.
-- Output ONLY the single sentence. No quotes, no labels, no markdown, no punctuation around it.`;
+HARD CONSTRAINTS (violating any one makes your output unusable):
+1. EXACTLY one sentence. No line breaks.
+2. MAXIMUM 160 characters total. Count carefully. Shorter is fine.
+3. No em dashes. Use commas or periods only.
+4. No markdown, no quotes, no labels. Output the bare sentence only.
+
+CONTENT:
+- Describe what a web agent CAN and CANNOT do on this page.
+- Present tense. Lead with what works, then what does not.
+- Name the domain once, at the start: "An agent visiting {domain}..."
+- Pick ONE or TWO observations, not an exhaustive list.
+
+BANNED WORDS (never use): ${ALL_BANNED_WORDS.join(', ')}.
+
+EXAMPLE (130 chars): "An agent visiting example.com can read article text and follow nav links, but cannot identify the search input by its label."`;
 
 // --- Deterministic templates ---
 

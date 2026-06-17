@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigatewayv2';
 import * as integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
@@ -51,6 +52,12 @@ export class PerseusClewComputeStack extends cdk.Stack {
     dataStack.benchmarkTable.grantReadData(this.scanLambda);
     dataStack.scanCountersTable.grantReadWriteData(this.scanLambda);
 
+    // Grant Bedrock InvokeModel (hero-line + Layer 2 simulation)
+    this.scanLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['bedrock:InvokeModel'],
+      resources: ['arn:aws:bedrock:us-east-1::foundation-model/claude-haiku-4-5-20251001']
+    }));
+
     // HTTP API (API Gateway v2)
     this.httpApi = new apigateway.HttpApi(this, 'HttpApi', {
       apiName: 'PerseusClew-API',
@@ -96,6 +103,12 @@ export class PerseusClewComputeStack extends cdk.Stack {
     });
 
     dataStack.benchmarkTable.grantReadWriteData(refreshLambda);
+
+    // Grant Bedrock InvokeModel (hero-line + simulation per benchmark site)
+    refreshLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['bedrock:InvokeModel'],
+      resources: ['arn:aws:bedrock:us-east-1::foundation-model/claude-haiku-4-5-20251001']
+    }));
 
     // EventBridge rule: monthly refresh (1st of month, 6am UTC)
     new events.Rule(this, 'BenchmarkRefreshRule', {

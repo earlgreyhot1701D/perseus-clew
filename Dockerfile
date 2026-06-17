@@ -4,9 +4,10 @@
 # Stage 1: Install dependencies
 FROM public.ecr.aws/lambda/nodejs:20 AS deps
 WORKDIR /var/task
-COPY backend/package.json ./
-COPY backend/package-lock.json ./
-RUN npm ci --omit=dev
+COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
+COPY backend/package.json ./backend/package.json
+RUN npm ci -w backend --omit=dev
 
 # Stage 2: Build source
 FROM deps AS build

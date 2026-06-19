@@ -118,8 +118,8 @@ export async function GET(request: NextRequest) {
 
           {/* Top bar: wordmark + domain */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontFamily: 'Archivo Black', fontSize: '28px', fontStyle: 'italic' }}>
-              AgentisLux
+            <span style={{ fontFamily: 'Archivo Black', fontSize: '20px', textTransform: 'uppercase' as const, letterSpacing: '0.03em' }}>
+              Agentis<span style={{ color: '#e85416', margin: '0 3px' }}>·</span>Lux
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', letterSpacing: '0.02em' }}>
@@ -139,15 +139,15 @@ export async function GET(request: NextRequest) {
           {/* Horizontal rule */}
           <div style={{ height: '2px', backgroundColor: '#0f3d42', marginTop: '12px', width: '100%' }} />
 
-          {/* Main content: score left, narrative right */}
-          <div style={{ display: 'flex', flex: 1, marginTop: '24px', gap: '48px' }}>
+          {/* Main content: score left, narrative right — vertically centered */}
+          <div style={{ display: 'flex', flex: 1, gap: '48px', alignItems: 'center', justifyContent: 'flex-start' }}>
             {/* Score column */}
             <div style={{ display: 'flex', flexDirection: 'column', minWidth: '240px' }}>
               <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                <span style={{ fontFamily: 'Archivo Black', fontSize: '140px', lineHeight: '0.85' }}>
+                <span style={{ fontFamily: 'Instrument Serif', fontSize: '140px', lineHeight: '0.85', fontStyle: 'italic' }}>
                   {score}
                 </span>
-                <span style={{ fontFamily: 'Archivo Black', fontSize: '40px', color: '#8a9a9d', marginLeft: '4px' }}>
+                <span style={{ fontFamily: 'Instrument Serif', fontSize: '42px', color: '#8a9a9d', marginLeft: '4px', fontStyle: 'italic' }}>
                   /100
                 </span>
               </div>
@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
             </div>
 
             {/* Narrative column */}
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'flex-start', paddingTop: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: '10px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#8a9a9d' }}>
                 What an agent experiences
               </span>

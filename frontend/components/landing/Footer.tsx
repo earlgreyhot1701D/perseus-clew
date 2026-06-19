@@ -29,7 +29,7 @@ export default function Footer() {
             <li><a href="#scan">Scan</a></li>
             <li><a href="#method">Methodology</a></li>
             <li><a href="/benchmark">Benchmark</a></li>
-            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/ROADMAP.md">Roadmap</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener noreferrer">Roadmap</a></li>
           </ul>
         </div>
 
@@ -37,16 +37,16 @@ export default function Footer() {
           <h4>Field Notes</h4>
           <ul>
             <li><a href="/benchmark">50-site study</a></li>
-            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/BENCHMARK-HYPOTHESES.md">The thesis</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/BENCHMARK-HYPOTHESES.md" target="_blank" rel="noopener noreferrer">The thesis</a></li>
           </ul>
         </div>
 
         <div className={styles.footCol}>
           <h4>Project</h4>
           <ul>
-            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew">GitHub</a></li>
-            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/LICENSE">License · Apache 2.0</a></li>
-            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/NOTICE">Credits</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License · Apache 2.0</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/NOTICE" target="_blank" rel="noopener noreferrer">Credits</a></li>
           </ul>
         </div>
       </div>

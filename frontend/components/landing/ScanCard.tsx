@@ -55,7 +55,7 @@ export default function ScanCard() {
 
       <div className={styles.scanEyebrow}>
         <span>&#167; 01 · Begin scan</span>
-        <span className={styles.status}>
+        <span className={styles.status} aria-live="polite">
           <span className={styles.pulseDot} aria-hidden="true" />
           System ready
         </span>
@@ -100,7 +100,7 @@ export default function ScanCard() {
               className={styles.urlInput}
               id="url-input"
               name="url"
-              type="text"
+              type="url"
               placeholder="yourdomain.com"
               autoComplete="off"
               spellCheck={false}

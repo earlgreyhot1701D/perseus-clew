@@ -11,11 +11,11 @@ import Link from 'next/link';
 import styles from './page.module.css';
 
 const VERTICALS = [
-  { name: 'Indie', score: 77 },
-  { name: 'Content', score: 64 },
-  { name: 'SaaS', score: 62 },
-  { name: 'Government', score: 59 },
-  { name: 'E-commerce', score: 53 },
+  { name: 'Indie', score: 77, color: 'var(--teal)' },
+  { name: 'Content', score: 64, color: 'var(--teal-mid)' },
+  { name: 'SaaS', score: 62, color: 'var(--ochre)' },
+  { name: 'Government', score: 59, color: 'var(--sienna)' },
+  { name: 'E-commerce', score: 53, color: 'var(--ink)' },
 ];
 
 const BLOCKED_SITES = [
@@ -71,7 +71,7 @@ export default function BenchmarkPage() {
                 <div className={styles.barTrack}>
                   <div
                     className={styles.barFill}
-                    style={{ width: `${(v.score / 100) * 100}%` }}
+                    style={{ width: `${(v.score / 100) * 100}%`, background: v.color }}
                   />
                 </div>
                 <span className={styles.barScore}>{v.score}</span>
@@ -120,6 +120,9 @@ export default function BenchmarkPage() {
             </a>
             <a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/BENCHMARK-HYPOTHESES.md" className={styles.artifactLink}>
               Predictions (pre-registered)
+            </a>
+            <a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/BENCHMARK-SITES.md" className={styles.artifactLink}>
+              Site selection and rationale
             </a>
           </div>
         </section>

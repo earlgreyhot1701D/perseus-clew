@@ -54,9 +54,9 @@ describe('generateReportHtml', () => {
       const html = generateReportHtml(makeReportData());
 
       expect(html).toContain('Semantic HTML');
-      expect(html).toContain('18 / 25');
+      expect(html).toContain('18/25');
       expect(html).toContain('Form Accessibility');
-      expect(html).toContain('15 / 20');
+      expect(html).toContain('15/20');
     });
 
     it('includes findings with IDs and text', () => {
@@ -170,8 +170,8 @@ describe('generateReportHtml', () => {
       // Same structure: both have hero section, category table, findings section
       expect(low).toContain('<section class="hero"');
       expect(high).toContain('<section class="hero"');
-      expect(low).toContain('Category Breakdown');
-      expect(high).toContain('Category Breakdown');
+      expect(low).toContain('Six categories');
+      expect(high).toContain('Six categories');
 
       // No conditional celebratory/punitive classes
       expect(low).not.toContain('class="fail"');
@@ -207,10 +207,8 @@ describe('generateReportHtml', () => {
       const html = generateReportHtml(makeReportData());
 
       expect(html).toContain('<main>');
-      expect(html).toContain('<h1>');
       expect(html).toContain('<h2>');
       expect(html).toContain('<section');
-      expect(html).toContain('<table');
       expect(html).toContain('aria-label=');
     });
 

@@ -374,6 +374,9 @@ function ScanFlow() {
               {report.preScanFindings.map((finding, i) => (
                 <div key={i} className={styles.preScanNotice}>
                   {finding.message}
+                  {finding.type === 'redirect_chain' && (
+                    <span className={styles.infoTip} tabIndex={0} aria-label="Redirects are normal. Most sites send http to https. We show the chain because each hop is a step an agent has to follow.">?</span>
+                  )}
                 </div>
               ))}
             </div>

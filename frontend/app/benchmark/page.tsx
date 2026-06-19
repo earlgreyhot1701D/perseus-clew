@@ -37,7 +37,7 @@ export default function BenchmarkPage() {
           <div className={styles.heroInner}>
             <span className={styles.eyebrow}>The 50-site study</span>
             <h1 id="benchmark-headline" className={styles.headline}>
-              Indie builders scored highest. I predicted the opposite.
+              Indie builders scored highest. I predicted the <em>opposite.</em>
             </h1>
             <p className={styles.subhead}>
               50 sites, scored before I looked. I missed 3 of 6 predictions. The data and the predictions are both public.

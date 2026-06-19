@@ -31,12 +31,16 @@
 }
 
 .headline {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 2.4rem;
-  font-style: italic;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--teal);
   margin: 0 0 var(--space-4);
+}
+
+.headline em {
+  font-family: var(--font-serif);
+  font-style: italic;
 }
 
 .subhead {

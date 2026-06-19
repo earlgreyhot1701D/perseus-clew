@@ -71,11 +71,9 @@ export async function GET(request: NextRequest) {
     if (archivoBlackData) fonts.push({ name: 'Archivo Black', data: archivoBlackData, style: 'normal', weight: 400 });
     if (jetbrainsMonoData) fonts.push({ name: 'JetBrains Mono', data: jetbrainsMonoData, style: 'normal', weight: 400 });
 
-    // Rating badge color (observational tones, not pass/fail)
-    const ratingBg = rating === 'Agent-Ready' ? '#1b6d74'
-      : rating === 'Partially Ready' ? '#d4a43c'
-      : '#a5370e';
-    const ratingText = rating === 'Partially Ready' ? '#0f3d42' : '#f1ebdc';
+    // Rating badge: NEUTRAL — ochre for all ratings (no celebrate/punish signal)
+    const ratingBg = '#d4a43c';
+    const ratingText = '#0f3d42';
 
     return new ImageResponse(
       (
@@ -92,54 +90,58 @@ export async function GET(request: NextRequest) {
             overflow: 'hidden',
           }}
         >
-          {/* Arc decoration with ochre dot */}
+          {/* Arc decoration: Wyman signature, richer strokes + ochre dots */}
           <svg
-            viewBox="0 0 340 360"
+            viewBox="0 0 420 630"
             style={{
               position: 'absolute',
               top: 0,
               right: 0,
-              width: '340px',
+              width: '420px',
               height: '100%',
               opacity: 0.18,
             }}
           >
-            <g fill="none" stroke="#f1ebdc" strokeWidth="3">
-              <path d="M 340 360 A 300 300 0 0 0 60 70" />
-              <path d="M 340 360 A 235 235 0 0 0 120 120" />
-              <path d="M 340 360 A 170 170 0 0 0 180 180" />
-              <path d="M 340 360 A 105 105 0 0 0 235 250" />
+            <g fill="none" stroke="#f1ebdc" strokeWidth="4">
+              <path d="M 420 630 A 380 380 0 0 0 50 60" />
+              <path d="M 420 630 A 300 300 0 0 0 130 130" />
+              <path d="M 420 630 A 220 220 0 0 0 210 210" />
+              <path d="M 420 630 A 150 150 0 0 0 280 290" />
+              <path d="M 420 630 A 90 90 0 0 0 335 380" />
             </g>
-            <circle cx="300" cy="56" r="14" fill="#d4a43c" />
+            <circle cx="370" cy="70" r="16" fill="#d4a43c" />
+            <circle cx="280" cy="290" r="8" fill="#d4a43c" />
           </svg>
 
           {/* Header: branding + domain */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 2 }}>
-            <span style={{ fontFamily: 'Archivo Black', fontSize: '18px', letterSpacing: '0.02em' }}>
+            <span style={{ fontFamily: 'Archivo Black', fontSize: '20px', letterSpacing: '0.02em' }}>
               AgentisLux
             </span>
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '14px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
               {domain}
             </span>
           </div>
 
           {/* Main: score + narrative */}
-          <div style={{ display: 'flex', flex: 1, alignItems: 'center', gap: '48px', zIndex: 2, marginTop: '24px' }}>
+          <div style={{ display: 'flex', flex: 1, alignItems: 'center', gap: '56px', zIndex: 2, marginTop: '16px' }}>
             {/* Score block */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '200px' }}>
-              <span style={{ fontFamily: 'Instrument Serif', fontSize: '120px', lineHeight: '0.85', fontStyle: 'italic' }}>
-                {score}
-              </span>
-              <span style={{ fontFamily: 'Instrument Serif', fontSize: '36px', color: '#8a9a9d', fontStyle: 'italic', marginTop: '-8px' }}>
-                /100
-              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'Instrument Serif', fontSize: '130px', lineHeight: '0.85', fontStyle: 'italic' }}>
+                  {score}
+                </span>
+                <span style={{ fontFamily: 'Instrument Serif', fontSize: '42px', color: '#f1ebdc', fontStyle: 'italic', marginLeft: '4px', opacity: 0.6 }}>
+                  /100
+                </span>
+              </div>
               <div style={{
-                marginTop: '16px',
+                marginTop: '14px',
                 fontFamily: 'JetBrains Mono',
-                fontSize: '13px',
+                fontSize: '12px',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase' as const,
-                padding: '6px 16px',
+                padding: '5px 14px',
                 borderRadius: '2px',
                 backgroundColor: ratingBg,
                 color: ratingText,
@@ -148,9 +150,9 @@ export async function GET(request: NextRequest) {
               </div>
               {/* Ring/progress bar (sienna fill, score% width) */}
               <div style={{
-                marginTop: '16px',
-                width: '100%',
-                height: '5px',
+                marginTop: '14px',
+                width: '180px',
+                height: '6px',
                 backgroundColor: 'rgba(241, 235, 220, 0.18)',
                 borderRadius: '3px',
                 overflow: 'hidden',
@@ -166,26 +168,29 @@ export async function GET(request: NextRequest) {
             </div>
 
             {/* Narrative */}
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: '10px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#8a9a9d' }}>
                 What an agent experiences
               </span>
               {heroText && (
-                <p style={{ fontFamily: 'Instrument Serif', fontSize: '28px', fontStyle: 'italic', lineHeight: '1.3', margin: 0 }}>
+                <p style={{ fontFamily: 'Instrument Serif', fontSize: '24px', fontStyle: 'italic', lineHeight: '1.35', margin: 0, maxWidth: '560px' }}>
                   {heroText}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Footer */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 2, marginTop: 'auto' }}>
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
-              Scan mode: Frontend
-            </span>
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
-              Powered by the Perseus Clew engine
-            </span>
+          {/* Footer with separator */}
+          <div style={{ display: 'flex', flexDirection: 'column', zIndex: 2, marginTop: 'auto', gap: '10px' }}>
+            <div style={{ height: '1px', backgroundColor: 'rgba(241, 235, 220, 0.15)', width: '100%' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
+                agentislux.io
+              </span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#8a9a9d', letterSpacing: '0.04em' }}>
+                Powered by the Perseus Clew engine
+              </span>
+            </div>
           </div>
         </div>
       ),

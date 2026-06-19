@@ -1,0 +1,61 @@
+site_id,vertical,scan_mode,status,failure_reason,frontend_score,frontend_rating,semantic_html,form_accessibility,aria,structured_data,content_in_html,link_navigation,api_score,api_rating,hero_line_source,simulation_available
+bbc,content,door,success,,64,Partially Ready,13/25,20/20,0/15,11/15,13/15,7/10,,,ai,true
+daring-fireball,content,door,success,,65,Partially Ready,13/25,13/20,15/15,6/15,13/15,5/10,,,ai,true
+defector,content,door,success,,60,Partially Ready,13/25,20/20,0/15,9/15,13/15,5/10,,,ai,true
+dev-to,content,door,success,,57,Partially Ready,17/25,13/20,0/15,9/15,13/15,5/10,,,ai,true
+devpost,content,door,success,,48,Not Yet Readable,13/25,7/20,0/15,13/15,13/15,2/10,,,template,true
+npr,content,door,failed,FETCH_TIMEOUT,,,,,,,,,,,,
+nyt,content,door,success,,72,Partially Ready,21/25,20/20,0/15,13/15,13/15,5/10,,,ai,true
+propublica,content,door,success,,70,Partially Ready,21/25,20/20,0/15,13/15,13/15,3/10,,,ai,true
+techcrunch,content,door,success,,56,Partially Ready,17/25,13/20,0/15,13/15,10/15,3/10,,,ai,true
+the-verge,content,door,success,,85,Agent-Ready,17/25,20/20,15/15,13/15,13/15,7/10,,,ai,true
+allbirds,ecommerce,door,success,,41,Not Yet Readable,13/25,7/20,0/15,9/15,10/15,2/10,,,ai,true
+amazon,ecommerce,door,success,,34,Not Yet Readable,8/25,5/20,0/15,6/15,13/15,2/10,,,ai,true
+bombas,ecommerce,door,success,,48,Not Yet Readable,8/25,20/20,0/15,3/15,15/15,2/10,,,ai,true
+brooklinen,ecommerce,door,success,,66,Partially Ready,17/25,20/20,0/15,13/15,13/15,3/10,,,ai,true
+mcmaster-carr,ecommerce,door,success,,36,Not Yet Readable,13/25,7/20,0/15,6/15,8/15,2/10,,,ai,true
+misen,ecommerce,door,success,,63,Partially Ready,17/25,15/20,0/15,13/15,13/15,5/10,,,ai,true
+olipop,ecommerce,door,success,,66,Partially Ready,13/25,20/20,5/15,13/15,10/15,5/10,,,ai,true
+topo-designs,ecommerce,door,success,,47,Not Yet Readable,8/25,5/20,4/15,15/15,10/15,5/10,,,ai,true
+vermont-country-store,ecommerce,door,success,,61,Partially Ready,21/25,13/20,0/15,11/15,13/15,3/10,,,ai,true
+walmart,ecommerce,door,success,,66,Partially Ready,17/25,20/20,0/15,13/15,13/15,3/10,,,ai,true
+boston,government,door,success,,46,Not Yet Readable,8/25,7/20,0/15,13/15,13/15,5/10,,,ai,true
+california,government,door,success,,75,Partially Ready,21/25,20/20,0/15,13/15,13/15,8/10,,,ai,true
+census,government,door,success,,35,Not Yet Readable,13/25,0/20,0/15,9/15,10/15,3/10,,,ai,true
+congress-gov,government,door,failed,FETCH_FORBIDDEN,,,,,,,,,,,,
+federal-register,government,door,success,,40,Not Yet Readable,13/25,5/20,0/15,0/15,15/15,7/10,,,ai,true
+irs,government,door,success,,62,Partially Ready,17/25,15/20,3/15,9/15,13/15,5/10,,,ai,true
+michigan,government,door,failed,FETCH_FORBIDDEN,,,,,,,,,,,,
+nyc,government,door,success,,56,Partially Ready,13/25,20/20,0/15,3/15,13/15,7/10,,,ai,true
+recreation-gov,government,door,success,,81,Agent-Ready,13/25,20/20,15/15,13/15,15/15,5/10,,,ai,true
+usa-gov,government,door,success,,77,Partially Ready,21/25,20/20,0/15,13/15,15/15,8/10,,,ai,true
+are-na,indie,door,success,,87,Agent-Ready,17/25,20/20,15/15,13/15,15/15,7/10,,,ai,true
+brittany-chiang,indie,door,success,,91,Agent-Ready,25/25,20/20,15/15,6/15,15/15,10/10,,,ai,true
+dan-luu,indie,door,success,,67,Partially Ready,13/25,20/20,15/15,0/15,12/15,7/10,,,ai,true
+gwern,indie,door,success,,82,Agent-Ready,21/25,20/20,15/15,6/15,13/15,7/10,,,ai,true
+josh-comeau,indie,door,success,,84,Agent-Ready,21/25,20/20,15/15,6/15,15/15,7/10,,,ai,true
+julia-evans,indie,door,success,,80,Agent-Ready,17/25,20/20,15/15,6/15,15/15,7/10,,,ai,true
+lynn-fisher,indie,door,success,,84,Agent-Ready,25/25,20/20,15/15,6/15,10/15,8/10,,,ai,true
+maggie-appleton,indie,door,success,,68,Partially Ready,21/25,20/20,0/15,9/15,13/15,5/10,,,ai,true
+simon-willison,indie,door,success,,67,Partially Ready,21/25,7/20,15/15,6/15,13/15,5/10,,,ai,true
+xe-iaso,indie,door,success,,64,Partially Ready,21/25,20/20,0/15,3/15,13/15,7/10,,,ai,true
+asana,saas,door,success,,65,Partially Ready,8/25,20/20,4/15,15/15,15/15,3/10,,,ai,true
+asana,saas,reference,failed,FETCH_SPEC_HTTP_ERROR,,,,,,,,,,,,
+box,saas,door,success,,59,Partially Ready,13/25,20/20,0/15,11/15,13/15,2/10,,,ai,true
+box,saas,reference,success,,,,,,,,,,41,Not Yet Readable,,
+github,saas,door,success,,52,Partially Ready,13/25,7/20,0/15,12/15,15/15,5/10,,,ai,true
+github,saas,reference,success,,,,,,,,,,31,Not Yet Readable,,
+openai,saas,door,failed,FETCH_FORBIDDEN,,,,,,,,,,,,
+openai,saas,reference,success,,,,,,,,,,35,Not Yet Readable,,
+pagerduty,saas,door,success,,52,Partially Ready,17/25,7/20,0/15,12/15,13/15,3/10,,,ai,true
+pagerduty,saas,reference,success,,,,,,,,,,28,Not Yet Readable,,
+slack,saas,door,success,,71,Partially Ready,21/25,20/20,0/15,12/15,13/15,5/10,,,ai,true
+slack,saas,reference,success,,,,,,,,,,43,Not Yet Readable,,
+square,saas,door,success,,44,Not Yet Readable,17/25,5/20,0/15,9/15,10/15,3/10,,,ai,true
+square,saas,reference,failed,FETCH_SPEC_HTTP_ERROR,,,,,,,,,,,,
+stripe,saas,door,success,,65,Partially Ready,17/25,20/20,0/15,15/15,10/15,3/10,,,ai,true
+stripe,saas,reference,success,,,,,,,,,,38,Not Yet Readable,,
+twilio,saas,door,success,,76,Partially Ready,17/25,20/20,4/15,15/15,15/15,5/10,,,ai,true
+twilio,saas,reference,success,,,,,,,,,,30,Not Yet Readable,,
+vercel,saas,door,success,,78,Partially Ready,17/25,20/20,5/15,15/15,13/15,8/10,,,template,true
+vercel,saas,reference,success,,,,,,,,,,34,Not Yet Readable,,

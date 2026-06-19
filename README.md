@@ -48,6 +48,10 @@ Full artifacts:
 - [Downloadable report HTML](docs/self-scan/before/self-scan-before-report.html)
 - [Build-in-public writeup](docs/self-scan/SELF-SCAN-BEFORE.md)
 
+## Benchmark
+
+I scanned 50 sites to see what agents experience across the web: ten each in e-commerce, SaaS, content/media, US government, and indie/builder projects. The headline: indie builders scored highest (mean 77/100), beating government, SaaS, and e-commerce. Scores ran from 34 to 91, with no convergence on agent-readiness yet. Four sites blocked the scan at the door, including OpenAI. The complete dataset, every site, including the ones that blocked us, is in [docs/benchmark/](docs/benchmark/), and the predictions I made before scanning are timestamped in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md). I missed three of six, which is the point.
+
 ## Architecture
 
 Two ideas run through the whole build. The structure is deterministic, so the same input gives the same score every time. The flavor is AI, used only where judgment helps. The checks and the scoring are pattern matching, no model involved. Bedrock writes the one-line verdict and runs the agent simulation on top of that.

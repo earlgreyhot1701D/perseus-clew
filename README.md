@@ -39,14 +39,22 @@ Before the engine scans anything, I wrote down what I expect it to find across t
 
 ## Dogfooding
 
-We scan our own site and publish the result, flattering or not. The first self-scan, before any cleanup, scored 70/100 ("Partially Ready"), with the gaps in structured data and navigation. The after-scan, once we fix what the tool found, will be published right beside it.
+We scan our own site and publish the result, flattering or not.
 
-![Agentis Lux self-scan card: perseus-clew.vercel.app scored 70 of 100, Partially Ready](docs/self-scan/before/self-scan-before-card.png)
+**Before** (score 70, before any cleanup):
+
+![Agentis Lux self-scan before: perseus-clew.vercel.app scored 70 of 100, Partially Ready](docs/self-scan/before/self-scan-before-card.png)
+
+**After** (score 96, after fixing what the tool found):
+
+![Agentis Lux self-scan after: perseus-clew.vercel.app scored 96 of 100, Agent-Ready](docs/self-scan/after/self-scan-after-card.png)
+
+The gaps were in structured data (3/15 to 15/15), form accessibility, ARIA, and link navigation. One finding remains (SEM-005), shown honestly. The complete before/after story is in [docs/self-scan/](docs/self-scan/).
 
 Full artifacts:
-- [Scan result JSON](docs/self-scan/before/self-scan-before.json)
-- [Downloadable report HTML](docs/self-scan/before/self-scan-before-report.html)
-- [Build-in-public writeup](docs/self-scan/SELF-SCAN-BEFORE.md)
+- [Before: scan JSON](docs/self-scan/before/self-scan-before.json) | [report](docs/self-scan/before/self-scan-before-report.html)
+- [After: report](docs/self-scan/after/self-scan-after-report.html) | [writeup](docs/self-scan/SELF-SCAN-AFTER.md)
+- [Build-in-public writeup (before)](docs/self-scan/SELF-SCAN-BEFORE.md)
 
 ## Benchmark
 

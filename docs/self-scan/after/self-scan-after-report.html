@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentis Lux Report: perseus-clew.vercel.app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f1ebdc;
+    --cream-2: #ebe3ce;
+    --teal: #0f3d42;
+    --teal-mid: #1b6d74;
+    --sienna: #e85416;
+    --sienna-deep: #d24912;
+    --ochre: #d4a43c;
+    --muted: #8a9a9d;
+    --ink: #5a5548;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--cream);
+    font-family: 'Archivo', system-ui, sans-serif;
+    color: var(--teal);
+    line-height: 1.5;
+    padding: 32px 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 880px; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 10px;
+    margin-bottom: 0;
+  }
+  .topbar .meta { display: flex; gap: 18px; align-items: center; }
+
+  /* Hero card */
+  .hero {
+    background: var(--teal);
+    color: var(--cream);
+    border-radius: 2px;
+    padding: 34px 36px 30px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 18px;
+  }
+  .hero .arcs {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 340px;
+    height: 100%;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 34px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .scoreblock { text-align: center; min-width: 170px; }
+  .scoreblock .num {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 118px;
+    line-height: 0.82;
+    color: var(--cream);
+    font-style: italic;
+  }
+  .scoreblock .num .denom { font-size: 34px; color: var(--muted); }
+  .label {
+    margin-top: 14px;
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+  .ring-track { margin-top: 16px; height: 5px; background: rgba(241,235,220,0.18); border-radius: 3px; overflow: hidden; }
+  .ring-fill { height: 100%; background: var(--sienna); }
+
+  .narr .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .narr .tag .ai { color: var(--ochre); }
+  .narr p.line {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 24px;
+    font-style: italic;
+    line-height: 1.28;
+    color: var(--cream);
+    max-width: 540px;
+  }
+
+  /* Categories */
+  .cats-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 26px 2px 12px;
+  }
+  .cats-head .h {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .cat-card {
+    background: var(--cream-2);
+    border: 1px solid rgba(15,61,66,0.14);
+    border-radius: 2px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cat-card .cat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cat-card .cat-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .cat-card .cat-summary {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.4;
+    margin: 0;
+  }
+  .cat-card .cat-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .cat-card .cat-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(15,61,66,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .cat-card .cat-bar-fill { height: 100%; background: var(--teal); border-radius: 3px; }
+  .cat-card .cat-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--teal-mid);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .cat-card .cat-finding-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Findings detail */
+  .findings-detail { margin-top: 32px; }
+  .findings-detail h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--teal);
+    border-bottom: 1px solid var(--teal);
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+  }
+  .findings-detail h3 {
+    font-size: 14px;
+    color: var(--teal-mid);
+    margin: 20px 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .finding-list { list-style: none; padding: 0; }
+  .finding-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(15,61,66,0.08);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .finding-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--sienna);
+    margin-right: 8px;
+  }
+  .finding-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+
+  /* Simulation */
+  .simulation-section { margin-top: 32px; }
+  .simulation-section h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--teal);
+    border-bottom: 1px solid var(--teal);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .section-note { font-size: 13px; color: var(--ink); margin-bottom: 16px; }
+  .tasks { list-style: none; padding: 0; }
+  .task { padding: 12px 0; border-bottom: 1px solid rgba(15,61,66,0.08); }
+  .task-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .outcome {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+  .outcome-success { background: var(--teal-mid); color: var(--cream); }
+  .outcome-partial { background: var(--ochre); color: var(--teal); }
+  .outcome-failure { background: var(--sienna); color: var(--cream); }
+  .task-narrative { font-style: italic; font-size: 14px; color: var(--teal); margin-top: 4px; }
+  .task-linked { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* Footer */
+  .footnote {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(15,61,66,0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Print */
+  @media print {
+    body { padding: 16px; }
+    .hero { break-inside: avoid; }
+    .cat-card { break-inside: avoid; }
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .scoreblock .num { font-size: 72px; }
+    .narr p.line { font-size: 20px; max-width: none; }
+    .cat-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<main>
+  <div class="topbar">
+    <div class="meta">
+      <span class="eyebrow" style="font-weight:500;color:var(--teal);">AgentisLux</span>
+      <span class="eyebrow">Powered by the Perseus Clew engine</span>
+    </div>
+    <div class="meta">
+      <span class="eyebrow">perseus-clew.vercel.app</span>
+      <span class="eyebrow">2026-06-19T21:00:54.876Z</span>
+    </div>
+  </div>
+
+  <section class="hero" aria-label="Score summary">
+    <svg class="arcs" viewBox="0 0 340 360" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="#f1ebdc" stroke-width="3">
+        <path d="M 340 360 A 300 300 0 0 0 60 70"></path>
+        <path d="M 340 360 A 235 235 0 0 0 120 120"></path>
+        <path d="M 340 360 A 170 170 0 0 0 180 180"></path>
+        <path d="M 340 360 A 105 105 0 0 0 235 250"></path>
+      </g>
+      <circle cx="300" cy="56" r="14" fill="#d4a43c"></circle>
+    </svg>
+
+    <div class="hero-grid">
+      <div class="scoreblock">
+        <div class="num">96<span class="denom">/100</span></div>
+        <div class="label" style="background:#1b6d74;color:#f1ebdc">Agent-Ready</div>
+        <div class="ring-track"><div class="ring-fill" style="width:96%"></div></div>
+      </div>
+
+      <div class="narr">
+        <div class="tag">
+          <span>What an agent experiences</span>
+          <span class="ai">&bull; AI written</span>
+        </div>
+        <p class="line">An agent visiting perseus-clew.vercel.app can read text and follow links, but cannot identify repeated sibling elements as lists without ul or ol wrappers.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cats-head">
+    <span class="h">Six categories</span>
+    <span class="eyebrow">Methodology v1.1.1</span>
+  </div>
+
+  <div class="cat-grid">
+  
+      <div class="cat-card">
+        <span class="cat-num">Category 01 &middot; Weight 25</span>
+        <span class="cat-name">Semantic HTML</span>
+        <p class="cat-summary">Agents can&#039;t always tell your buttons, lists, and sections apart. This is usually handled with semantic HTML, which most frameworks output by default.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:84%"></div></div>
+          <span class="cat-score">21 / 25</span>
+        </div>
+        
+        <span class="cat-finding-count">1 finding</span>
+      </div>
+      <div class="cat-card">
+        <span class="cat-num">Category 02 &middot; Weight 20</span>
+        <span class="cat-name">Form Accessibility</span>
+        <p class="cat-summary">Agents can&#039;t always tell what each form field expects. This is usually handled with proper labels and input types.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:100%"></div></div>
+          <span class="cat-score">20 / 20</span>
+        </div>
+        
+        
+      </div>
+      <div class="cat-card">
+        <span class="cat-num">Category 03 &middot; Weight 15</span>
+        <span class="cat-name">ARIA and Accessibility</span>
+        <p class="cat-summary">Agents can&#039;t always read the state of interactive widgets. This is usually handled with ARIA roles and attributes.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:100%"></div></div>
+          <span class="cat-score">15 / 15</span>
+        </div>
+        
+        
+      </div>
+      <div class="cat-card">
+        <span class="cat-num">Category 04 &middot; Weight 15</span>
+        <span class="cat-name">Structured Data</span>
+        <p class="cat-summary">Agents can&#039;t reliably tell what your pages are about. This is usually handled with structured data, which most site builders and frameworks support.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:100%"></div></div>
+          <span class="cat-score">15 / 15</span>
+        </div>
+        
+        
+      </div>
+      <div class="cat-card">
+        <span class="cat-num">Category 05 &middot; Weight 15</span>
+        <span class="cat-name">Content in HTML</span>
+        <p class="cat-summary">Agents may not see content that only appears after JavaScript runs. This is usually handled with server-side rendering or static HTML.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:100%"></div></div>
+          <span class="cat-score">15 / 15</span>
+        </div>
+        
+        
+      </div>
+      <div class="cat-card">
+        <span class="cat-num">Category 06 &middot; Weight 10</span>
+        <span class="cat-name">Link and Navigation</span>
+        <p class="cat-summary">Agents can&#039;t always move through your site predictably. This is usually handled with real link destinations and clear navigation.</p>
+        <div class="cat-bar-row">
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:100%"></div></div>
+          <span class="cat-score">10 / 10</span>
+        </div>
+        
+        
+      </div>
+  </div>
+
+  <section class="findings-detail">
+    <h2>All Findings</h2>
+    
+      <section>
+        <h3>Semantic HTML</h3>
+        <ul class="finding-list">
+      <li>
+        <span class="finding-id">SEM-005</span>
+        1 group of repeated sibling elements appear to be lists but are not wrapped in ul or ol with li elements. Agents parsing list structures cannot identify these as lists.
+        <span class="finding-count">(1 instance)</span>
+      </li></ul>
+      </section>
+  </section>
+
+  
+      <section class="simulation-section">
+        <h2>Agent Simulation</h2>
+        <p class="section-note">Layer 2: what happened when an agent attempted common tasks on this page.</p>
+        <ul class="tasks">
+      <li class="task">
+        <div class="task-head">
+          <strong>SIM-FE-CTA</strong>
+          <span class="outcome outcome-success">success</span>
+        </div>
+        <p class="task-narrative">Primary CTA is a semantic button element with text &#039;Observe this site&#039; located in the scan form, using proper button tag.</p>
+        
+      </li>
+      <li class="task">
+        <div class="task-head">
+          <strong>SIM-FE-PURPOSE</strong>
+          <span class="outcome outcome-success">success</span>
+        </div>
+        <p class="task-narrative">Agent can determine this is a website scanning tool for agent-readiness assessment, with six scoring categories and free service, from semantic HTML and text content alone.</p>
+        
+      </li>
+      <li class="task">
+        <div class="task-head">
+          <strong>SIM-FE-NAV</strong>
+          <span class="outcome outcome-success">success</span>
+        </div>
+        <p class="task-narrative">Navigation structure includes semantic nav element with five links; page hierarchy identifiable through heading structure and section IDs; internal links lead to page sections and external links to Gi</p>
+        
+      </li></ul>
+      </section>
+
+  <div class="footnote">
+    <span>AgentisLux &middot; for your second audience</span>
+    <span>Score is deterministic &middot; narrative is AI written</span>
+  </div>
+</main>
+</div>
+</body>
+</html>

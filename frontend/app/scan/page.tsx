@@ -81,6 +81,15 @@ const CATEGORY_LABELS: Record<string, string> = {
   link_navigation: 'Link and Navigation',
 };
 
+const CATEGORY_SUMMARIES: Record<string, string> = {
+  semantic_html: "Agents can't always tell your buttons, lists, and sections apart. This is usually handled with semantic HTML, which most frameworks output by default.",
+  form_accessibility: "Agents can't always tell what each form field expects. This is usually handled with proper labels and input types.",
+  aria: "Agents can't always read the state of interactive widgets. This is usually handled with ARIA roles and attributes.",
+  structured_data: "Agents can't reliably tell what your pages are about. This is usually handled with structured data, which most site builders and frameworks support.",
+  content_in_html: "Agents may not see content that only appears after JavaScript runs. This is usually handled with server-side rendering or static HTML.",
+  link_navigation: "Agents can't always move through your site predictably. This is usually handled with real link destinations and clear navigation.",
+};
+
 const CATEGORY_ORDER = [
   'semantic_html', 'form_accessibility', 'aria',
   'structured_data', 'content_in_html', 'link_navigation'
@@ -389,6 +398,7 @@ function ScanFlow() {
                       Category {String(i + 1).padStart(2, '0')} · Weight {cat.max}
                     </span>
                     <span className={styles.categoryName}>{CATEGORY_LABELS[key]}</span>
+                    <span className={styles.categorySummary}>{CATEGORY_SUMMARIES[key]}</span>
                     <div className={styles.categoryBarRow}>
                       <div className={styles.categoryBarTrack}>
                         <div className={styles.categoryBarFill} style={{ width: `${pct}%` }} />

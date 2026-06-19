@@ -74,6 +74,15 @@ const CATEGORY_NAMES: Record<string, string> = {
   link_navigation: 'Link and Navigation',
 };
 
+const CATEGORY_SUMMARIES: Record<string, string> = {
+  semantic_html: 'Agents can\'t always tell your buttons, lists, and sections apart. This is usually handled with semantic HTML, which most frameworks output by default.',
+  form_accessibility: 'Agents can\'t always tell what each form field expects. This is usually handled with proper labels and input types.',
+  aria: 'Agents can\'t always read the state of interactive widgets. This is usually handled with ARIA roles and attributes.',
+  structured_data: 'Agents can\'t reliably tell what your pages are about. This is usually handled with structured data, which most site builders and frameworks support.',
+  content_in_html: 'Agents may not see content that only appears after JavaScript runs. This is usually handled with server-side rendering or static HTML.',
+  link_navigation: 'Agents can\'t always move through your site predictably. This is usually handled with real link destinations and clear navigation.',
+};
+
 // --- Report generation ---
 
 export function generateReportHtml(data: ReportData): string {
@@ -111,6 +120,7 @@ export function generateReportHtml(data: ReportData): string {
         <div class="plain">${topFinding}${note}</div>
         <div class="helper">
           <span class="cat-name">${escapeHtml(name)}</span>
+          <span class="cat-summary">${escapeHtml(CATEGORY_SUMMARIES[key] || '')}</span>
           <span class="cat-score">${val.earned}/${val.max}</span>
           <div class="cat-bar"><div class="cat-bar-fill" style="width:${pct}%"></div></div>
         </div>
@@ -317,6 +327,16 @@ export function generateReportHtml(data: ReportData): string {
     font-size: 10px;
     color: var(--muted);
     margin-bottom: 3px;
+  }
+  .cat .helper .cat-summary {
+    display: block;
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: normal;
   }
   .cat .helper .cat-score { font-size: 15px; color: var(--teal-mid); font-weight: 500; }
   .cat .helper .cat-bar { height: 4px; background: rgba(15,61,66,0.1); border-radius: 2px; margin-top: 4px; overflow: hidden; }

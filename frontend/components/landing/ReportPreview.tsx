@@ -62,8 +62,7 @@ export default function ReportPreview() {
             </p>
             <div className={styles.catFoot} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>Score · 72% · 4 findings</span>
-              <a
-                href="#"
+              <span
                 style={{
                   color: 'var(--sienna)',
                   fontFamily: 'var(--font-mono)',
@@ -73,7 +72,7 @@ export default function ReportPreview() {
                 }}
               >
                 View findings &#8594;
-              </a>
+              </span>
             </div>
           </article>
         </div>

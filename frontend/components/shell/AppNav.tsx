@@ -15,12 +15,12 @@ import { usePathname } from 'next/navigation';
 import styles from './AppNav.module.css';
 
 const LIVE_LINKS = [
-  { label: 'Scan', href: '/scan' }
+  { label: 'Scan', href: '/scan' },
+  { label: 'Benchmark', href: '/benchmark' }
 ];
 
 const STUB_LINKS = [
   { label: 'Methodology' },
-  { label: 'Benchmark' },
   { label: 'About' }
 ];
 

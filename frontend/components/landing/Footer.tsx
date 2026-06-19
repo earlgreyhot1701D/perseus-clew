@@ -29,27 +29,24 @@ export default function Footer() {
             <li><a href="#scan">Scan</a></li>
             <li><a href="#method">Methodology</a></li>
             <li><a href="/benchmark">Benchmark</a></li>
-            <li><a href="#">Roadmap</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/ROADMAP.md">Roadmap</a></li>
           </ul>
         </div>
 
         <div className={styles.footCol}>
           <h4>Field Notes</h4>
           <ul>
-            <li><a href="#">50-site study</a></li>
-            <li><a href="#">Why agents matter</a></li>
-            <li><a href="#">Measurement ethics</a></li>
-            <li><a href="#">The thesis</a></li>
+            <li><a href="/benchmark">50-site study</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/docs/BENCHMARK-HYPOTHESES.md">The thesis</a></li>
           </ul>
         </div>
 
         <div className={styles.footCol}>
           <h4>Project</h4>
           <ul>
-            <li><a href="#">GitHub</a></li>
-            <li><a href="#">License · Apache 2.0</a></li>
-            <li><a href="#">Contribute</a></li>
-            <li><a href="#">Credits</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew">GitHub</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/LICENSE">License · Apache 2.0</a></li>
+            <li><a href="https://github.com/earlgreyhot1701D/perseus-clew/blob/main/NOTICE">Credits</a></li>
           </ul>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function HeroSection() {
           </h1>
 
           <p className={styles.lede}>
-            AI agents are already browsing the web, filling out your forms, and calling your endpoints. Most products were never tested for this. AgentisLux scans your site and shows you what an agent experiences when it tries to use you.
+            AI agents are already reading your pages, citing your content, and deciding whether to recommend you. Most products were never tested for this. AgentisLux shows you what an agent experiences when it reads your site.
           </p>
 
           <dl className={styles.metaRow} aria-label="Product attributes">

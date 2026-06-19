@@ -3,7 +3,7 @@
 > The public-facing Agentis Lux web application.
 > Translates the locked visual language (agentislux-landing.html, agentislux-app.html) into a React app.
 
-**Status:** v2, May 27, 2026. v1 (April 18) defined the React/Vite frontend on CloudFront + S3. v2 updates the decision-level content for Path B: Next.js on Vercel with API routes that do real work, the result hero leading the results view, two-layer finding text, the 24h shareable-link lifetime, and the signed-in auth stub. **Framework-detail conversion deferred:** filenames, routing, state idioms, and Vite config below remain in React form. Read them as "the frontend" pending the build-time conversion to Next.js App Router (the conversion happens against real components, not reconstructed in this doc from memory). The decision-level content here is current.
+**Status:** v2, May 27, 2026. v1 defined the React/Vite frontend on CloudFront + S3. v2 updates the decision-level content for Path B: Next.js on Vercel with API routes that do real work, the result hero leading the results view, two-layer finding text, the 24h shareable-link lifetime, and the signed-in auth stub. **Framework-detail conversion deferred:** filenames, routing, state idioms, and Vite config below remain in React form. Read them as "the frontend" pending the build-time conversion to Next.js App Router (the conversion happens against real components, not reconstructed in this doc from memory). The decision-level content here is current.
 
 **Naming:** The public product is **Agentis Lux**. Every user-facing string in the app references Agentis Lux. Internal file names, component names, and code comments may reference Perseus Clew where they describe the engine (e.g., "fetches results from the Perseus Clew scan Lambda"). All marketing, UI copy, and error messages use Agentis Lux.
 
@@ -58,75 +58,75 @@ Read top to bottom. Each component has a contract (props, state, events) but the
 
 ```
 /frontend
-├── index.html                  # Entry point, includes meta, OG, JSON-LD
-├── vite.config.js
-├── package.json
-├── public/
-│   ├── robots.txt              # Self-scanning discoverability
-│   ├── sitemap.xml             # Generated at build time
-│   └── fonts/                  # Self-hosted fonts (Archivo, Instrument Serif, JetBrains Mono)
-├── src/
-│   ├── main.jsx                # React root, Router setup, Context providers
-│   ├── App.jsx                 # Layout shell, route definitions
-│   ├── styles/
-│   │   ├── tokens.css          # Design tokens (colors, fonts, spacing)
-│   │   ├── reset.css           # CSS reset + base element styles
-│   │   └── globals.css         # App-level global styles
-│   ├── routes/
-│   │   ├── LandingRoute.jsx    # /
-│   │   ├── ScanInputRoute.jsx  # /scan
-│   │   ├── ScanningRoute.jsx   # /scan/:id/loading
-│   │   ├── ResultsRoute.jsx    # /scan/:id
-│   │   ├── FindingDetailRoute.jsx  # /scan/:id/findings/:findingId
-│   │   ├── ErrorRoute.jsx      # /scan/:id/error
-│   │   ├── MethodologyRoute.jsx # /methodology (renders SCORING.md)
-│   │   ├── BenchmarkRoute.jsx  # /benchmark
-│   │   ├── AboutRoute.jsx      # /about
-│   │   └── NotFoundRoute.jsx   # 404 fallback
-│   ├── components/
-│   │   ├── shell/
-│   │   │   ├── AppNav.jsx
-│   │   │   ├── AppFooter.jsx
-│   │   │   └── ArcDecoration.jsx   # Reusable SVG arc pattern
-│   │   ├── scan/
-│   │   │   ├── ScanInput.jsx
-│   │   │   ├── InputTypeTabs.jsx
-│   │   │   ├── ScanProgress.jsx
-│   │   │   ├── ScoreRing.jsx
-│   │   │   ├── CategoryGrid.jsx
-│   │   │   ├── CategoryCell.jsx
-│   │   │   ├── Layer2Tasks.jsx
-│   │   │   ├── Layer2Task.jsx
-│   │   │   ├── FindingsList.jsx
-│   │   │   ├── FindingItem.jsx
-│   │   │   ├── FindingDetail.jsx
-│   │   │   ├── SeverityPill.jsx
-│   │   │   ├── RatingBadge.jsx
-│   │   │   ├── ResultsHeader.jsx
-│   │   │   └── ResultsFooter.jsx
-│   │   ├── social/
-│   │   │   ├── SocialCard.jsx      # The visual card component
-│   │   │   └── SocialCardExport.jsx # Wrapper with download button
-│   │   ├── error/
-│   │   │   ├── ErrorView.jsx
-│   │   │   └── ErrorIcon.jsx
-│   │   └── common/
-│   │       ├── Button.jsx
-│   │       ├── CodeBlock.jsx
-│   │       └── LoadingDots.jsx
-│   ├── state/
-│   │   ├── ScanContext.jsx     # Current scan state (React Context + useReducer)
-│   │   └── scanReducer.js
-│   ├── lib/
-│   │   ├── api-client.js       # fetch wrapper with error handling
-│   │   ├── scan-storage.js     # localStorage for draft scans only (no results stored)
-│   │   ├── social-card.js      # Social card export to PNG via html2canvas
-│   │   ├── report-export.js    # Report download (HTML or PDF)
-│   │   └── analytics.js        # Plausible wrapper, no cookies, server-side only
-│   └── tests/
-│       ├── routes/              # Route-level integration tests
-│       ├── components/          # Component tests
-│       └── fixtures/            # Mock scan responses for testing
+â”œâ”€â”€ index.html                  # Entry point, includes meta, OG, JSON-LD
+â”œâ”€â”€ vite.config.js
+â”œâ”€â”€ package.json
+â”œâ”€â”€ public/
+â”‚   â”œâ”€â”€ robots.txt              # Self-scanning discoverability
+â”‚   â”œâ”€â”€ sitemap.xml             # Generated at build time
+â”‚   â””â”€â”€ fonts/                  # Self-hosted fonts (Archivo, Instrument Serif, JetBrains Mono)
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ main.jsx                # React root, Router setup, Context providers
+â”‚   â”œâ”€â”€ App.jsx                 # Layout shell, route definitions
+â”‚   â”œâ”€â”€ styles/
+â”‚   â”‚   â”œâ”€â”€ tokens.css          # Design tokens (colors, fonts, spacing)
+â”‚   â”‚   â”œâ”€â”€ reset.css           # CSS reset + base element styles
+â”‚   â”‚   â””â”€â”€ globals.css         # App-level global styles
+â”‚   â”œâ”€â”€ routes/
+â”‚   â”‚   â”œâ”€â”€ LandingRoute.jsx    # /
+â”‚   â”‚   â”œâ”€â”€ ScanInputRoute.jsx  # /scan
+â”‚   â”‚   â”œâ”€â”€ ScanningRoute.jsx   # /scan/:id/loading
+â”‚   â”‚   â”œâ”€â”€ ResultsRoute.jsx    # /scan/:id
+â”‚   â”‚   â”œâ”€â”€ FindingDetailRoute.jsx  # /scan/:id/findings/:findingId
+â”‚   â”‚   â”œâ”€â”€ ErrorRoute.jsx      # /scan/:id/error
+â”‚   â”‚   â”œâ”€â”€ MethodologyRoute.jsx # /methodology (renders SCORING.md)
+â”‚   â”‚   â”œâ”€â”€ BenchmarkRoute.jsx  # /benchmark
+â”‚   â”‚   â”œâ”€â”€ AboutRoute.jsx      # /about
+â”‚   â”‚   â””â”€â”€ NotFoundRoute.jsx   # 404 fallback
+â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ shell/
+â”‚   â”‚   â”‚   â”œâ”€â”€ AppNav.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ AppFooter.jsx
+â”‚   â”‚   â”‚   â””â”€â”€ ArcDecoration.jsx   # Reusable SVG arc pattern
+â”‚   â”‚   â”œâ”€â”€ scan/
+â”‚   â”‚   â”‚   â”œâ”€â”€ ScanInput.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ InputTypeTabs.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ ScanProgress.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ ScoreRing.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ CategoryGrid.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ CategoryCell.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ Layer2Tasks.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ Layer2Task.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ FindingsList.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ FindingItem.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ FindingDetail.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ SeverityPill.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ RatingBadge.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ ResultsHeader.jsx
+â”‚   â”‚   â”‚   â””â”€â”€ ResultsFooter.jsx
+â”‚   â”‚   â”œâ”€â”€ social/
+â”‚   â”‚   â”‚   â”œâ”€â”€ SocialCard.jsx      # The visual card component
+â”‚   â”‚   â”‚   â””â”€â”€ SocialCardExport.jsx # Wrapper with download button
+â”‚   â”‚   â”œâ”€â”€ error/
+â”‚   â”‚   â”‚   â”œâ”€â”€ ErrorView.jsx
+â”‚   â”‚   â”‚   â””â”€â”€ ErrorIcon.jsx
+â”‚   â”‚   â””â”€â”€ common/
+â”‚   â”‚       â”œâ”€â”€ Button.jsx
+â”‚   â”‚       â”œâ”€â”€ CodeBlock.jsx
+â”‚   â”‚       â””â”€â”€ LoadingDots.jsx
+â”‚   â”œâ”€â”€ state/
+â”‚   â”‚   â”œâ”€â”€ ScanContext.jsx     # Current scan state (React Context + useReducer)
+â”‚   â”‚   â””â”€â”€ scanReducer.js
+â”‚   â”œâ”€â”€ lib/
+â”‚   â”‚   â”œâ”€â”€ api-client.js       # fetch wrapper with error handling
+â”‚   â”‚   â”œâ”€â”€ scan-storage.js     # localStorage for draft scans only (no results stored)
+â”‚   â”‚   â”œâ”€â”€ social-card.js      # Social card export to PNG via html2canvas
+â”‚   â”‚   â”œâ”€â”€ report-export.js    # Report download (HTML or PDF)
+â”‚   â”‚   â””â”€â”€ analytics.js        # Plausible wrapper, no cookies, server-side only
+â”‚   â””â”€â”€ tests/
+â”‚       â”œâ”€â”€ routes/              # Route-level integration tests
+â”‚       â”œâ”€â”€ components/          # Component tests
+â”‚       â””â”€â”€ fixtures/            # Mock scan responses for testing
 ```
 
 ### Why this structure
@@ -147,21 +147,21 @@ The app is a series of screens, not a single scrollable page. Each route is a di
 
 ```
 /                          (Landing page. Marketing, not the app)
-  ↓  "Scan your site" CTA
+  â†“  "Scan your site" CTA
 /scan                      (Scan Input View. URL / repo / spec upload)
-  ↓  submit
+  â†“  submit
 /scan/:id/loading          (Scanning State. Progress indicator)
-  ↓  success
+  â†“  success
 /scan/:id                  (Results Dashboard. Main report view)
-  ↓  click finding
+  â†“  click finding
 /scan/:id/findings/:fid    (Finding Detail. Expanded view of one finding)
-  ↑  back button
+  â†‘  back button
 /scan/:id                  (Results Dashboard)
 
 Alternative paths from /scan/:id/loading:
-  ↓  failure
+  â†“  failure
 /scan/:id/error            (Error View. Site blocked, timeout, etc.)
-  ↑  "Try another URL"
+  â†‘  "Try another URL"
 /scan                      (Scan Input View)
 ```
 
@@ -174,7 +174,7 @@ Marketing page. Hero, manifesto, six categories, editorial thesis, report previe
 Scan input view. Three input tabs (URL, GitHub repo, API spec upload). Validation, submit. On submit, calls scan API, receives a scan ID, navigates to `/scan/:id/loading`.
 
 **`/scan/:id/loading` (ScanningRoute)**
-Scanning state. Polls `/api/scans/:id` until status is `complete`, `error`, or `timeout`. Shows progress steps (fetch → parse → Layer 1 → Layer 2 → assemble). On success, navigates to `/scan/:id`. On error, navigates to `/scan/:id/error`.
+Scanning state. Polls `/api/scans/:id` until status is `complete`, `error`, or `timeout`. Shows progress steps (fetch â†’ parse â†’ Layer 1 â†’ Layer 2 â†’ assemble). On success, navigates to `/scan/:id`. On error, navigates to `/scan/:id/error`.
 
 **`/scan/:id` (ResultsRoute)**
 Results dashboard. Fetches full scan result. The **result hero leads** (score 0-100 + rating label + AI-written agent narrative line, as one unit; see ResultHero component below). Below the hero: category breakdown, Layer 2 narratives, findings list with two-layer text, export actions. Scroll-based interaction within the route.
@@ -264,7 +264,7 @@ The single most important component in the product. Built first in Block 0 with 
 - Big 0-100 score (Instrument Serif italic, large)
 - Rating label (`Agent-Ready` / `Partially Ready` / `Not Yet Readable`) computed from SCORING.md band cutoffs (80 / 50 / 0)
 - One plain-language agent narrative line (`heroLine.text`), tagged "AI written" when `heroLine.source === 'ai'` and silently the same shape when `source === 'template'`
-- Action buttons: View findings · Share result · Download report
+- Action buttons: View findings Â· Share result Â· Download report
 The hero is never absent and never broken: if Bedrock fails on the hero line, the backend already substituted a deterministic template, so the frontend just renders `heroLine.text`. The frontend does not need a fallback path of its own.
 
 **`ScoreRing`** (subordinate to the hero, used in cards and the social card)
@@ -274,7 +274,7 @@ The circular score ring with number in the center. Takes `score` (0-100), `maxSc
 Text badge showing the rating. Three variants: "Agent-Ready" (teal-mid border), "Partially Ready" (ochre border), "Not Yet Readable" (orange border). Never "bad" or "failing". Rating names come from SCORING.md.
 
 **`CategoryGrid`**
-Six-cell grid (2 columns × 3 rows on desktop, 1 column on mobile). Each cell is a `CategoryCell`.
+Six-cell grid (2 columns Ã— 3 rows on desktop, 1 column on mobile). Each cell is a `CategoryCell`.
 
 **`CategoryCell`**
 One category's display. Category number (mono label), category name (display font), bar indicator with fill proportional to score, score text (e.g., "21 / 25"), finding count with link to filtered findings list. Handles `zeroInstance: true` case by showing the bar empty with an italic "This category did not apply" note.
@@ -286,7 +286,7 @@ Three-task grid (one column on mobile). Each task is a `Layer2Task`. Distinct fr
 One Layer 2 simulation task. Task number, task name, result pill (Completed / Partial / Failed), narrative in italic serif, related findings links. If task was skipped or failed due to Layer 2 system failure, the narrative explains that.
 
 **`FindingsList`**
-The list of all findings. Shows a severity summary at the top: "16 findings · 1 high · 2 medium · 13 low." Findings listed in order: high severity first, then medium, then low. Within each severity, ordered by category weight (highest-weighted categories first).
+The list of all findings. Shows a severity summary at the top: "16 findings Â· 1 high Â· 2 medium Â· 13 low." Findings listed in order: high severity first, then medium, then low. Within each severity, ordered by category weight (highest-weighted categories first).
 
 **`FindingItem`** (two-layer text)
 One finding in the list. **Primary layer (always visible):** plain-language agent narrative ("An agent can't tell your checkout button is a button."). **Helper layer (STUB-eligible at MVP):** finding ID (mono, orange), technical category + score + selector, severity pill. Vibecoder reads the primary; dev expands or glances for the helper. The helper can be a thin first pass at launch and fill in over time. Click/tap opens `FindingDetail`.
@@ -304,12 +304,12 @@ The dashboard sub-header below the hero. Left side: scanned URL, scan metadata (
 Appears in anonymous results: "Sign up to track your scores over time." Single button to `/sign-in`. Discreet, not nagging. Hidden for signed-in users.
 
 **`ResultsFooter`**
-Sticky footer on results view. Left side: "Anonymous scans stored 24h for shareable links · No PII" disclaimer (truthful, matches the data policy; the old "Not stored server-side" line was superseded by 24h TTL storage). Right side: three buttons (Download report, Share card, Scan another).
+Sticky footer on results view. Left side: "Anonymous scans stored 24h for shareable links Â· No PII" disclaimer (truthful, matches the data policy; the old "Not stored server-side" line was superseded by 24h TTL storage). Right side: three buttons (Download report, Share card, Scan another).
 
 ### Social card components
 
 **`SocialCard`**
-The visual card at 1200×630. Reads from scan state context. Renders to a DOM element that can be captured by `html2canvas` for PNG export. Also used as the inline preview in `SocialCardExport`.
+The visual card at 1200Ã—630. Reads from scan state context. Renders to a DOM element that can be captured by `html2canvas` for PNG export. Also used as the inline preview in `SocialCardExport`.
 
 **`SocialCardExport`**
 The share UI. Shows the SocialCard at scaled preview size, with buttons: Copy image, Download PNG, Copy share URL (deep link to the scan), Share to Twitter, Share to LinkedIn. Share buttons open pre-populated share intents with the OG preview URL.
@@ -422,7 +422,7 @@ Engineering-level specifications for each component. Props, state, events, side 
   - If `status === "in_progress"`, update `currentStep` based on `response.currentPhase`
   - If `status === "complete"`, call `onComplete`
   - If `status === "error"`, call `onError(response.error)`
-- Timeout at 30 seconds → `onError({ code: "TIMEOUT" })`
+- Timeout at 30 seconds â†’ `onError({ code: "TIMEOUT" })`
 - Unmount: cancel any in-flight poll
 
 **Accessibility:**
@@ -461,8 +461,8 @@ Engineering-level specifications for each component. Props, state, events, side 
 ```
 
 **Behavior:**
-- Renders severity summary at top: "X findings · Y high · Z medium · W low"
-- Sorts findings: high severity → medium → low
+- Renders severity summary at top: "X findings Â· Y high Â· Z medium Â· W low"
+- Sorts findings: high severity â†’ medium â†’ low
 - Within severity, sorts by category weight (Semantic HTML first if high, etc.)
 - Empty state if no findings in filter: "No findings in this category. An agent would complete tasks here successfully."
 
@@ -479,17 +479,17 @@ Engineering-level specifications for each component. Props, state, events, side 
 
 **Behavior:**
 - Pure rendering component, no interactivity
-- Renders at exactly 1200×630
+- Renders at exactly 1200Ã—630
 - Parent component (`SocialCardExport`) handles scaling for preview and capture for export
 - Colors, fonts, layout match the mockup exactly
 
 **Export flow (`SocialCardExport`):**
 1. User clicks "Share card" in ResultsFooter
-2. Component renders SocialCard off-screen at full 1200×630
+2. Component renders SocialCard off-screen at full 1200Ã—630
 3. User sees scaled preview
-4. User clicks "Download PNG" → `html2canvas` captures the off-screen SocialCard at 2x scale → downloads as `agentislux-scan-[domain]-[date].png`
-5. User clicks "Copy share URL" → copies the scan URL to clipboard
-6. User clicks a social platform button → opens share intent with the scan URL (the platform will fetch OG meta from the URL)
+4. User clicks "Download PNG" â†’ `html2canvas` captures the off-screen SocialCard at 2x scale â†’ downloads as `agentislux-scan-[domain]-[date].png`
+5. User clicks "Copy share URL" â†’ copies the scan URL to clipboard
+6. User clicks a social platform button â†’ opens share intent with the scan URL (the platform will fetch OG meta from the URL)
 
 **Alternate path (server-rendered OG images):**
 At launch, the SocialCard is rendered client-side via html2canvas for download, AND server-rendered as a static PNG at scan completion for OG meta tags. Server-rendering is via a Lambda using `@vercel/og` or similar. The URL `https://agentislux.io/og/:scanId.png` returns the PNG; this URL is set as `og:image` in the dynamic meta tag on the results page.
@@ -544,7 +544,7 @@ Everything else uses `useState` in the component that owns it:
 
 ### Why this architecture
 
-- One global state concern (the scan) → one context.
+- One global state concern (the scan) â†’ one context.
 - No other cross-cutting concerns justify context.
 - Adding state (e.g., user preferences in paid tier) means adding a new context, not mutating the scan context.
 - Matches build principle 7 (one file, one responsibility).
@@ -583,7 +583,7 @@ Server-rendered social card PNG. Used by OG meta tags. Returns: PNG image.
 
 `api-client.js` wraps fetch and provides:
 - **Timeout** (30 seconds for scan status polling, 60 seconds for submit)
-- **Structured error mapping** (HTTP status codes → ErrorShape)
+- **Structured error mapping** (HTTP status codes â†’ ErrorShape)
 - **Request duration logging** (anonymous, for Plausible / CloudWatch correlation)
 - **AbortController support** (cancels in-flight requests when the component unmounts)
 
@@ -766,7 +766,7 @@ Every route includes Schema.org markup:
   "@type": "TechArticle",
   "headline": "Agentis Lux Scoring Methodology",
   "version": "1.1.0",
-  "dateModified": "2026-04-18"
+  "dateModified": "2026-06-19"
 }
 ```
 
@@ -794,10 +794,10 @@ This is a baseline, not a stretch goal. Non-negotiable.
 ### Color contrast
 
 All foreground/background combinations meet WCAG AA:
-- Primary text (`--teal-deep` on `--cream`): 11.4:1 ✓ (AAA)
-- Secondary text (`--muted` on `--cream`): 5.9:1 ✓ (AA)
-- Orange on cream: 4.7:1 ✓ (AA for normal text)
-- Cream on teal-deep: 12.6:1 ✓ (AAA)
+- Primary text (`--teal-deep` on `--cream`): 11.4:1 âœ“ (AAA)
+- Secondary text (`--muted` on `--cream`): 5.9:1 âœ“ (AA)
+- Orange on cream: 4.7:1 âœ“ (AA for normal text)
+- Cream on teal-deep: 12.6:1 âœ“ (AAA)
 
 Contrast tested in the mockups. Any new color combination added during build must pass AA before shipping.
 
@@ -819,7 +819,7 @@ Contrast tested in the mockups. Any new color combination added during build mus
 
 ### Touch targets
 
-- All interactive elements minimum 44×44px on mobile
+- All interactive elements minimum 44Ã—44px on mobile
 - Adequate spacing between adjacent targets (8px minimum)
 
 ### No color-only meaning
@@ -899,12 +899,12 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 - Mobile: stack (ID, body, severity on separate lines)
 
 **Social card:**
-- Always renders at 1200×630 internally
+- Always renders at 1200Ã—630 internally
 - Preview on mobile scales down via transform
 
 ### Touch optimizations
 
-- All buttons minimum 44×44px
+- All buttons minimum 44Ã—44px
 - Tap targets have 8px+ gap between them
 - Tap on FindingItem opens FindingDetail (same behavior as click)
 - Double-tap to zoom is not disabled
@@ -952,7 +952,7 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 
 - File structure (routes, components, lib, state)
 - Tech stack (React 18, React Router v6, Vite, Vitest, CSS modules)
-- Route flow (landing → scan → scanning → results → finding detail, with error branches)
+- Route flow (landing â†’ scan â†’ scanning â†’ results â†’ finding detail, with error branches)
 - Scan ID model (backend-assigned opaque resultId, 24h ScanResults TTL for shareable links, 404 after expiry)
 - ScanContext + useReducer for scan state
 - Error handling strategy (no blank screens, specific messages, next-step actions)

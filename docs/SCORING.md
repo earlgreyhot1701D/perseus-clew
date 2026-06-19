@@ -4,7 +4,7 @@
 
 **Methodology version:** 1.1.1
 **Last updated:** May 27, 2026
-**Status:** MVP — active methodology
+**Status:** MVP â€” active methodology
 
 Every score Agentis Lux produces is tagged with the methodology version that produced it. When this methodology changes, the version number changes. Scores produced under different versions should not be compared directly without noting the version difference. See the Changelog at the bottom of this document for the full version history.
 
@@ -77,7 +77,7 @@ If the response was unusual in shape (non-HTML content type, exceptionally large
 
 Six categories. Total weight: 100. Running on the backend at launch to scan the 50-site benchmark dataset. Not yet available in the user-facing tool. Will move to the paid tier when ready.
 
-These categories were developed from multiple sources: Hermes Clew v1's pattern of structured deterministic scanning, observed behavior of production AI agents consuming APIs (which often differs from how their documentation says they consume APIs), WCAG accessibility principles where APIs intersect with assistive technology, and Emmanuel Paraskakis's "Build AI-Ready Products" checklist (© 2026 Level 250, Inc.) where his specific insights apply. Per-insight attribution to Paraskakis appears inline where his work directly informed a check.
+These categories were developed from multiple sources: Hermes Clew v1's pattern of structured deterministic scanning, observed behavior of production AI agents consuming APIs (which often differs from how their documentation says they consume APIs), WCAG accessibility principles where APIs intersect with assistive technology, and Emmanuel Paraskakis's "Build AI-Ready Products" checklist (Â© 2026 Level 250, Inc.) where his specific insights apply. Per-insight attribution to Paraskakis appears inline where his work directly informed a check.
 
 **Naming and Descriptions (weight: 25)**
 
@@ -240,7 +240,7 @@ Agentis Lux draws from multiple sources. No single document defines our methodol
 
 **Frontend categories** evolved from Hermes Clew v1, an agent readiness scanner built for the GitLab AI Hackathon (March 2026). The six frontend categories were tested against real repositories during that build and refined for Agentis Lux.
 
-**API categories** were shaped by several inputs. Hermes Clew's pattern of dividing scanning into deterministic categories with weighted scoring carries over. Observed behavior of production AI agents consuming APIs informs which patterns matter most. WCAG accessibility principles apply where APIs intersect with assistive technology. Emmanuel Paraskakis's "Build AI-Ready Products" checklist (© 2026 Level 250, Inc.) contributed specific insights, credited inline above where his work directly informed a check.
+**API categories** were shaped by several inputs. Hermes Clew's pattern of dividing scanning into deterministic categories with weighted scoring carries over. Observed behavior of production AI agents consuming APIs informs which patterns matter most. WCAG accessibility principles apply where APIs intersect with assistive technology. Emmanuel Paraskakis's "Build AI-Ready Products" checklist (Â© 2026 Level 250, Inc.) contributed specific insights, credited inline above where his work directly informed a check.
 
 **Accessibility overlap** comes from WCAG 2.1 AA. The same semantic HTML, ARIA support, and structured markup that helps screen readers helps AI agents. The overlap is real and useful, and WCAG 2.1 AA is the baseline Agentis Lux builds and scans against. But agents are a distinct audience with distinct needs, not a subset of the accessibility audience. The thesis is that the web is becoming an interface for agents and most sites were built for a different audience; the WCAG overlap is a head start, not the whole story.
 
@@ -278,13 +278,13 @@ The full mitigation algorithms and the complete list of known limitations live i
 
 ## Versioning
 
-This methodology uses semantic versioning. Every score Agentis Lux produces is tagged with the version of the methodology that produced it. This is how we honor the trust commitment: a score from April 2026 can always be reconciled with a score from October 2026, because you know exactly what changed between versions.
+This methodology uses semantic versioning. Every score Agentis Lux produces is tagged with the version of the methodology that produced it. This is how we honor the trust commitment: a score from one version can always be reconciled with a score from October 2026, because you know exactly what changed between versions.
 
 **Version format:** `MAJOR.MINOR.PATCH`
 
-- **MAJOR** — a change that could make old scores incomparable to new ones. Weight changes across categories. New categories added. Removed categories. Rating band threshold changes. The kind of change where you cannot reasonably say "site X improved from 62 to 78" because the scoring system itself shifted.
-- **MINOR** — a change that refines specific checks within a category without changing category-level weights or rating thresholds. Adding a new sub-check within an existing category. Refining how a specific pattern is detected. Old scores still directionally valid but not byte-for-byte reproducible.
-- **PATCH** — clarifications, fixed bugs in detection logic, improvements to finding text, or documentation-only changes. Scores remain reproducible; wording may improve.
+- **MAJOR** â€” a change that could make old scores incomparable to new ones. Weight changes across categories. New categories added. Removed categories. Rating band threshold changes. The kind of change where you cannot reasonably say "site X improved from 62 to 78" because the scoring system itself shifted.
+- **MINOR** â€” a change that refines specific checks within a category without changing category-level weights or rating thresholds. Adding a new sub-check within an existing category. Refining how a specific pattern is detected. Old scores still directionally valid but not byte-for-byte reproducible.
+- **PATCH** â€” clarifications, fixed bugs in detection logic, improvements to finding text, or documentation-only changes. Scores remain reproducible; wording may improve.
 
 **Current version: 1.1.1**
 
@@ -328,8 +328,8 @@ When we change anything in this document, the change is logged in the Changelog 
 | Version | Date | Change | Rationale |
 |---------|------|--------|-----------|
 | 1.1.1 | 2026-05-27 | Patch: corrected internal version inconsistency (body said 1.0.0); sharpened thesis framing (agents are a distinct audience, WCAG 2.1 AA is the baseline not the thesis); clarified anonymous 24h storage vs account-based trend tracking; stated rating band cutoffs (80/50/0) as the active values the hero label is computed from | Align public methodology with v5 product review and v2 architecture (Path B, 24h TTL storage, result hero). No weight or threshold changes, so scores remain comparable. |
-| 1.1.0 | 2026-04-18 | Expanded API category detail (specific checks per category, Paraskakis insight credits inline, "Not flagged" mitigation notes), Layer 2 simulation moved from roadmap to MVP section, methodology version bumped | API methodology brought to match frontend detail level; Layer 2 is at MVP not future; public methodology aligned with engineering spec in BACKEND-API-CHECKS.md v1 |
-| 1.0.0 | 2026-04-17 | Initial methodology published | Repository launch |
+| 1.1.0 | 2026-05-31 | Expanded API category detail (specific checks per category, Paraskakis insight credits inline, "Not flagged" mitigation notes), Layer 2 simulation moved from roadmap to MVP section, methodology version bumped | API methodology brought to match frontend detail level; Layer 2 is at MVP not future; public methodology aligned with engineering spec in BACKEND-API-CHECKS.md v1 |
+| 1.0.0 | 2026-05-31 | Initial methodology published | Repository launch |
 
 ---
 

@@ -3,7 +3,7 @@
 > The seven foundational modules every Lambda depends on.
 > Contracts, constraints, and observable behavior.
 
-**Status:** v2, May 27, 2026. v1 (April 18) defined the shared module set. v2 adds `scan-store.js` for the ScanResults (24h TTL) + ScanCache (15m TTL) writes/reads added in architecture v2, and clarifies that the existing `bedrock-client.js` is shared by both the Layer 2 simulation and the new hero-line generation. Written for Kiro to build from and for the builder (non-engineer) to validate behavior.
+**Status:** v2, May 27, 2026. v1 defined the shared module set. v2 adds `scan-store.js` for the ScanResults (24h TTL) + ScanCache (15m TTL) writes/reads added in architecture v2, and clarifies that the existing `bedrock-client.js` is shared by both the Layer 2 simulation and the new hero-line generation. Written for Kiro to build from and for the builder (non-engineer) to validate behavior.
 
 **Naming:** Engineering artifacts use "Perseus Clew" as the engine name. The public product is **Agentis Lux** (agentislux.io). User-facing strings (error messages users see, the User-Agent identifying the scanner publicly) use Agentis Lux. Code, tests, CloudWatch metric namespaces, and internal logs use Perseus Clew.
 
@@ -20,7 +20,7 @@ This doc is written so you can validate it without reading code.
 1. **For each module, read "What It Does" and "How You'll Know It Works."** If those descriptions match what you expect users to experience, the module is specified correctly.
 2. **Check the examples.** Each module has a concrete input and a concrete output. If the output looks wrong or surprising, flag it.
 3. **Check the "Constraints" section.** These are the rules the module must follow. If something's missing that matters to you, add it.
-4. **Ignore implementation details.** Anything about how a function is structured internally, what helper functions exist, how retries are timed — that's Kiro's call, not yours.
+4. **Ignore implementation details.** Anything about how a function is structured internally, what helper functions exist, how retries are timed â€” that's Kiro's call, not yours.
 
 If a module's "How You'll Know It Works" section matches your expectations, the spec is good. If the test results later say "all tests pass," the build matches the spec.
 
@@ -41,7 +41,7 @@ If a module's "How You'll Know It Works" section matches your expectations, the 
 | `bedrock-client.js` | Wraps the AWS Bedrock SDK. Used by Layer 2 simulation AND by the hero-line generator. | `errors.js`, `logger.js` |
 | `scan-store.js` | DynamoDB CRUD for ScanResults (24h TTL) and ScanCache (15m TTL). Fail-soft writes. | `errors.js`, `logger.js` |
 
-**Build order:** errors → logger → everything else in any order. The two leaf modules (errors, logger) are foundational. Everything above depends on them.
+**Build order:** errors â†’ logger â†’ everything else in any order. The two leaf modules (errors, logger) are foundational. Everything above depends on them.
 
 ---
 
@@ -104,26 +104,26 @@ One place for all errors means consistent shape everywhere. When a scan fails, t
 **Constructor signature:** `new AppError(code, userMessage, internalDetail?)`
 
 **Properties on an AppError instance:**
-- `code` — string, e.g. `FETCH_TIMEOUT`
-- `category` — string, derived from the code prefix (see below)
-- `userMessage` — string, shown in the UI
-- `internalDetail` — string or object, logged only, never returned in responses
-- `timestamp` — ISO 8601 string, set automatically
-- `toJSON()` — method that returns `{ code, category, message: userMessage }` (never includes internalDetail)
+- `code` â€” string, e.g. `FETCH_TIMEOUT`
+- `category` â€” string, derived from the code prefix (see below)
+- `userMessage` â€” string, shown in the UI
+- `internalDetail` â€” string or object, logged only, never returned in responses
+- `timestamp` â€” ISO 8601 string, set automatically
+- `toJSON()` â€” method that returns `{ code, category, message: userMessage }` (never includes internalDetail)
 
 ### Error Code Format
 
 Hierarchical strings. Category prefix, then specific code.
 
 **Categories and examples:**
-- `VALIDATION_*` — input validation failures (`VALIDATION_INVALID_URL`, `VALIDATION_URL_TOO_LONG`)
-- `FETCH_*` — URL or repo fetching failures (`FETCH_TIMEOUT`, `FETCH_TOO_LARGE`, `FETCH_NOT_HTML`, `FETCH_REDIRECT_LIMIT`, `FETCH_FORBIDDEN`, `FETCH_NOT_FOUND`, `FETCH_DNS_FAILURE`)
-- `PARSE_*` — parsing failures (`PARSE_INVALID_HTML`, `PARSE_INVALID_SPEC`, `PARSE_UNSUPPORTED_SPEC_VERSION`)
-- `CHECK_*` — check module failures (`CHECK_MODULE_ERROR`)
-- `SCORE_*` — scoring failures (`SCORE_INVALID_INPUT`)
-- `BEDROCK_*` — Bedrock/simulation failures (`BEDROCK_THROTTLED`, `BEDROCK_UNAVAILABLE`, `BEDROCK_TIMEOUT`, `BEDROCK_INVALID_RESPONSE`)
-- `RATE_LIMIT_*` — rate limiting (`RATE_LIMIT_EXCEEDED`)
-- `INTERNAL_*` — unexpected errors (`INTERNAL_UNKNOWN`)
+- `VALIDATION_*` â€” input validation failures (`VALIDATION_INVALID_URL`, `VALIDATION_URL_TOO_LONG`)
+- `FETCH_*` â€” URL or repo fetching failures (`FETCH_TIMEOUT`, `FETCH_TOO_LARGE`, `FETCH_NOT_HTML`, `FETCH_REDIRECT_LIMIT`, `FETCH_FORBIDDEN`, `FETCH_NOT_FOUND`, `FETCH_DNS_FAILURE`)
+- `PARSE_*` â€” parsing failures (`PARSE_INVALID_HTML`, `PARSE_INVALID_SPEC`, `PARSE_UNSUPPORTED_SPEC_VERSION`)
+- `CHECK_*` â€” check module failures (`CHECK_MODULE_ERROR`)
+- `SCORE_*` â€” scoring failures (`SCORE_INVALID_INPUT`)
+- `BEDROCK_*` â€” Bedrock/simulation failures (`BEDROCK_THROTTLED`, `BEDROCK_UNAVAILABLE`, `BEDROCK_TIMEOUT`, `BEDROCK_INVALID_RESPONSE`)
+- `RATE_LIMIT_*` â€” rate limiting (`RATE_LIMIT_EXCEEDED`)
+- `INTERNAL_*` â€” unexpected errors (`INTERNAL_UNKNOWN`)
 
 Kiro adds new codes as needed within these categories. Adding a new category requires updating this doc.
 
@@ -146,7 +146,7 @@ throw new AppError(
 
 The user sees: "This site did not respond within 30 seconds."
 
-The log captures: `{ code: 'FETCH_TIMEOUT', category: 'FETCH', userMessage: 'This site did not respond within 30 seconds.', internalDetail: { targetUrl: 'example.com', durationMs: 30123 }, timestamp: '2026-04-18T16:22:15.000Z' }`
+The log captures: `{ code: 'FETCH_TIMEOUT', category: 'FETCH', userMessage: 'This site did not respond within 30 seconds.', internalDetail: { targetUrl: 'example.com', durationMs: 30123 }, timestamp: '2026-06-19T12:00:00.000Z' }`
 
 The API response body: `{ error: { code: 'FETCH_TIMEOUT', category: 'FETCH', message: 'This site did not respond within 30 seconds.' } }` (no internal detail)
 
@@ -171,7 +171,7 @@ The logger enforces the deny-list: certain data must never appear in logs regard
 **Log entry shape (written as single-line JSON to stdout):**
 ```json
 {
-  "timestamp": "2026-04-18T16:22:15.000Z",
+  "timestamp": "2026-06-19T12:00:00.000Z",
   "level": "info",
   "service": "perseus-scan",
   "requestId": "abc-123-def",
@@ -197,10 +197,10 @@ The logger also strips the full URL from any field named `url` or `targetUrl` an
 
 ### Log Levels
 
-- `DEBUG` — development only. Not written in production (env variable controls).
-- `INFO` — normal operational events (scan started, scan completed, cache hit)
-- `WARN` — recoverable issues (rate limit hit, fetch retried, Bedrock throttle)
-- `ERROR` — failures (any AppError that reaches the Lambda boundary)
+- `DEBUG` â€” development only. Not written in production (env variable controls).
+- `INFO` â€” normal operational events (scan started, scan completed, cache hit)
+- `WARN` â€” recoverable issues (rate limit hit, fetch retried, Bedrock throttle)
+- `ERROR` â€” failures (any AppError that reaches the Lambda boundary)
 
 ### How You'll Know It Works
 
@@ -225,7 +225,7 @@ What actually gets logged:
 
 ```json
 {
-  "timestamp": "2026-04-18T16:22:15.000Z",
+  "timestamp": "2026-06-19T12:00:00.000Z",
   "level": "info",
   "service": "perseus-scan",
   "requestId": "abc-123-def",
@@ -262,7 +262,7 @@ This is the single entry point for fetching arbitrary URLs from Perseus. No othe
     statusCode: 200,
     contentType: 'text/html; charset=utf-8',
     contentLength: 45123,           // bytes
-    redirectChain: [                // array of { domain, statusCode } — never full URLs
+    redirectChain: [                // array of { domain, statusCode } â€” never full URLs
       { domain: 'example.com', statusCode: 301 },
       { domain: 'www.example.com', statusCode: 200 },
     ],
@@ -372,7 +372,7 @@ This is how Perseus scans GitHub-hosted projects when a user provides a repo URL
 - **File filter:** Only `.html`, `.jsx`, `.tsx` files. Matches Hermes v1.
 - **File count cap:** 20 files max. If the repo has more, prioritize files in `src/`, `app/`, `pages/`, `components/` directories first, then the rest.
 - **File size cap:** 500KB per file. Larger files are skipped (noted in `metadata.skippedReasons`).
-- **Excluded directories:** `node_modules`, `dist`, `build`, `.next`, `coverage`, `.git` — never traversed. *Matches Hermes v1 `file_finder.py`.*
+- **Excluded directories:** `node_modules`, `dist`, `build`, `.next`, `coverage`, `.git` â€” never traversed. *Matches Hermes v1 `file_finder.py`.*
 - **Spec search:** Looks for `openapi.json`, `openapi.yaml`, `swagger.json`, `swagger.yaml` in the repo root and in `docs/`, `api/`, `spec/` directories. First match wins.
 - **Private repos:** Throws `FETCH_FORBIDDEN` with message "This repo is private or doesn't exist. Perseus can only scan public repositories."
 - **Rate limit exhausted:** Throws `FETCH_FORBIDDEN` with message "GitHub API rate limit reached. Try again in [N] minutes." where N is derived from the `X-RateLimit-Reset` header.
@@ -412,7 +412,7 @@ Output on a small repo:
 
 ### What It Does
 
-Takes raw HTML text and returns a queryable tree structure the check modules can inspect. Uses the cheerio library. Does not execute JavaScript — returns only what's in the HTML as received, which is what AI agents without browser engines see.
+Takes raw HTML text and returns a queryable tree structure the check modules can inspect. Uses the cheerio library. Does not execute JavaScript â€” returns only what's in the HTML as received, which is what AI agents without browser engines see.
 
 Think of it as: "turn this HTML string into something I can ask questions about."
 
@@ -479,7 +479,7 @@ Output:
 }
 ```
 
-A check module could then do: `const buttonCount = result.$('button').length;` → gets 1.
+A check module could then do: `const buttonCount = result.$('button').length;` â†’ gets 1.
 
 ---
 
@@ -496,8 +496,8 @@ Normalizes Swagger 2.0 to OpenAPI 3.x shape internally, so API check modules onl
 **Export:** `parseSpec(specText, contentType?)` async function.
 
 **Input:**
-- `specText` — string (JSON or YAML)
-- `contentType` — optional hint (`'application/json'`, `'application/yaml'`). If not provided, detected from content.
+- `specText` â€” string (JSON or YAML)
+- `contentType` â€” optional hint (`'application/json'`, `'application/yaml'`). If not provided, detected from content.
 
 **Output:**
 ```js
@@ -575,8 +575,8 @@ Takes a string that's about to be returned to the user (in a finding, in an erro
 **Export:** `sanitize(text, options?)` function.
 
 **Input:**
-- `text` — string to sanitize
-- `options` — optional object. Default options sanitize aggressively.
+- `text` â€” string to sanitize
+- `options` â€” optional object. Default options sanitize aggressively.
 
 **Output:** A string, safe to include in a report, log, or response body.
 
@@ -587,12 +587,12 @@ Takes a string that's about to be returned to the user (in a finding, in an erro
 - Null bytes, control characters that aren't newline/tab.
 
 **Redacted with visible placeholder:**
-- Email addresses: `user@example.com` → `[redacted-email]`
-- What-looks-like API keys or tokens: long alphanumeric strings (20+ chars) with high entropy → `[redacted-token]`
-- Credit card-shaped numbers (Luhn-valid 13-19 digit sequences) → `[redacted-card]`
-- Phone number patterns → `[redacted-phone]`
+- Email addresses: `user@example.com` â†’ `[redacted-email]`
+- What-looks-like API keys or tokens: long alphanumeric strings (20+ chars) with high entropy â†’ `[redacted-token]`
+- Credit card-shaped numbers (Luhn-valid 13-19 digit sequences) â†’ `[redacted-card]`
+- Phone number patterns â†’ `[redacted-phone]`
   - Note: bare 7-digit numbers (e.g. 555-1234) are deliberately not redacted. The NNN-NNNN pattern is structurally identical to numeric ranges and error codes (e.g. 100-2000, 401-4012). Over-redacting innocent numbers is worse than missing an ambiguous phone number. Only phone numbers with enough structure to be unambiguous (area code, country code, parentheses) are redacted.
-- IP addresses → `[redacted-ip]`
+- IP addresses â†’ `[redacted-ip]`
 
 **The rule:** Never silently strip. Always replace with a visible placeholder. If something was sanitized, the reader can see it was, so they know something was there.
 
@@ -637,7 +637,7 @@ Defense in depth: API Gateway applies its own rate limit at the network edge; th
 
 - **Per-IP limit:** 10 scans per minute per source IP.
 - **Global limit:** 1000 scans per minute across all IPs (burst protection).
-- **Storage:** In-memory per Lambda instance (not shared across instances). This is intentionally imperfect — API Gateway handles the authoritative limit. The in-memory check catches burst patterns within a single Lambda container.
+- **Storage:** In-memory per Lambda instance (not shared across instances). This is intentionally imperfect â€” API Gateway handles the authoritative limit. The in-memory check catches burst patterns within a single Lambda container.
 - **Window:** Sliding, 60-second window.
 - **Bypass:** An env variable `RATE_LIMIT_BYPASS=true` disables the check (for local development and tests). Never set in production.
 
@@ -671,16 +671,16 @@ The Lambda handler catches this, sets HTTP status 429, sets `Retry-After: 34` he
 
 Wraps the AWS Bedrock SDK for calling Claude Haiku 4.5. Takes a structured prompt, handles retries on transient failures, enforces timeouts, and returns the model's response. Used only by the simulation module (Layer 2).
 
-Generic wrapper — the client doesn't know what prompt it's sending or what the response means. Prompt engineering lives in the simulation module.
+Generic wrapper â€” the client doesn't know what prompt it's sending or what the response means. Prompt engineering lives in the simulation module.
 
 ### Inputs and Outputs
 
 **Export:** `invokeBedrock(systemPrompt, userPrompt, options?)` async function.
 
 **Input:**
-- `systemPrompt` — string, the system-level instructions (e.g., "You are an AI agent simulating use of a website...")
-- `userPrompt` — string, the user-level content (e.g., the HTML summary and findings)
-- `options` — optional `{ maxTokens, temperature }`. Defaults: `maxTokens: 1000`, `temperature: 0.2`.
+- `systemPrompt` â€” string, the system-level instructions (e.g., "You are an AI agent simulating use of a website...")
+- `userPrompt` â€” string, the user-level content (e.g., the HTML summary and findings)
+- `options` â€” optional `{ maxTokens, temperature }`. Defaults: `maxTokens: 1000`, `temperature: 0.2`.
 
 **Output (on success):**
 ```js
@@ -760,10 +760,10 @@ The module is called by the scan orchestrator after scoring (write path) and at 
 ### Interface
 
 **Exports:**
-- `readCache(urlHash)` async → `result | null`. Reads ScanCache by URL hash; returns the cached result if found and within the cache window, otherwise null. Never throws.
-- `writeCache(urlHash, domain, result)` async → void. Writes a ScanCache row with a 15-minute TTL. Fail-soft: catches DynamoDB errors, logs to CloudWatch, returns void without throwing.
-- `writeResult(resultId, domain, score, ratingLabel, heroLine, categoryBreakdown, findings)` async → void. Writes a ScanResults row with a 24-hour TTL. Same fail-soft semantics.
-- `readResult(resultId)` async → `result | null`. Reads ScanResults by resultId for shareable links. Returns the row if found and not expired, otherwise null.
+- `readCache(urlHash)` async â†’ `result | null`. Reads ScanCache by URL hash; returns the cached result if found and within the cache window, otherwise null. Never throws.
+- `writeCache(urlHash, domain, result)` async â†’ void. Writes a ScanCache row with a 15-minute TTL. Fail-soft: catches DynamoDB errors, logs to CloudWatch, returns void without throwing.
+- `writeResult(resultId, domain, score, ratingLabel, heroLine, categoryBreakdown, findings)` async â†’ void. Writes a ScanResults row with a 24-hour TTL. Same fail-soft semantics.
+- `readResult(resultId)` async â†’ `result | null`. Reads ScanResults by resultId for shareable links. Returns the row if found and not expired, otherwise null.
 
 The two writes happen in parallel after the response is sent, not before. The orchestrator does not await them.
 
@@ -787,7 +787,7 @@ Read functions return either the deserialized row (without the TTL attribute) or
 
 - DynamoDB GetItem / PutItem calls
 - TTL computation (`createdAt + ttlSeconds`)
-- Result-row → JSON deserialization (strip TTL attribute)
+- Result-row â†’ JSON deserialization (strip TTL attribute)
 - Fail-soft wrapping of every DynamoDB call
 
 ### What does NOT live here
@@ -810,8 +810,8 @@ Every shared module is unit tested. Tests use Vitest.
 - Example: `it('throws FETCH_TIMEOUT when the target does not respond within 30 seconds')`
 
 **What tests cover:**
-- Happy path: valid input → expected output
-- Every error path: specific invalid input → specific error code thrown
+- Happy path: valid input â†’ expected output
+- Every error path: specific invalid input â†’ specific error code thrown
 - Constraint enforcement: inputs that hit limits produce the right error
 - Edge cases: empty strings, null, very large inputs
 
@@ -821,30 +821,30 @@ Every shared module is unit tested. Tests use Vitest.
 
 **PASS/FAIL gate:** Before Kiro moves to the next module, the current module's tests must all pass. No skipped tests. No "TODO: fix this test later" comments. *Build principles #20, #23.*
 
-**How you review tests:** Open the test file. Read the `it(...)` descriptions. Each one should describe a behavior you expect. If descriptions match your expectations and all tests pass, the module works. If a test description surprises you ("wait, why is it doing that?"), flag it — either the test is wrong or the spec needs updating.
+**How you review tests:** Open the test file. Read the `it(...)` descriptions. Each one should describe a behavior you expect. If descriptions match your expectations and all tests pass, the module works. If a test description surprises you ("wait, why is it doing that?"), flag it â€” either the test is wrong or the spec needs updating.
 
 ---
 
 ## What's NOT in This Doc
 
-- **Check modules** — see BACKEND-FRONTEND-CHECKS and BACKEND-API-CHECKS
-- **Scoring logic** — see BACKEND-FRONTEND-CHECKS
-- **Lambda orchestrator** (the function that ties fetch + parse + checks + score together) — see BACKEND-FRONTEND-CHECKS
-- **Layer 2 simulation prompts and logic** — see BACKEND-API-CHECKS or a dedicated SIMULATION-SPEC (TBD)
-- **DynamoDB table schemas** — see ARCHITECTURE.md Section 6
-- **CDK deployment config** — see BUILD-PLAN
-- **Frontend behavior** — see FRONTEND-SPEC
+- **Check modules** â€” see BACKEND-FRONTEND-CHECKS and BACKEND-API-CHECKS
+- **Scoring logic** â€” see BACKEND-FRONTEND-CHECKS
+- **Lambda orchestrator** (the function that ties fetch + parse + checks + score together) â€” see BACKEND-FRONTEND-CHECKS
+- **Layer 2 simulation prompts and logic** â€” see BACKEND-API-CHECKS or a dedicated SIMULATION-SPEC (TBD)
+- **DynamoDB table schemas** â€” see ARCHITECTURE.md Section 6
+- **CDK deployment config** â€” see BUILD-PLAN
+- **Frontend behavior** â€” see FRONTEND-SPEC
 
 ---
 
 ## References
 
-- **ARCHITECTURE.md** — system view, tech stack, data flow
-- **PERSEUS-CLEW-PRODUCT-REVIEW.md** — scope, philosophy, scan constraints
-- **SCORING.md** — public scoring methodology (what findings look like)
-- **BUILD-PRINCIPLES.md** — 38 principles referenced throughout this doc
-- **Paraskakis checklist** (© 2026 Level 250 Inc.) — referenced for Pitfall #2 in parse-spec.js
-- **Hermes Clew v1 codebase** — `scan/file_finder.py` confirmed file filter patterns used in fetch-repo.js
+- **ARCHITECTURE.md** â€” system view, tech stack, data flow
+- **PERSEUS-CLEW-PRODUCT-REVIEW.md** â€” scope, philosophy, scan constraints
+- **SCORING.md** â€” public scoring methodology (what findings look like)
+- **BUILD-PRINCIPLES.md** â€” 38 principles referenced throughout this doc
+- **Paraskakis checklist** (Â© 2026 Level 250 Inc.) â€” referenced for Pitfall #2 in parse-spec.js
+- **Hermes Clew v1 codebase** â€” `scan/file_finder.py` confirmed file filter patterns used in fetch-repo.js
 
 ---
 
@@ -855,10 +855,10 @@ Every shared module is unit tested. Tests use Vitest.
 - Module inventory and build order (derived from ARCHITECTURE.md Section 7)
 - File filter patterns in fetch-repo (verified against Hermes v1 `scan/file_finder.py`: allowed extensions, excluded dirs, priority dirs)
 - Fetch constraints in fetch-url (reproduced from product review "Scan Prerequisites" section)
-- Model choice and pricing for bedrock-client (locked April 18 decision)
+- Model choice and pricing for bedrock-client (locked decision)
 - Prompt injection protection approach (matches product review security section)
 - Sanitize categories (composed from product review privacy commitments + XSS prevention from build principle #10)
-- Graceful degradation behavior for Bedrock (locked April 18 decision)
+- Graceful degradation behavior for Bedrock (locked decision)
 
 ### Medium confidence (reasonable synthesis, worth your review)
 
@@ -866,7 +866,7 @@ Every shared module is unit tested. Tests use Vitest.
 - Token limit for bedrock-client (150K of Haiku's 200K max). Conservative. Kiro may adjust based on actual Layer 2 prompt sizes during build.
 - Specific sanitize patterns (email regex, token heuristics). These are starting implementations; Kiro will refine based on test fixtures.
 
-### Locked decisions baked in (April 18)
+### Locked decisions baked in
 
 - Error code format: hierarchical strings (e.g., `FETCH_TIMEOUT`)
 - User-Agent: `Agentis Lux/0.1 (+https://agentislux.io/about-scanner)` as fallback; Kiro sets via `PERSEUS_USER_AGENT` env if customization needed

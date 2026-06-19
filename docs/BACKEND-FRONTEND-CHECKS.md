@@ -3,9 +3,9 @@
 > The six frontend check modules + scoring + the Lambda that ties them together.
 > Ports Hermes Clew v1 patterns to JavaScript. Honors the observational tone.
 
-**Status:** v2, May 27, 2026. v1 (April 18) defined the six check modules, scoring, and the orchestrator. v2 updates the orchestrator response shape (score nested under a render-mode context for the v3 JS-rendering guardrail), splits cache from result-store (ScanCache 15m / ScanResults 24h), adds the hero-line generation step, and makes the result write fail-soft and post-response. Check module specs are unchanged.
+**Status:** v2, May 27, 2026. v1 defined the six check modules, scoring, and the orchestrator. v2 updates the orchestrator response shape (score nested under a render-mode context for the v3 JS-rendering guardrail), splits cache from result-store (ScanCache 15m / ScanResults 24h), adds the hero-line generation step, and makes the result write fail-soft and post-response. Check module specs are unchanged.
 
-**Naming:** Engineering artifacts (code, tests, CloudWatch metric namespaces) use "Perseus Clew" as the engine name. The public product is **Agentis Lux** (agentislux.io). User-facing strings — findings text, error messages, the report UI — reference Agentis Lux. See the Voice and Tone section below for how this plays out in findings.
+**Naming:** Engineering artifacts (code, tests, CloudWatch metric namespaces) use "Perseus Clew" as the engine name. The public product is **Agentis Lux** (agentislux.io). User-facing strings â€” findings text, error messages, the report UI â€” reference Agentis Lux. See the Voice and Tone section below for how this plays out in findings.
 
 **Scope:** Six frontend check modules, one scoring module, one scan orchestrator Lambda. What each one inputs, outputs, and must never do. What findings look like. How failure modes produce user-facing messages.
 
@@ -20,7 +20,7 @@ Same review pattern as BACKEND-SHARED.
 1. **Read each check module's "What It Does" and "Example findings" sections.** If the findings read like things you'd want Perseus to say, the module is specified correctly.
 2. **Check "How You'll Know It Works" per module.** Those are behaviors you can verify by running the tool.
 3. **Read the "Finding Shape and Voice" section carefully.** That's the drift guard for the most-visible product surface.
-4. **Skip implementation details.** Internal function names, helper regexes, whether a check uses one loop or two — not your concern.
+4. **Skip implementation details.** Internal function names, helper regexes, whether a check uses one loop or two â€” not your concern.
 
 If the example findings match what you want users to see, and the observable behaviors match what you want users to experience, the spec is good.
 
@@ -73,7 +73,7 @@ Every check module exports one function. Same signature across all six.
 }
 ```
 
-**On failure:** Throws `CHECK_MODULE_ERROR` AppError if the module itself breaks (not if the page is bad — a bad page produces findings, not errors).
+**On failure:** Throws `CHECK_MODULE_ERROR` AppError if the module itself breaks (not if the page is bad â€” a bad page produces findings, not errors).
 
 **Must not:**
 - Write to logs at WARN or ERROR level during normal scans
@@ -104,13 +104,13 @@ Every finding is:
 }
 ```
 
-**id** — category prefix + 3-digit number. `SEM-001` through `SEM-0XX` for Semantic HTML, `FORM-0XX` for forms, `ARIA-0XX`, `SDATA-0XX`, `CONT-0XX`, `LINK-0XX`. Stable over time. Used in the UI to deep-link into documentation.
+**id** â€” category prefix + 3-digit number. `SEM-001` through `SEM-0XX` for Semantic HTML, `FORM-0XX` for forms, `ARIA-0XX`, `SDATA-0XX`, `CONT-0XX`, `LINK-0XX`. Stable over time. Used in the UI to deep-link into documentation.
 
-**text** — what an agent experiences. Plain language. Usually one or two sentences. Follows the voice rules below.
+**text** â€” what an agent experiences. Plain language. Usually one or two sentences. Follows the voice rules below.
 
-**count** — how many instances of this issue were found. Integer for "found N of this thing" findings. Null for binary findings ("the page has no `<main>` element").
+**count** â€” how many instances of this issue were found. Integer for "found N of this thing" findings. Null for binary findings ("the page has no `<main>` element").
 
-**examples** — up to 3 short, sanitized snippets. Optional. The UI may show or hide these. If a snippet is longer than 80 characters, it's truncated with an ellipsis.
+**examples** â€” up to 3 short, sanitized snippets. Optional. The UI may show or hide these. If a snippet is longer than 80 characters, it's truncated with an ellipsis.
 
 ### Voice rules for finding text
 
@@ -118,7 +118,7 @@ Every finding is:
 - Describe what an agent experiences, not what the developer did wrong
 - Use present tense ("cannot find" not "could not find")
 - Lead with the observation, then the consequence
-- Group by type — one finding per issue type, with a count — never one finding per instance
+- Group by type â€” one finding per issue type, with a count â€” never one finding per instance
 
 **Never:**
 - Judgment words: "bad," "poor," "wrong," "failing," "broken," "weak," "insufficient"
@@ -143,7 +143,7 @@ Every finding is:
 - "This page has broken heading hierarchy." (judgment word)
 - "Fix your navigation so agents can use it." (judgment + prescription)
 
-The orchestrator runs sanitize.js on every finding's text and examples before returning. Check modules don't need to worry about HTML injection — but they do need to worry about voice, because sanitize.js can't un-editorialize.
+The orchestrator runs sanitize.js on every finding's text and examples before returning. Check modules don't need to worry about HTML injection â€” but they do need to worry about voice, because sanitize.js can't un-editorialize.
 
 ---
 
@@ -166,7 +166,7 @@ Cannot identify interactive elements. Cannot determine whether clicking somethin
 5. **List structure.** When content appears to be a list (multiple repeated items), is it wrapped in `<ul>` or `<ol>` with `<li>` children? Counts loose "list-like" content.
 6. **Form wrapper.** If `<input>` or `<select>` elements exist, are they inside a `<form>` element? Counts form controls outside forms.
 
-Each of the six checks contributes to `passed/total`. *These patterns match Hermes v1 `scan/check_semantic_html.py` — verified.*
+Each of the six checks contributes to `passed/total`. *These patterns match Hermes v1 `scan/check_semantic_html.py` â€” verified.*
 
 ### Scoring
 
@@ -237,7 +237,7 @@ If the page has no forms and no input controls at all, this category returns `{ 
 
 ### What It Does
 
-Examines whether dynamic widgets (custom dropdowns, tabs, dialogs, carousels) use ARIA roles and states that agents can interpret. ARIA is how HTML communicates dynamic component state to assistive technologies — and to agents.
+Examines whether dynamic widgets (custom dropdowns, tabs, dialogs, carousels) use ARIA roles and states that agents can interpret. ARIA is how HTML communicates dynamic component state to assistive technologies â€” and to agents.
 
 ### What an agent cannot do on a page that fails here
 
@@ -337,7 +337,7 @@ Cannot read the primary content. Cannot extract text for summarization. Cannot f
 
 - When Perseus scans a single-page app with an empty `<body>` waiting for React to mount, findings describe the missing content and near-empty body
 - When Perseus scans a server-rendered page with full content in the HTML, the Content in HTML score is high
-- Findings do not judge the developer for using a framework — they describe what an agent without a browser engine sees
+- Findings do not judge the developer for using a framework â€” they describe what an agent without a browser engine sees
 
 ### Example findings
 
@@ -351,7 +351,7 @@ Cannot read the primary content. Cannot extract text for summarization. Cannot f
 
 ### What It Does
 
-Examines whether links on the page are real, navigable, and descriptive. Agents traverse sites via links — the `<a href="...">` pattern is the primary navigation mechanism. Links that don't work as links (JS-only click handlers, empty hrefs, "click here" anchor text) break agent navigation.
+Examines whether links on the page are real, navigable, and descriptive. Agents traverse sites via links â€” the `<a href="...">` pattern is the primary navigation mechanism. Links that don't work as links (JS-only click handlers, empty hrefs, "click here" anchor text) break agent navigation.
 
 ### What an agent cannot do on a page that fails here
 
@@ -388,7 +388,7 @@ Cannot build a site map. Cannot follow navigation predictably. Cannot determine 
 
 ### What It Does
 
-Takes the outputs of all six check modules and produces a final score, rating band, and per-category breakdown. Applies the category weights from SCORING.md. Knows nothing about HTML or specific checks — just arithmetic and labels.
+Takes the outputs of all six check modules and produces a final score, rating band, and per-category breakdown. Applies the category weights from SCORING.md. Knows nothing about HTML or specific checks â€” just arithmetic and labels.
 
 ### Inputs and Outputs
 
@@ -429,7 +429,7 @@ Per category: `earned = (passed / total) * max_points` where max_points comes fr
 **Zero-instance rule (Q4 recommendation):** When a category's `total === 0` (e.g., page has no forms), that category receives **full credit with a note**. The note text is predefined per category:
 - `form_accessibility`: `'no forms present'`
 - `aria`: `'no custom widgets present'`
-- `structured_data`: (always has something to check — no zero case expected)
+- `structured_data`: (always has something to check â€” no zero case expected)
 - `link_navigation`: `'no links present'` (unusual but possible)
 - `semantic_html`: (always has something to check)
 - `content_in_html`: (always has something to check)
@@ -457,19 +457,19 @@ Thresholds applied to the total score:
 Input:
 ```js
 {
-  semantic_html:    { passed: 4, total: 6, findings: [...] },  // → 17/25
-  form_accessibility:{ passed: 0, total: 0, findings: [] },     // → 20/20 (note)
-  aria:             { passed: 3, total: 6, findings: [...] },  // → 8/15
-  structured_data:  { passed: 5, total: 7, findings: [...] },  // → 11/15
-  content_in_html:  { passed: 6, total: 6, findings: [] },     // → 15/15
-  link_navigation:  { passed: 4, total: 6, findings: [...] },  // → 7/10
+  semantic_html:    { passed: 4, total: 6, findings: [...] },  // â†’ 17/25
+  form_accessibility:{ passed: 0, total: 0, findings: [] },     // â†’ 20/20 (note)
+  aria:             { passed: 3, total: 6, findings: [...] },  // â†’ 8/15
+  structured_data:  { passed: 5, total: 7, findings: [...] },  // â†’ 11/15
+  content_in_html:  { passed: 6, total: 6, findings: [] },     // â†’ 15/15
+  link_navigation:  { passed: 4, total: 6, findings: [...] },  // â†’ 7/10
 }
 ```
 
 Output:
 ```js
 {
-  total: 78,              // (17 + 20 + 8 + 11 + 15 + 7) → rounded
+  total: 78,              // (17 + 20 + 8 + 11 + 15 + 7) â†’ rounded
   rating: 'Partially Ready',
   breakdown: { /* as shown in the Output structure above */ }
 }
@@ -553,14 +553,14 @@ Full report shape, updated in v2 for the render-mode guardrail and the hero line
 
 ### Pipeline (data flow)
 
-1. **Validate input.** Check `type` is one of the three. Check `target` format matches the type. Invalid → throw `VALIDATION_*`.
-2. **Check rate limit.** `rate-limit.checkRateLimit(event)`. Over → throw `RATE_LIMIT_EXCEEDED`.
+1. **Validate input.** Check `type` is one of the three. Check `target` format matches the type. Invalid â†’ throw `VALIDATION_*`.
+2. **Check rate limit.** `rate-limit.checkRateLimit(event)`. Over â†’ throw `RATE_LIMIT_EXCEEDED`.
 3. **Hash the target.** Compute `urlHash = sha256(normalize(target))` once. Used for the cache key. The full URL is never stored.
 4. **Check ScanCache.** `scan-store.readCache(urlHash)`. If a fresh entry exists (within the 15-min cache window), return that cached response with `meta.fromCache: true`. Done.
 5. **Branch on type:**
-   - `type: 'url'` → call `fetchUrl(target)`
-   - `type: 'repo'` → call `fetchRepo(owner, repo)`, pick the primary HTML file, optionally use apiSpec for later
-   - `type: 'spec'` → skip fetch, use `target` directly (API scanning only; frontend checks don't apply)
+   - `type: 'url'` â†’ call `fetchUrl(target)`
+   - `type: 'repo'` â†’ call `fetchRepo(owner, repo)`, pick the primary HTML file, optionally use apiSpec for later
+   - `type: 'spec'` â†’ skip fetch, use `target` directly (API scanning only; frontend checks don't apply)
 6. **Parse.** Call `parseHtml(html)` for URL/repo paths. For spec input, skip to API check modules (covered in BACKEND-API-CHECKS).
 7. **Run checks sequentially.** Call each of the six check modules, one after another. Collect results. *Matches Hermes v1 pattern.*
 8. **Score (deterministic).** `calculateScore(categoryResults)`.
@@ -572,8 +572,8 @@ Full report shape, updated in v2 for the render-mode guardrail and the hero line
 14. **Log scan event.** `logger.info('Scan completed', { requestId, resultId, domain, scanType, durationMs, score: total, heroSource })`.
 15. **Return the response body to the user.**
 16. **Async, post-response, fail-soft writes** (not awaited; the user already has their report):
-    - `scan-store.writeResult(resultId, ...)` → ScanResults, 24-hour TTL, backs shareable links
-    - `scan-store.writeCache(urlHash, domain, response)` → ScanCache, 15-minute TTL, dedup
+    - `scan-store.writeResult(resultId, ...)` â†’ ScanResults, 24-hour TTL, backs shareable links
+    - `scan-store.writeCache(urlHash, domain, response)` â†’ ScanCache, 15-minute TTL, dedup
     - Either write failing logs `WARN` and increments `Perseus/ScanStore/WriteFailures` but never affects the user
     - If the user is signed in, `user-store.appendScan(userId, resultId)` runs in parallel with a small honest signal on failure (handled by the frontend; anonymous scans get no such signal)
 
@@ -647,29 +647,29 @@ Before Kiro moves to the next module, all tests on the current module must pass.
 
 ### How you review tests
 
-Open the test file. Read the `describe` and `it` descriptions. Each one should make sense to you as a behavior you'd expect. If an `it` description surprises you, flag it — either the test is wrong or the spec is. Running `npm test` and seeing all green means the module matches the spec.
+Open the test file. Read the `describe` and `it` descriptions. Each one should make sense to you as a behavior you'd expect. If an `it` description surprises you, flag it â€” either the test is wrong or the spec is. Running `npm test` and seeing all green means the module matches the spec.
 
 ---
 
 ## What's NOT in This Doc
 
-- **Shared infrastructure modules** — see BACKEND-SHARED
-- **API check modules, API scan path** — see BACKEND-API-CHECKS
-- **Layer 2 simulation prompt design** — see BACKEND-API-CHECKS or a dedicated SIMULATION spec
-- **DynamoDB schemas (cache table, benchmark table)** — see ARCHITECTURE.md Section 6
-- **React UI, report rendering** — see FRONTEND-SPEC
-- **Security implementation details, CDK deploy** — see BUILD-PLAN
+- **Shared infrastructure modules** â€” see BACKEND-SHARED
+- **API check modules, API scan path** â€” see BACKEND-API-CHECKS
+- **Layer 2 simulation prompt design** â€” see BACKEND-API-CHECKS or a dedicated SIMULATION spec
+- **DynamoDB schemas (cache table, benchmark table)** â€” see ARCHITECTURE.md Section 6
+- **React UI, report rendering** â€” see FRONTEND-SPEC
+- **Security implementation details, CDK deploy** â€” see BUILD-PLAN
 
 ---
 
 ## References
 
-- **ARCHITECTURE.md** — system view, scan pipeline overview
-- **BACKEND-SHARED.md** — shared infrastructure modules that every check depends on
-- **SCORING.md** — public scoring methodology, category weights, band descriptions
-- **PERSEUS-CLEW-PRODUCT-REVIEW.md** — product tone, scan prerequisites
-- **BUILD-PRINCIPLES.md** — 38 principles referenced throughout
-- **Hermes Clew v1 codebase** — `scan/scanner.py`, `scan/check_semantic_html.py`, `scan/scoring.py` (patterns ported from Python to JavaScript)
+- **ARCHITECTURE.md** â€” system view, scan pipeline overview
+- **BACKEND-SHARED.md** â€” shared infrastructure modules that every check depends on
+- **SCORING.md** â€” public scoring methodology, category weights, band descriptions
+- **PERSEUS-CLEW-PRODUCT-REVIEW.md** â€” product tone, scan prerequisites
+- **BUILD-PRINCIPLES.md** â€” 38 principles referenced throughout
+- **Hermes Clew v1 codebase** â€” `scan/scanner.py`, `scan/check_semantic_html.py`, `scan/scoring.py` (patterns ported from Python to JavaScript)
 
 ---
 
@@ -677,18 +677,18 @@ Open the test file. Read the `describe` and `it` descriptions. Each one should m
 
 ### High confidence (grounded in existing docs or code)
 
-- Check module contract (`{ passed, total, findings }`) — verified against Hermes v1 `scan/check_semantic_html.py` return shape
-- Scoring math (per-category = passed/total * weight) — verified against Hermes v1 `scan/scoring.py`
-- Category weights (25/20/15/15/15/10) — from SCORING.md
-- Orchestrator pipeline order — composed from ARCHITECTURE.md data flow section
-- Semantic HTML specific patterns (div/span click, nav, main, headings, lists, forms) — verified against Hermes v1 `check_semantic_html.py`
-- Finding voice rules — derived from product review and build principle #35
+- Check module contract (`{ passed, total, findings }`) â€” verified against Hermes v1 `scan/check_semantic_html.py` return shape
+- Scoring math (per-category = passed/total * weight) â€” verified against Hermes v1 `scan/scoring.py`
+- Category weights (25/20/15/15/15/10) â€” from SCORING.md
+- Orchestrator pipeline order â€” composed from ARCHITECTURE.md data flow section
+- Semantic HTML specific patterns (div/span click, nav, main, headings, lists, forms) â€” verified against Hermes v1 `check_semantic_html.py`
+- Finding voice rules â€” derived from product review and build principle #35
 
 ### Medium confidence (reasonable synthesis, worth your review)
 
-- Specific finding IDs and text — these are my proposed starting language. Kiro may tweak during implementation; you'll see the results in fixtures.
-- Rating band thresholds (80/50/0) — these are starting values. SCORING.md v2 will lock specific cutoffs after benchmark testing.
-- The exact count of "what it looks for" sub-checks per module (6 per module for a clean `passed/total`) — matches Hermes v1 pattern but specific items may shift based on cheerio affordances.
+- Specific finding IDs and text â€” these are my proposed starting language. Kiro may tweak during implementation; you'll see the results in fixtures.
+- Rating band thresholds (80/50/0) â€” these are starting values. SCORING.md v2 will lock specific cutoffs after benchmark testing.
+- The exact count of "what it looks for" sub-checks per module (6 per module for a clean `passed/total`) â€” matches Hermes v1 pattern but specific items may shift based on cheerio affordances.
 
 ### Deliberate departure from Hermes v1
 

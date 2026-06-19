@@ -18,7 +18,6 @@ export default function Editorial() {
           <p className={styles.sectionMarker}>&#167; 02</p>
           <p className={styles.sidebarTitle}>The Thesis · In Plain View</p>
           <div>
-            <div className={styles.bylineDate}>17 April 2026</div>
             <div className={styles.bylineWriter}>Scanner named for Perseus<br />Tool named for agents</div>
           </div>
         </aside>
@@ -35,7 +34,7 @@ export default function Editorial() {
               The internet was built for human eyes. Websites use visual layouts, styled divs, and JavaScript-rendered content that humans navigate by sight. Agents don&#39;t have eyes. They parse the DOM. When a button is a styled div instead of a button element, an agent literally cannot find it.
             </p>
             <p className={styles.columnsParagraph}>
-              This is not a future problem. Production agents browse the web right now. ChatGPT visits URLs. Perplexity reads pages. Google&#39;s AI overviews pull from live sites. Shopping agents fill out forms. Coding agents call endpoints. Most products were built for humans and never tested for this second audience.
+              This is not a future problem. Production agents read the web right now. ChatGPT visits URLs. Perplexity reads pages. Google&#39;s AI overviews pull from live sites. These retrieval agents arrive by the million, read your HTML, and decide what your page is about, often without ever running your JavaScript. Most products were built for human readers and never tested for this second audience.
             </p>
 
             <figure className={styles.pullquote} role="group">

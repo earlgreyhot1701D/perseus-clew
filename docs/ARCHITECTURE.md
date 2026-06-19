@@ -9,10 +9,10 @@
 
 **Scope:** This document is the system view. It names the parts and describes how they relate. Detailed specs live in sibling documents:
 
-- `BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md` — scan engine, module contracts, check definitions at the interface level
-- `FRONTEND-SPEC.md` — Next.js app (App Router), routes, API routes, components, state
-- `BUILD-PLAN.md` — security implementation, testing strategy, build sequence, risks
-- `SCORING.md` — public scoring methodology (already published)
+- `BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md` â€” scan engine, module contracts, check definitions at the interface level
+- `FRONTEND-SPEC.md` â€” Next.js app (App Router), routes, API routes, components, state
+- `BUILD-PLAN.md` â€” security implementation, testing strategy, build sequence, risks
+- `SCORING.md` â€” public scoring methodology (already published)
 
 **Source of truth:** This document derives from the Perseus Clew Product Review (v5, signed off) and the Project Checklist. Any contradiction with those documents is a bug in this one.
 
@@ -365,7 +365,7 @@ Aggregate counters for the measurement and privacy section of the product review
 
 | Attribute | Type | Notes |
 |-----------|------|-------|
-| `counterKey` (PK) | String | e.g., `scans:total:2026-04-17` |
+| `counterKey` (PK) | String | e.g., `scans:total:2026-06-19` |
 | `count` | Number | Atomic counter |
 | `lastUpdated` | String (ISO 8601) | |
 
@@ -437,23 +437,23 @@ OPEN QUESTION from checklist: DynamoDB may fight against percentile and trend qu
 
 Cross-cutting modules used by all Lambdas. Detailed contracts in `BACKEND-SPEC.md`. Existence and role established here.
 
-- **`errors.js`** — Structured error class. Every error has a code, a user-facing message, an internal detail field, and a category (validation, fetch, parse, check, score, bedrock, internal). Thrown by any module. Caught at Lambda entry points and serialized into the response.
+- **`errors.js`** â€” Structured error class. Every error has a code, a user-facing message, an internal detail field, and a category (validation, fetch, parse, check, score, bedrock, internal). Thrown by any module. Caught at Lambda entry points and serialized into the response.
 
-- **`logger.js`** — Structured JSON to CloudWatch Logs. Every log event has a timestamp, level, Lambda name, request id, and event-specific fields. Explicit deny-list: no full URLs, no HTML content, no API spec content, no raw IPs. Domain-only for URLs.
+- **`logger.js`** â€” Structured JSON to CloudWatch Logs. Every log event has a timestamp, level, Lambda name, request id, and event-specific fields. Explicit deny-list: no full URLs, no HTML content, no API spec content, no raw IPs. Domain-only for URLs.
 
-- **`fetch-url.js`** — Retrieves a URL with the constraints from section 5 (30s timeout, 3 redirects max, 5MB max, content-type check, robots.txt check). Returns the HTML and metadata, or throws a structured error.
+- **`fetch-url.js`** â€” Retrieves a URL with the constraints from section 5 (30s timeout, 3 redirects max, 5MB max, content-type check, robots.txt check). Returns the HTML and metadata, or throws a structured error.
 
-- **`fetch-repo.js`** — Retrieves files from a public GitHub repo via the unauthenticated REST API. Filters to `.html`, `.jsx`, `.tsx`. Max 20 files. 500KB per file max. Also searches for OpenAPI specs (`openapi.json`, `openapi.yaml`, `swagger.json`).
+- **`fetch-repo.js`** â€” Retrieves files from a public GitHub repo via the unauthenticated REST API. Filters to `.html`, `.jsx`, `.tsx`. Max 20 files. 500KB per file max. Also searches for OpenAPI specs (`openapi.json`, `openapi.yaml`, `swagger.json`).
 
-- **`parse-html.js`** — Parses HTML into the structure the check modules consume.
+- **`parse-html.js`** â€” Parses HTML into the structure the check modules consume.
 
-- **`parse-spec.js`** — Parses OpenAPI 3.x and Swagger 2.0 into a normalized structure for the API check modules.
+- **`parse-spec.js`** â€” Parses OpenAPI 3.x and Swagger 2.0 into a normalized structure for the API check modules.
 
-- **`sanitize.js`** — Sanitizes strings before they're returned to clients or logged. Removes anything that could leak PII or that looks like a secret. Applies to findings, error messages, and any user-facing output derived from scanned content.
+- **`sanitize.js`** â€” Sanitizes strings before they're returned to clients or logged. Removes anything that could leak PII or that looks like a secret. Applies to findings, error messages, and any user-facing output derived from scanned content.
 
-- **`rate-limit.js`** — Rate limiting middleware at the Lambda entry point. Limits per-IP and globally. Returns 429 with retry-after on breach.
+- **`rate-limit.js`** â€” Rate limiting middleware at the Lambda entry point. Limits per-IP and globally. Returns 429 with retry-after on breach.
 
-- **`bedrock-client.js`** — Wraps the AWS Bedrock SDK. Single place to manage model selection, prompt construction, retries, and error handling for Layer 2 simulation.
+- **`bedrock-client.js`** â€” Wraps the AWS Bedrock SDK. Single place to manage model selection, prompt construction, retries, and error handling for Layer 2 simulation.
 
 These modules are built first, per build principle #6 and #7 (PRD-first, single responsibility). Every other module depends on them.
 
@@ -471,13 +471,13 @@ Every Lambda writes structured JSON logs to CloudWatch Logs. Log levels: DEBUG (
 
 Published by the scan Lambda on every invocation:
 
-- `Perseus/Scans/Total` — incremented per scan attempt
-- `Perseus/Scans/Success` — incremented on successful scan
-- `Perseus/Scans/Failure` — incremented on failure, with dimension for error category
-- `Perseus/Scans/Duration` — histogram in seconds
-- `Perseus/Cache/Hits` — incremented on cache hit
-- `Perseus/Reports/Downloaded` — incremented when the frontend confirms a download
-- `Perseus/SocialCards/Generated` — incremented on social card generation
+- `Perseus/Scans/Total` â€” incremented per scan attempt
+- `Perseus/Scans/Success` â€” incremented on successful scan
+- `Perseus/Scans/Failure` â€” incremented on failure, with dimension for error category
+- `Perseus/Scans/Duration` â€” histogram in seconds
+- `Perseus/Cache/Hits` â€” incremented on cache hit
+- `Perseus/Reports/Downloaded` â€” incremented when the frontend confirms a download
+- `Perseus/SocialCards/Generated` â€” incremented on social card generation
 
 These metrics feed the measurement table published on the website.
 
@@ -485,9 +485,9 @@ These metrics feed the measurement table published on the website.
 
 From the production-grade section of the product review:
 
-- Error rate > 10% over a 5-minute window → notify
-- Scan duration > 15 seconds at p95 → notify
-- Rate-limit breaches > 50 unique IPs per hour → notify (possible abuse)
+- Error rate > 10% over a 5-minute window â†’ notify
+- Scan duration > 15 seconds at p95 â†’ notify
+- Rate-limit breaches > 50 unique IPs per hour â†’ notify (possible abuse)
 
 **Notification channel: email via SNS.** Solo project, no on-call rotation. Email is sufficient. Revisit if volume grows or a team forms.
 
@@ -543,7 +543,7 @@ GitHub Actions runs on every PR:
 - Dependency audit (`npm audit`)
 - Unit tests (Vitest)
 - Integration tests (Vitest + fixtures)
-- Determinism tests (same input → same output)
+- Determinism tests (same input â†’ same output)
 - Self-scan (Perseus runs against its own deployed frontend or a local build; PR fails if the self-scan regresses)
 
 Deployment is split. The Next.js frontend deploys to Vercel on merge to `main` (Vercel's Git integration, with preview deployments per PR). The AWS side (Lambda, API Gateway, DynamoDB, EventBridge) deploys via CDK. Application deploy is separate from infrastructure deploy. Both sides have one-command (or one-click, on Vercel) rollback.
@@ -590,20 +590,20 @@ From the checklist's Open Questions. These are not blocking MVP. The architectur
 
 ### Perseus Clew documents
 
-- **Product Review** (`PERSEUS-CLEW-PRODUCT-REVIEW.md`) — source of truth for scope, philosophy, and stack. Signed off.
-- **Project Checklist** (`PERSEUS-CLEW-PROJECT-CHECKLIST.md`) — living tracker. Contains decisions, open questions, methodology decisions log, and build sequence.
-- **Build Principles** (`BUILD-PRINCIPLES.md`) — 38 principles applied throughout this architecture.
-- **Scoring** (`SCORING.md`) — public scoring methodology. What each category measures and why.
-- **Frontend Spec** (`FRONTEND-SPEC.md`) — Next.js app, routes, API routes, components, state. Written (v1; Path B update in progress).
-- **Backend Specs** (`BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md`) — module contracts, check definitions, orchestrator flow, Layer 2 simulation. Written.
-- **Build Plan** (`BUILD-PLAN.md`) — security implementation, testing strategy, block-by-block build sequence. Written.
+- **Product Review** (`PERSEUS-CLEW-PRODUCT-REVIEW.md`) â€” source of truth for scope, philosophy, and stack. Signed off.
+- **Project Checklist** (`PERSEUS-CLEW-PROJECT-CHECKLIST.md`) â€” living tracker. Contains decisions, open questions, methodology decisions log, and build sequence.
+- **Build Principles** (`BUILD-PRINCIPLES.md`) â€” 38 principles applied throughout this architecture.
+- **Scoring** (`SCORING.md`) â€” public scoring methodology. What each category measures and why.
+- **Frontend Spec** (`FRONTEND-SPEC.md`) â€” Next.js app, routes, API routes, components, state. Written (v1; Path B update in progress).
+- **Backend Specs** (`BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md`) â€” module contracts, check definitions, orchestrator flow, Layer 2 simulation. Written.
+- **Build Plan** (`BUILD-PLAN.md`) â€” security implementation, testing strategy, block-by-block build sequence. Written.
 
 ### External references
 
 - Lance Wyman's 1968 Mexico City Olympics identity (visual lineage, not technical)
-- Emmanuel Paraskakis, "Build AI-Ready Products: API Checklist" (© 2026 Level 250, Inc.) — informs API scanning categories per the attribution in the product review
-- WCAG 2.1 AA — accessibility baseline
-- Hermes Clew v1 codebase (GitLab AI Hackathon, March 2026) — proven frontend scan engine patterns
+- Emmanuel Paraskakis, "Build AI-Ready Products: API Checklist" (Â© 2026 Level 250, Inc.) â€” informs API scanning categories per the attribution in the product review
+- WCAG 2.1 AA â€” accessibility baseline
+- Hermes Clew v1 codebase (GitLab AI Hackathon, March 2026) â€” proven frontend scan engine patterns
 
 ---
 
@@ -617,10 +617,10 @@ Per the self-QA framework.
 - **Storage:** anonymous scan results stored 24h (ScanResults, TTL), written async + fail-soft, for shareable links. A separate ScanCache table (15-min TTL, keyed by URL hash) handles target-site fetch dedup. Two tables by design: different keys, lifetimes, and purposes. Signed-in user partition (Users) added as a stub. Supersedes v1 "store nothing."
 - **AI placement:** deterministic score, AI-written hero line (fail-soft to deterministic template), AI Layer 2 simulation. AI never produces the score.
 - **Result hero leads** the report (0-100 score + rating label + agent narrative line). Two-layer finding text below.
-- **Auth stub** in scope (provider TBD, open question). **Rating band cutoffs** (0-100 → label) tracked as an open question in `SCORING.md`.
+- **Auth stub** in scope (provider TBD, open question). **Rating band cutoffs** (0-100 â†’ label) tracked as an open question in `SCORING.md`.
 - **Data policy** is now a launch requirement, not paid-tier-only.
 
-### Decisions locked April 17-18, 2026
+### Decisions locked
 
 The 11 items originally flagged as VERIFY or ASSUMPTION have been resolved:
 
@@ -658,7 +658,7 @@ These are tracked in the checklist, not in this doc. They affect specific implem
 
 ### Integrity check
 
-- No tech choices were invented outside the product review stack table or the April 17-18 decisions above.
+- No tech choices were invented outside the product review stack table or the decisions above.
 - No behaviors were invented outside the product review's "What Perseus Clew Does" and "Scan Prerequisites" sections.
 - Every NEVER list item is traceable to the product review.
 - Every claim about Hermes v1 is cited to the file in the Hermes codebase.

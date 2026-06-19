@@ -16,6 +16,10 @@ Agentis Lux scans a site and surfaces what an agent experiences when it tries to
 
 Built for the H0 Hackathon, B2B track.
 
+## On timeline and provenance
+
+Agentis Lux (engine: Perseus Clew) was built during the hackathon window. The idea has older roots. It grew out of Hermes Clew, an agent-readiness scanner built for the GitLab AI hackathon earlier in 2026, and the thinking has developed since. What is new and built in-window is this product: the unified scanner, the AWS engine, the 50-site benchmark, and everything in this repo. Earlier dates in design notes reflect when the idea was being thought through, not when the product was built.
+
 ## What works today, and what's pending
 
 Built and merged:

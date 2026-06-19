@@ -3,9 +3,9 @@
 > The six API check modules + API scoring + the agent simulation layer.
 > Addresses Paraskakis Pitfall #2 directly in the check logic.
 
-**Status:** v2, May 27, 2026. v1 (April 18) defined the six API check modules, API scoring, and Layer 2 simulation. v2 updates how simulation results are stored (ScanResults 24h TTL, alongside the rest of the response) and points at the Next.js frontend instead of React. API check module specs are unchanged.
+**Status:** v2, May 27, 2026. v1 defined the six API check modules, API scoring, and Layer 2 simulation. v2 updates how simulation results are stored (ScanResults 24h TTL, alongside the rest of the response) and points at the Next.js frontend instead of React. API check module specs are unchanged.
 
-**Naming:** Engineering artifacts (code, tests, CloudWatch metric namespaces) use "Perseus Clew" as the engine name. The public product is **Agentis Lux** (agentislux.io). User-facing strings — findings text, error messages — reference Agentis Lux. See the Voice and Tone section for how this plays out in findings.
+**Naming:** Engineering artifacts (code, tests, CloudWatch metric namespaces) use "Perseus Clew" as the engine name. The public product is **Agentis Lux** (agentislux.io). User-facing strings â€” findings text, error messages â€” reference Agentis Lux. See the Voice and Tone section for how this plays out in findings.
 
 **Scope:** Six API check modules, the API scoring module, and the Layer 2 agent simulation Lambda (includes task library, prompt design, structured output contract, graceful degradation). Also covers the orchestrator extensions that tie API scanning into the existing scan flow.
 
@@ -162,7 +162,7 @@ Good:
 
 > "The response schema property `auc` has no description and the name is not self-explanatory. An agent receiving this response would have to look up the field name elsewhere to know whether it represents active user count, authorized user certificate, or something else."
 
-Bad (would violate the voice rules — never ship these):
+Bad (would violate the voice rules â€” never ship these):
 > ~~"Poor naming in POST /users/sync. Missing description is a failure."~~
 > ~~"This API has bad descriptions."~~
 
@@ -328,7 +328,7 @@ Zero-instance rule: if the spec has no parameterized paths at all (no `{id}` seg
 
 ### What this module does (plain English)
 
-When an agent calls an API, every field in the response costs tokens. Returning 80 fields when the agent only needs 3 isn't a single big problem — it's a small problem that compounds across every call. Over a conversation that makes 30 API calls, bloated responses can burn thousands of unnecessary tokens. This module checks whether response schemas are focused, whether pagination is designed well, and whether the spec supports field selection or sparse responses.
+When an agent calls an API, every field in the response costs tokens. Returning 80 fields when the agent only needs 3 isn't a single big problem â€” it's a small problem that compounds across every call. Over a conversation that makes 30 API calls, bloated responses can burn thousands of unnecessary tokens. This module checks whether response schemas are focused, whether pagination is designed well, and whether the spec supports field selection or sparse responses.
 
 Draws from the Paraskakis checklist (insights #8, #9 credited).
 
@@ -456,7 +456,7 @@ Draws from the Paraskakis checklist (insight #12 credited, pitfall #1 addressed)
 **Authentication scheme clarity**
 - `securitySchemes` are defined in components.
 - Auth schemes use standard types where possible (`http` with `bearer` or `basic`, `apiKey`, `oauth2`, `openIdConnect`). Custom auth schemes documented inline.
-- API key auth includes location (`header`, `query`, `cookie`) and name. Note: API key auth is not a deduction in itself — it's flagged if the location/name is ambiguous. Source: Paraskakis pitfall #2 addressed (we do not flag API key auth as an "issue" just because it's not OAuth).
+- API key auth includes location (`header`, `query`, `cookie`) and name. Note: API key auth is not a deduction in itself â€” it's flagged if the location/name is ambiguous. Source: Paraskakis pitfall #2 addressed (we do not flag API key auth as an "issue" just because it's not OAuth).
 
 **Universal search endpoint detection (Pitfall #1)**
 - If the spec has a `POST /search` endpoint that accepts arbitrary query objects and returns heterogeneous results, flag it. Source: Paraskakis pitfall #1 ("Universal search endpoints are a hallucination factory") credited directly.
@@ -499,7 +499,7 @@ Zero-instance rule: if the spec has no `security` declarations and no operations
 ### Confidence notes
 
 - **High confidence:** Standard auth scheme detection (OpenAPI spec structure).
-- **Medium confidence:** "Universal search" detection. Heuristic based on path name + request body shape + response shape. False positives possible on specs where `/search` is appropriate (Algolia, Elastic, etc.) — mitigated by the search-product exception.
+- **Medium confidence:** "Universal search" detection. Heuristic based on path name + request body shape + response shape. False positives possible on specs where `/search` is appropriate (Algolia, Elastic, etc.) â€” mitigated by the search-product exception.
 - **Low confidence:** SDK reference detection. No standard way to declare an SDK in OpenAPI. Check looks for common patterns in `externalDocs.url` and `info.description` (github.com paths, npm/pypi links, "SDK" or "Skill" text).
 
 ---
@@ -628,7 +628,7 @@ Array of six check module outputs, one per category:
     ...
   ],
   totalFindings: 14,
-  scannedAt: "2026-04-18T19:15:33.421Z",
+  scannedAt: "2026-06-19T12:00:00.000Z",
   methodologyVersion: "1.1.0"  // will be bumped when SCORING.md is updated alongside this doc
 }
 ```
@@ -873,7 +873,7 @@ This means a user who re-scans the same URL within 15 minutes gets the cached si
 
 ### Cost management
 
-Claude Haiku 4.5 pricing (verified current as of April 18, 2026): $1/M input tokens, $5/M output tokens.
+Claude Haiku 4.5 pricing (verified current): $1/M input tokens, $5/M output tokens.
 
 Per-task budget estimate:
 - Input: ~20k tokens typical (summarized HTML or spec + prompts) = $0.02
@@ -949,7 +949,7 @@ This doc and SCORING.md are kept in sync. When this doc is signed off, SCORING.m
 - Paraskakis Pitfall #2 mitigations explained in public-facing language
 - Layer 2 simulation described (not full technical detail, just what users see in the report)
 - Zero-instance rule confirmed for API modules
-- Changelog entry: "1.1.0 — Expanded API methodology to match engineering spec in BACKEND-API-CHECKS.md v1."
+- Changelog entry: "1.1.0 â€” Expanded API methodology to match engineering spec in BACKEND-API-CHECKS.md v1."
 
 The public methodology in SCORING.md is the trust document. This doc is the engineering contract. They describe the same system at different depths.
 

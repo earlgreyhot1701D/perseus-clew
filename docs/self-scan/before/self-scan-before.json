@@ -1,0 +1,157 @@
+﻿{
+    "meta":  {
+                 "requestId":  "da7d85ed-6778-4c8f-951f-fe9c6c233505",
+                 "resultId":  "7f06b9ba-c3bf-41f6-9d78-6eec8fe37406",
+                 "scanType":  "url",
+                 "targetDomain":  "perseus-clew.vercel.app",
+                 "durationMs":  7954,
+                 "timestamp":  "2026-06-19T03:04:19.018Z",
+                 "scannedAt":  "2026-06-19T03:04:19.018Z",
+                 "fromCache":  false,
+                 "methodologyVersion":  "1.1.1"
+             },
+    "preScanFindings":  [
+
+                        ],
+    "scoredViews":  {
+                        "rawHtml":  {
+                                        "score":  {
+                                                      "total":  70,
+                                                      "rating":  "Partially Ready",
+                                                      "breakdown":  {
+                                                                        "semantic_html":  {
+                                                                                              "earned":  21,
+                                                                                              "max":  25,
+                                                                                              "note":  null
+                                                                                          },
+                                                                        "form_accessibility":  {
+                                                                                                   "earned":  15,
+                                                                                                   "max":  20,
+                                                                                                   "note":  null
+                                                                                               },
+                                                                        "aria":  {
+                                                                                     "earned":  10,
+                                                                                     "max":  15,
+                                                                                     "note":  null
+                                                                                 },
+                                                                        "structured_data":  {
+                                                                                                "earned":  3,
+                                                                                                "max":  15,
+                                                                                                "note":  null
+                                                                                            },
+                                                                        "content_in_html":  {
+                                                                                                "earned":  15,
+                                                                                                "max":  15,
+                                                                                                "note":  null
+                                                                                            },
+                                                                        "link_navigation":  {
+                                                                                                "earned":  6,
+                                                                                                "max":  10,
+                                                                                                "note":  null
+                                                                                            }
+                                                                    }
+                                                  },
+                                        "heroLine":  {
+                                                         "text":  "An agent visiting perseus-clew.vercel.app can read page content and interact with styled elements, but cannot follow 10 placeholder links or identify page type from missing structured data.",
+                                                         "source":  "ai",
+                                                         "model":  "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+                                                     },
+                                        "findings":  {
+                                                         "semantic_html":  [
+                                                                               {
+                                                                                   "id":  "SEM-005",
+                                                                                   "text":  "1 group of repeated sibling elements appear to be lists but are not wrapped in ul or ol with li elements. Agents parsing list structures cannot identify these as lists.",
+                                                                                   "count":  1
+                                                                               }
+                                                                           ],
+                                                         "form_accessibility":  [
+                                                                                    {
+                                                                                        "id":  "FORM-004",
+                                                                                        "text":  "1 input field that accepts a specific data type (email, phone, URL) uses type=\"text\" instead of the matching input type. Agents parsing input expectations by type cannot distinguish this field from generic text fields.",
+                                                                                        "count":  1
+                                                                                    }
+                                                                                ],
+                                                         "aria":  [
+                                                                      {
+                                                                          "id":  "ARIA-005",
+                                                                          "text":  "1 element with a dynamic-content class name (e.g. toast, notification) has no aria-live attribute or live-region role. Agents monitoring page updates cannot detect when this region changes.",
+                                                                          "count":  1
+                                                                      }
+                                                                  ],
+                                                         "structured_data":  [
+                                                                                 {
+                                                                                     "id":  "SDATA-001",
+                                                                                     "text":  "No JSON-LD structured data is present on this page. Agents parsing structured declarations to identify the page type cannot determine what this page represents.",
+                                                                                     "count":  null
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "SDATA-004",
+                                                                                     "text":  "1 Open Graph meta tag (og:title, og:description, og:type, or og:image) is absent. Agents generating link previews or summaries of this page must infer this value from the full HTML.",
+                                                                                     "count":  1
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "SDATA-005",
+                                                                                     "text":  "1 Twitter Card meta tag is absent. Agents generating card previews for this page on social platforms have incomplete metadata to work with.",
+                                                                                     "count":  1
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "SDATA-006",
+                                                                                     "text":  "No canonical URL is declared on this page. Agents determining the authoritative URL for this content have no declared value to use.",
+                                                                                     "count":  null
+                                                                                 }
+                                                                             ],
+                                                         "content_in_html":  [
+
+                                                                             ],
+                                                         "link_navigation":  [
+                                                                                 {
+                                                                                     "id":  "LINK-002",
+                                                                                     "text":  "10 anchor elements use placeholder hrefs (such as \"#\" or \"javascript:void(0)\"). Agents following these links for navigation arrive at no meaningful destination.",
+                                                                                     "count":  10
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "LINK-005",
+                                                                                     "text":  "No skip-to-content link is present near the top of the page. Agents and keyboard users bypassing navigation to reach main content have no shortcut.",
+                                                                                     "count":  null
+                                                                                 }
+                                                                             ]
+                                                     }
+                                    }
+                    },
+    "simulation":  {
+                       "available":  true,
+                       "tasks":  [
+                                     {
+                                         "taskId":  "SIM-FE-CTA",
+                                         "outcome":  "success",
+                                         "narrative":  "Primary CTA is a semantic button element with text \u0027Observe this site\u0027 located in the scan form, designed to submit the URL input.",
+                                         "linkedFindings":  [
+
+                                                            ],
+                                         "reasoning":  "The HTML contains a clear primary call-to-action: `\u003cbutton class=\"ScanCard_cta__9Bct6\" type=\"submit\"\u003e\u003cspan\u003eObserve this site\u003c/span\u003e...`. This is a semantic button element (not a div), positioned prominently in the ScanCard component with descriptive text and an arrow icon."
+                                     },
+                                     {
+                                         "taskId":  "SIM-FE-PURPOSE",
+                                         "outcome":  "success",
+                                         "narrative":  "Agent can determine this is a website scanning tool for AI agent readiness assessment, with metadata declaring it as a website type product offering deterministic scans.",
+                                         "linkedFindings":  [
+
+                                                            ],
+                                         "reasoning":  "The page provides clear purpose signals: (1) Meta description: \u0027See what AI agents experience on your site. Agent-readiness scanner powered by the Perseus Clew engine.\u0027 (2) og:type=\u0027website\u0027 and og:title=\u0027Agentis Lux\u0027 (3) H1 text: \u0027For your second Audience\u0027 with lede explaining agents browse the web and fill forms (4) Section headings and content explaining the scanning methodology (5) Six scoring categories with descriptions. An agent parsing this HTML would understand the page purpose without "
+                                     },
+                                     {
+                                         "taskId":  "SIM-FE-NAV",
+                                         "outcome":  "partial",
+                                         "narrative":  "Navigation structure exists with a semantic nav element and anchor links, but 10 links use placeholder hrefs that lead nowhere, preventing full site traversal.",
+                                         "linkedFindings":  [
+                                                                "LINK-002",
+                                                                "LINK-005"
+                                                            ],
+                                         "reasoning":  "The page contains a semantic `\u003cnav\u003e` element with aria-label=\u0027Primary\u0027 containing 5 anchor links (Scan, Method, Benchmark, Field Notes, Repo) with fragment identifiers (#scan, #method, etc.). Footer contains additional link groups in semantic `\u003cul\u003e` lists. However, LINK-002 indicates 10 anchors use placeholder hrefs like \u0027#\u0027 or \u0027javascript:void(0)\u0027, preventing navigation to meaningful destinations. LINK-005 notes absence of skip-to-content link. The page hierarchy appears to be a single-page app"
+                                     }
+                                 ],
+                       "source":  "ai",
+                       "model":  "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                       "durationMs":  7172
+                   }
+}

@@ -37,6 +37,17 @@ Pending:
 
 Before the engine scans anything, I wrote down what I expect it to find across the 50 sites, and committed it with a timestamp. Predictions first, data later. Read them in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md). The site list and the selection rationale are in [docs/BENCHMARK-SITES.md](docs/BENCHMARK-SITES.md).
 
+## Dogfooding
+
+We scan our own site and publish the result, flattering or not. The first self-scan, before any cleanup, scored 70/100 ("Partially Ready"), with the gaps in structured data and navigation. The after-scan, once we fix what the tool found, will be published right beside it.
+
+![Agentis Lux self-scan card: perseus-clew.vercel.app scored 70 of 100, Partially Ready](docs/self-scan/before/self-scan-before-card.png)
+
+Full artifacts:
+- [Scan result JSON](docs/self-scan/before/self-scan-before.json)
+- [Downloadable report HTML](docs/self-scan/before/self-scan-before-report.html)
+- [Build-in-public writeup](docs/self-scan/SELF-SCAN-BEFORE.md)
+
 ## Architecture
 
 Two ideas run through the whole build. The structure is deterministic, so the same input gives the same score every time. The flavor is AI, used only where judgment helps. The checks and the scoring are pattern matching, no model involved. Bedrock writes the one-line verdict and runs the agent simulation on top of that.

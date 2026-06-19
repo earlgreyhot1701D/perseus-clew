@@ -407,16 +407,22 @@ describe('Scan Flow', () => {
   });
 
   describe('URL prefill (Axis 7)', () => {
-    it('prefills input from ?url= search param', () => {
+    it('prefills input from ?url= search param and auto-starts scan', async () => {
       (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue(
         new URLSearchParams('url=https://prefilled.com')
       );
 
-      const { unmount } = render(<ScanPage />);
+      await act(async () => {
+        render(<ScanPage />);
+      });
 
-      const input = screen.getByLabelText('Enter URL to scan') as HTMLInputElement;
-      expect(input.value).toBe('https://prefilled.com');
-      unmount();
+      // Auto-scan should fire, advancing past input view
+      // The scan will complete (or error) since fetch is mocked,
+      // but the key assertion is that it auto-started (input view is gone)
+      await waitFor(() => {
+        const input = screen.queryByLabelText('Enter URL to scan');
+        expect(input).toBeNull();
+      });
     });
 
     it('absent ?url= param renders empty input without crash', () => {

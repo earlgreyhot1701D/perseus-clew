@@ -12,7 +12,7 @@
  * The report lives in component state (ephemeral by design; refresh resets to input).
  */
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import AppNav from '@/components/shell/AppNav';
@@ -103,20 +103,25 @@ function ScanFlow() {
   const [report, setReport] = useState<ScanReport | null>(null);
   const [scanError, setScanError] = useState<ScanError | null>(null);
   const [scanDomain, setScanDomain] = useState('');
+  const hasAutoScanned = useRef(false);
 
   // URL prefill from ?url= (L-LAND-1)
   useEffect(() => {
     const prefill = searchParams.get('url');
     if (prefill) {
       setInputValue(prefill);
+      // Auto-start the scan when arriving from landing page with ?url=
+      if (!hasAutoScanned.current) {
+        hasAutoScanned.current = true;
+        handleScan(prefill);
+      }
     }
   }, [searchParams]);
 
-  async function handleScan() {
-    if (!inputValue.trim()) return;
+  async function handleScan(urlOverride?: string | unknown) {
+    const target = (typeof urlOverride === 'string' ? urlOverride : inputValue).trim();
+    if (!target) return;
     if (viewState === 'scanning') return;
-
-    const target = inputValue.trim();
     let domain = 'unknown';
     try { domain = new URL(target).hostname; } catch { /* use default */ }
 

@@ -54,9 +54,9 @@ describe('generateReportHtml', () => {
       const html = generateReportHtml(makeReportData());
 
       expect(html).toContain('Semantic HTML');
-      expect(html).toContain('18/25');
+      expect(html).toContain('18 / 25');
       expect(html).toContain('Form Accessibility');
-      expect(html).toContain('15/20');
+      expect(html).toContain('15 / 20');
     });
 
     it('includes findings with IDs and text', () => {

@@ -105,25 +105,25 @@ export function generateReportHtml(data: ReportData): string {
 
   const fillWidth = Math.max(0, Math.min(100, score));
 
-  // Category breakdown rows (mockup card style: plain text left, score right)
-  const categoryCards = Object.entries(breakdown).map(([key, val]) => {
+  // Category breakdown cards (3x2 grid matching on-screen layout)
+  const categoryCards = Object.entries(breakdown).map(([key, val], index) => {
     const name = CATEGORY_NAMES[key] || key;
     const categoryFindings = findings[key] || [];
-    const note = val.note ? ` <em>(${escapeHtml(val.note)})</em>` : '';
     const pct = val.max > 0 ? Math.round((val.earned / val.max) * 100) : 100;
-    const topFinding = categoryFindings.length > 0
-      ? escapeHtml(categoryFindings[0].text)
-      : 'No findings in this category.';
+    const findingCount = categoryFindings.length;
+    const findingLabel = findingCount === 0 ? '' : `${findingCount} ${findingCount === 1 ? 'finding' : 'findings'}`;
 
     return `
-      <div class="cat">
-        <div class="plain">${topFinding}${note}</div>
-        <div class="helper">
-          <span class="cat-name">${escapeHtml(name)}</span>
-          <span class="cat-summary">${escapeHtml(CATEGORY_SUMMARIES[key] || '')}</span>
-          <span class="cat-score">${val.earned}/${val.max}</span>
+      <div class="cat-card">
+        <span class="cat-num">Category ${String(index + 1).padStart(2, '0')} &middot; Weight ${val.max}</span>
+        <span class="cat-name">${escapeHtml(name)}</span>
+        <p class="cat-summary">${escapeHtml(CATEGORY_SUMMARIES[key] || '')}</p>
+        <div class="cat-bar-row">
           <div class="cat-bar"><div class="cat-bar-fill" style="width:${pct}%"></div></div>
+          <span class="cat-score">${val.earned} / ${val.max}</span>
         </div>
+        ${val.note ? `<span class="cat-note">${escapeHtml(val.note)}</span>` : ''}
+        ${findingLabel ? `<span class="cat-finding-count">${findingLabel}</span>` : ''}
       </div>`;
   }).join('');
 
@@ -302,46 +302,68 @@ export function generateReportHtml(data: ReportData): string {
     text-transform: uppercase;
     color: var(--teal);
   }
-  .cat {
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .cat-card {
     background: var(--cream-2);
     border: 1px solid rgba(15,61,66,0.14);
     border-radius: 2px;
-    padding: 15px 18px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 9px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .cat .plain { font-size: 16px; color: var(--teal); line-height: 1.45; }
-  .cat .helper {
+  .cat-card .cat-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--ink);
-    text-align: right;
-    min-width: 100px;
-  }
-  .cat .helper .cat-name {
-    display: block;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
     font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 3px;
   }
-  .cat .helper .cat-summary {
-    display: block;
+  .cat-card .cat-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .cat-card .cat-summary {
     font-family: 'Archivo', system-ui, sans-serif;
     font-size: 12px;
     color: var(--ink);
-    margin-bottom: 6px;
     line-height: 1.4;
-    text-transform: none;
-    letter-spacing: normal;
+    margin: 0;
   }
-  .cat .helper .cat-score { font-size: 15px; color: var(--teal-mid); font-weight: 500; }
-  .cat .helper .cat-bar { height: 4px; background: rgba(15,61,66,0.1); border-radius: 2px; margin-top: 4px; overflow: hidden; }
-  .cat .helper .cat-bar-fill { height: 100%; background: var(--sienna); border-radius: 2px; }
+  .cat-card .cat-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .cat-card .cat-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(15,61,66,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .cat-card .cat-bar-fill { height: 100%; background: var(--teal); border-radius: 3px; }
+  .cat-card .cat-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--teal-mid);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .cat-card .cat-finding-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
 
   /* Findings detail */
   .findings-detail { margin-top: 32px; }
@@ -431,7 +453,7 @@ export function generateReportHtml(data: ReportData): string {
   @media print {
     body { padding: 16px; }
     .hero { break-inside: avoid; }
-    .cat { break-inside: avoid; }
+    .cat-card { break-inside: avoid; }
   }
 
   /* Mobile */
@@ -439,8 +461,7 @@ export function generateReportHtml(data: ReportData): string {
     .hero-grid { grid-template-columns: 1fr; text-align: center; }
     .scoreblock .num { font-size: 72px; }
     .narr p.line { font-size: 20px; max-width: none; }
-    .cat { grid-template-columns: 1fr; }
-    .cat .helper { text-align: left; }
+    .cat-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -491,7 +512,9 @@ export function generateReportHtml(data: ReportData): string {
     <span class="eyebrow">Methodology v${safeVersion}</span>
   </div>
 
+  <div class="cat-grid">
   ${categoryCards}
+  </div>
 
   <section class="findings-detail">
     <h2>All Findings</h2>

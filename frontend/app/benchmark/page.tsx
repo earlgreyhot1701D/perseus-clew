@@ -8,7 +8,16 @@
 
 import AppNav from '@/components/shell/AppNav';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import styles from './page.module.css';
+
+export const metadata: Metadata = {
+  title: 'Benchmark',
+  description: '50 sites scanned across 5 verticals. Indie builders scored highest (77 mean). Scores ranged 34 to 91. Complete dataset published.',
+  alternates: {
+    canonical: '/benchmark',
+  },
+};
 
 const VERTICALS = [
   { name: 'Indie', score: 77, color: 'var(--teal)' },

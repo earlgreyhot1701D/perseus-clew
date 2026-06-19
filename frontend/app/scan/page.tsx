@@ -462,9 +462,11 @@ export default function ScanPage() {
   return (
     <div className={styles.appFrame}>
       <AppNav />
-      <Suspense fallback={null}>
-        <ScanFlow />
-      </Suspense>
+      <main id="main-content">
+        <Suspense fallback={null}>
+          <ScanFlow />
+        </Suspense>
+      </main>
     </div>
   );
 }

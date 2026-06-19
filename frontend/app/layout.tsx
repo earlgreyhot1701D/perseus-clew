@@ -3,6 +3,8 @@ import { Archivo, Archivo_Black, Instrument_Serif, JetBrains_Mono } from 'next/f
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://agentislux.io';
+
 const archivo = Archivo({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -33,15 +35,36 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Agentis Lux',
+  title: {
+    default: 'Agentis Lux',
+    template: '%s | Agentis Lux'
+  },
   description: 'See what AI agents experience on your site. Agent-readiness scanner powered by the Perseus Clew engine.',
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Agentis Lux',
-    description: 'See what AI agents experience on your site.',
-    url: 'https://agentislux.io',
+    description: 'See what AI agents experience on your site. For your second audience.',
+    url: SITE_URL,
     siteName: 'Agentis Lux',
-    type: 'website'
-  }
+    type: 'website',
+    images: [
+      {
+        url: '/api/og?domain=agentislux.io&score=70&rating=Partially+Ready&hero=For+your+second+audience.',
+        width: 1200,
+        height: 630,
+        alt: 'Agentis Lux: agent-readiness scanner for your second audience',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Agentis Lux',
+    description: 'See what AI agents experience on your site. For your second audience.',
+    images: ['/api/og?domain=agentislux.io&score=70&rating=Partially+Ready&hero=For+your+second+audience.'],
+  },
 };
 
 export default function RootLayout({
@@ -54,7 +77,10 @@ export default function RootLayout({
       lang="en"
       className={`${archivo.variable} ${archivoBlack.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
+        {children}
+      </body>
     </html>
   );
 }

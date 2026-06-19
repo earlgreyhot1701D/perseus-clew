@@ -16,9 +16,9 @@ import { useRouter } from 'next/navigation';
 import styles from './ScanCard.module.css';
 
 const TABS = [
-  { id: 'url', label: 'URL' },
-  { id: 'github', label: 'GitHub' },
-  { id: 'api', label: 'API Spec' },
+  { id: 'url', label: 'URL', gated: false },
+  { id: 'github', label: 'GitHub', gated: true },
+  { id: 'api', label: 'API Spec', gated: true },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -27,23 +27,13 @@ export default function ScanCard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>('url');
   const [urlValue, setUrlValue] = useState('');
-  const [ghValue, setGhValue] = useState('');
-  const [apiValue, setApiValue] = useState('');
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    let target = '';
-    if (activeTab === 'url' && urlValue.trim()) {
-      target = urlValue.trim().startsWith('http') ? urlValue.trim() : `https://${urlValue.trim()}`;
-    } else if (activeTab === 'github' && ghValue.trim()) {
-      target = `https://github.com/${ghValue.trim()}`;
-    } else if (activeTab === 'api' && apiValue.trim()) {
-      target = apiValue.trim();
-    }
+    if (activeTab !== 'url' || !urlValue.trim()) return;
 
-    if (!target) return;
-
+    const target = urlValue.trim().startsWith('http') ? urlValue.trim() : `https://${urlValue.trim()}`;
     router.push(`/scan?url=${encodeURIComponent(target)}`);
   }
 
@@ -65,22 +55,24 @@ export default function ScanCard() {
         Paste a URL.
         <span className={styles.scanHeadingItal}>Get the report.</span>
       </h2>
-      <p className={styles.scanSub}>Frontend scanning live. API scanning on the backend.</p>
+      <p className={styles.scanSub}>Frontend scanning live. Repo and API scanning on the Team tier.</p>
 
       <div className={styles.tabs} role="tablist" aria-label="Scan input type">
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
+            className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''} ${tab.gated ? styles.tabGated : ''}`}
             role="tab"
             aria-selected={activeTab === tab.id}
+            aria-disabled={tab.gated ? true : undefined}
             aria-controls={`panel-${tab.id}`}
             id={`tab-${tab.id}`}
-            tabIndex={activeTab === tab.id ? 0 : -1}
-            onClick={() => setActiveTab(tab.id)}
+            tabIndex={tab.gated ? -1 : (activeTab === tab.id ? 0 : -1)}
+            onClick={() => { if (!tab.gated) setActiveTab(tab.id); }}
             type="button"
           >
             {tab.label}
+            {tab.gated && <span className={styles.tierBadge}>Team</span>}
           </button>
         ))}
       </div>
@@ -110,54 +102,24 @@ export default function ScanCard() {
           </div>
         </div>
 
-        {/* GitHub panel */}
+        {/* GitHub panel (gated) */}
         <div
-          className={activeTab === 'github' ? styles.scanPanel : styles.scanPanelHidden}
+          className={styles.scanPanelHidden}
           id="panel-github"
           role="tabpanel"
           aria-labelledby="tab-github"
         >
-          <label className={styles.visuallyHidden} htmlFor="gh-input">GitHub repository</label>
-          <div className={styles.inputRow}>
-            <span className={styles.prefix} aria-hidden="true">github.com/</span>
-            <input
-              className={styles.urlInput}
-              id="gh-input"
-              name="gh"
-              type="text"
-              placeholder="org/repo"
-              style={{ paddingLeft: 106 }}
-              autoComplete="off"
-              spellCheck={false}
-              value={ghValue}
-              onChange={(e) => setGhValue(e.target.value)}
-            />
-          </div>
+          <p className={styles.gatedNote}>Available on the Team tier.</p>
         </div>
 
-        {/* API Spec panel */}
+        {/* API Spec panel (gated) */}
         <div
-          className={activeTab === 'api' ? styles.scanPanel : styles.scanPanelHidden}
+          className={styles.scanPanelHidden}
           id="panel-api"
           role="tabpanel"
           aria-labelledby="tab-api"
         >
-          <label className={styles.visuallyHidden} htmlFor="api-input">OpenAPI spec URL</label>
-          <div className={styles.inputRow}>
-            <span className={styles.prefix} aria-hidden="true">spec:</span>
-            <input
-              className={styles.urlInput}
-              id="api-input"
-              name="api"
-              type="text"
-              placeholder="openapi.yaml"
-              style={{ paddingLeft: 58 }}
-              autoComplete="off"
-              spellCheck={false}
-              value={apiValue}
-              onChange={(e) => setApiValue(e.target.value)}
-            />
-          </div>
+          <p className={styles.gatedNote}>Available on the Team tier.</p>
         </div>
 
         <button className={styles.cta} type="submit">

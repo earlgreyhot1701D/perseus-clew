@@ -28,7 +28,7 @@ export default function Footer() {
           <ul>
             <li><a href="#scan">Scan</a></li>
             <li><a href="#method">Methodology</a></li>
-            <li><a href="#benchmark">Benchmark</a></li>
+            <li><a href="/benchmark">Benchmark</a></li>
             <li><a href="#">Roadmap</a></li>
           </ul>
         </div>

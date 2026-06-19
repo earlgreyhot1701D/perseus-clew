@@ -13,10 +13,9 @@ interface TopbarProps {
 }
 
 export default function Topbar({ activePage = 'scan' }: TopbarProps) {
-  const links = [
+  const scrollLinks = [
     { href: '#scan', label: 'Scan', id: 'scan' },
     { href: '#method', label: 'Method', id: 'method' },
-    { href: '#benchmark', label: 'Benchmark', id: 'benchmark' },
     { href: '#notes', label: 'Field Notes', id: 'notes' },
     { href: '#repo', label: 'Repo', id: 'repo' },
   ];
@@ -32,7 +31,7 @@ export default function Topbar({ activePage = 'scan' }: TopbarProps) {
           <span className={styles.versionBadge}>v0.1 · MVP</span>
         </Link>
         <nav className={styles.topnav} aria-label="Primary">
-          {links.map((link) => (
+          {scrollLinks.map((link) => (
             <a
               key={link.id}
               href={link.href}
@@ -42,6 +41,13 @@ export default function Topbar({ activePage = 'scan' }: TopbarProps) {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/benchmark"
+            className={`${styles.topnavLink} ${'benchmark' === activePage ? styles.topnavLinkActive : ''}`}
+            {...('benchmark' === activePage ? { 'aria-current': 'page' as const } : {})}
+          >
+            Benchmark
+          </Link>
         </nav>
       </div>
     </header>

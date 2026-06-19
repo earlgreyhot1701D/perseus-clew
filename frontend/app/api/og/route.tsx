@@ -21,18 +21,27 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
-// Font loading (fetched at build time on Vercel, cached at edge)
-const instrumentSerifItalic = fetch(
-  new URL('https://fonts.gstatic.com/s/instrumentserif/v4/jizBRFtNs2ka5fCjOY3GtSiUx3Yr.woff2')
-).then((res) => res.arrayBuffer());
+// Font URLs (Google Fonts static woff2)
+const FONT_URLS = {
+  instrumentSerif: 'https://fonts.gstatic.com/s/instrumentserif/v4/jizBRFtNs2ka5fCjOY3GtSiUx3Yr.woff2',
+  archivoBlack: 'https://fonts.gstatic.com/s/archivoblack/v21/HTxqL89-YrCOkULFpE3CfMg8Eqs.woff2',
+  jetbrainsMono: 'https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2',
+};
 
-const archivoBlack = fetch(
-  new URL('https://fonts.gstatic.com/s/archivoblack/v21/HTxqL89-YrCOkULFpE3CfMg8Eqs.woff2')
-).then((res) => res.arrayBuffer());
-
-const jetbrainsMono = fetch(
-  new URL('https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2')
-).then((res) => res.arrayBuffer());
+/**
+ * Fetch a font with validation. Returns ArrayBuffer or null on failure.
+ * Fail-soft: a missing font renders the card in system fonts, not an empty PNG.
+ */
+async function loadFont(url: string): Promise<ArrayBuffer | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    return buf.byteLength > 0 ? buf : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,12 +58,18 @@ export async function GET(request: NextRequest) {
     const ratingParam = searchParams.get('rating') || '';
     const rating = VALID_RATINGS.includes(ratingParam) ? ratingParam : 'Not Yet Readable';
 
-    // Load fonts
+    // Load fonts (fail-soft: null means use system font for that slot)
     const [instrumentSerifData, archivoBlackData, jetbrainsMonoData] = await Promise.all([
-      instrumentSerifItalic,
-      archivoBlack,
-      jetbrainsMono
+      loadFont(FONT_URLS.instrumentSerif),
+      loadFont(FONT_URLS.archivoBlack),
+      loadFont(FONT_URLS.jetbrainsMono),
     ]);
+
+    // Build fonts array (only include successfully loaded fonts)
+    const fonts: { name: string; data: ArrayBuffer; style: 'italic' | 'normal'; weight: 400 }[] = [];
+    if (instrumentSerifData) fonts.push({ name: 'Instrument Serif', data: instrumentSerifData, style: 'italic', weight: 400 });
+    if (archivoBlackData) fonts.push({ name: 'Archivo Black', data: archivoBlackData, style: 'normal', weight: 400 });
+    if (jetbrainsMonoData) fonts.push({ name: 'JetBrains Mono', data: jetbrainsMonoData, style: 'normal', weight: 400 });
 
     // Rating badge color (observational tones, not pass/fail)
     const ratingBg = rating === 'Agent-Ready' ? '#1b6d74'
@@ -77,7 +92,7 @@ export async function GET(request: NextRequest) {
             overflow: 'hidden',
           }}
         >
-          {/* Arc decoration (simplified for Satori compatibility) */}
+          {/* Arc decoration with ochre dot */}
           <svg
             viewBox="0 0 340 360"
             style={{
@@ -86,7 +101,7 @@ export async function GET(request: NextRequest) {
               right: 0,
               width: '340px',
               height: '100%',
-              opacity: 0.15,
+              opacity: 0.18,
             }}
           >
             <g fill="none" stroke="#f1ebdc" strokeWidth="3">
@@ -95,6 +110,7 @@ export async function GET(request: NextRequest) {
               <path d="M 340 360 A 170 170 0 0 0 180 180" />
               <path d="M 340 360 A 105 105 0 0 0 235 250" />
             </g>
+            <circle cx="300" cy="56" r="14" fill="#d4a43c" />
           </svg>
 
           {/* Header: branding + domain */}
@@ -130,6 +146,23 @@ export async function GET(request: NextRequest) {
               }}>
                 {rating}
               </div>
+              {/* Ring/progress bar (sienna fill, score% width) */}
+              <div style={{
+                marginTop: '16px',
+                width: '100%',
+                height: '5px',
+                backgroundColor: 'rgba(241, 235, 220, 0.18)',
+                borderRadius: '3px',
+                overflow: 'hidden',
+                display: 'flex',
+              }}>
+                <div style={{
+                  width: `${score}%`,
+                  height: '100%',
+                  backgroundColor: '#e85416',
+                  borderRadius: '3px',
+                }} />
+              </div>
             </div>
 
             {/* Narrative */}
@@ -159,18 +192,14 @@ export async function GET(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-        fonts: [
-          { name: 'Instrument Serif', data: instrumentSerifData, style: 'italic' as const, weight: 400 as const },
-          { name: 'Archivo Black', data: archivoBlackData, style: 'normal' as const, weight: 400 as const },
-          { name: 'JetBrains Mono', data: jetbrainsMonoData, style: 'normal' as const, weight: 400 as const },
-        ],
+        fonts: fonts.length > 0 ? fonts : undefined,
         headers: {
           'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
         },
       }
     );
   } catch {
-    // Fail-soft: return a minimal fallback image rather than crashing
+    // Fail-soft: return a minimal fallback image rather than an empty response
     return new ImageResponse(
       (
         <div style={{

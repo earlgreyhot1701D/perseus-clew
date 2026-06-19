@@ -22,6 +22,11 @@
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  transition: color var(--transition-fast);
+}
+
+.wordmark:hover {
+  color: var(--teal-mid);
 }
 
 .dot {

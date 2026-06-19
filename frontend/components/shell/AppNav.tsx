@@ -15,13 +15,9 @@ import { usePathname } from 'next/navigation';
 import styles from './AppNav.module.css';
 
 const LIVE_LINKS = [
+  { label: 'Home', href: '/' },
   { label: 'Scan', href: '/scan' },
   { label: 'Benchmark', href: '/benchmark' }
-];
-
-const STUB_LINKS = [
-  { label: 'Methodology' },
-  { label: 'About' }
 ];
 
 export default function AppNav() {
@@ -38,21 +34,20 @@ export default function AppNav() {
           <Link
             key={label}
             href={href}
-            className={`${styles.navLink} ${pathname === href || pathname?.startsWith(href + '/') ? styles.active : ''}`}
+            className={`${styles.navLink} ${pathname === href || (href !== '/' && pathname?.startsWith(href + '/')) ? styles.active : ''}`}
           >
             {label}
           </Link>
         ))}
 
-        {STUB_LINKS.map(({ label }) => (
-          <span
-            key={label}
-            className={styles.navLink}
-            aria-disabled="true"
-          >
-            {label}
-          </span>
-        ))}
+        <a
+          href="https://earlgreyhot1701d.github.io/Clew-Labs/"
+          className={styles.navLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          About
+        </a>
       </div>
     </nav>
   );

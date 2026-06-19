@@ -16,8 +16,11 @@ export default function Topbar({ activePage = 'scan' }: TopbarProps) {
   const scrollLinks = [
     { href: '#scan', label: 'Scan', id: 'scan' },
     { href: '#method', label: 'Method', id: 'method' },
-    { href: '#notes', label: 'Field Notes', id: 'notes' },
-    { href: '#repo', label: 'Repo', id: 'repo' },
+  ];
+
+  const externalLinks = [
+    { href: 'https://dev.to/earlgreyhot1701d', label: 'Field Notes', id: 'notes' },
+    { href: 'https://github.com/earlgreyhot1701D/perseus-clew', label: 'Repo', id: 'repo' },
   ];
 
   return (
@@ -48,6 +51,17 @@ export default function Topbar({ activePage = 'scan' }: TopbarProps) {
           >
             Benchmark
           </Link>
+          {externalLinks.map((link) => (
+            <a
+              key={link.id}
+              href={link.href}
+              className={styles.topnavLink}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
       </div>
     </header>

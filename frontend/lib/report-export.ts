@@ -281,10 +281,11 @@ export function generateReportHtml(data: ReportData): string {
   .narr .tag .ai { color: var(--ochre); }
   .narr p.line {
     font-family: 'Instrument Serif', Georgia, serif;
-    font-size: 30px;
+    font-size: 24px;
     font-style: italic;
     line-height: 1.28;
     color: var(--cream);
+    max-width: 540px;
   }
 
   /* Categories */
@@ -437,7 +438,7 @@ export function generateReportHtml(data: ReportData): string {
   @media (max-width: 640px) {
     .hero-grid { grid-template-columns: 1fr; text-align: center; }
     .scoreblock .num { font-size: 72px; }
-    .narr p.line { font-size: 22px; }
+    .narr p.line { font-size: 20px; max-width: none; }
     .cat { grid-template-columns: 1fr; }
     .cat .helper { text-align: left; }
   }

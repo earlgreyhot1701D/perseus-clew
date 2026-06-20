@@ -57,7 +57,7 @@ export class PerseusClewComputeStack extends cdk.Stack {
     this.scanLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['bedrock:InvokeModel'],
       resources: [
-        'arn:aws:bedrock:*:831889733571:inference-profile/us.anthropic.claude-haiku-4-5-*',
+        `arn:aws:bedrock:*:${this.account}:inference-profile/us.anthropic.claude-haiku-4-5-*`,
         'arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-*'
       ]
     }));
@@ -72,6 +72,15 @@ export class PerseusClewComputeStack extends cdk.Stack {
         allowHeaders: ['Content-Type', 'Authorization']
       }
     });
+
+    // Configure throttling on the default stage via escape hatch to avoid recreation
+    const cfnStage = this.httpApi.defaultStage?.node.defaultChild as apigateway.CfnStage;
+    if (cfnStage) {
+      cfnStage.defaultRouteSettings = {
+        throttlingBurstLimit: 10,
+        throttlingRateLimit: 5
+      };
+    }
 
     // Routes
     const scanIntegration = new integrations.HttpLambdaIntegration('ScanIntegration', this.scanLambda);
@@ -113,7 +122,7 @@ export class PerseusClewComputeStack extends cdk.Stack {
     refreshLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['bedrock:InvokeModel'],
       resources: [
-        'arn:aws:bedrock:*:831889733571:inference-profile/us.anthropic.claude-haiku-4-5-*',
+        `arn:aws:bedrock:*:${this.account}:inference-profile/us.anthropic.claude-haiku-4-5-*`,
         'arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-*'
       ]
     }));

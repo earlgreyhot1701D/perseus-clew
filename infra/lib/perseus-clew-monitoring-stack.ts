@@ -19,8 +19,9 @@ export class PerseusClewMonitoringStack extends cdk.Stack {
       displayName: 'Perseus Clew Alerts'
     });
 
-    // STUB: Add email subscription after deployment
-    // alertTopic.addSubscription(new subscriptions.EmailSubscription('your-email@example.com'));
+    // Add email subscription utilizing CDK context or falling back to placeholder
+    const alertEmail = this.node.tryGetContext('alertEmail') || 'your-email@example.com';
+    alertTopic.addSubscription(new subscriptions.EmailSubscription(alertEmail));
 
     // Alarm: Scan Lambda error rate > 10%
     const scanErrorAlarm = new cloudwatch.Alarm(this, 'ScanErrorRateAlarm', {

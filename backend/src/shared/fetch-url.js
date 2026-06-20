@@ -269,15 +269,37 @@ function validateUrlFormat(url) {
  */
 async function checkRobotsTxt(origin) {
   try {
-    const robotsUrl = `${origin}/robots.txt`;
+    let currentUrl = `${origin}/robots.txt`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), ROBOTS_TIMEOUT_MS);
 
-    const res = await fetch(robotsUrl, {
-      headers: { 'User-Agent': USER_AGENT },
-      signal: controller.signal,
-      redirect: 'follow'
-    });
+    let res;
+    let hops = 0;
+    while (true) {
+      res = await fetch(currentUrl, {
+        headers: { 'User-Agent': USER_AGENT },
+        signal: controller.signal,
+        redirect: 'manual'
+      });
+
+      if (res.status >= 300 && res.status < 400) {
+        hops++;
+        if (hops > MAX_REDIRECTS) {
+          throw new Error('Too many redirects');
+        }
+        const location = res.headers.get('location');
+        if (!location) break;
+
+        const redirectUrl = new URL(location, currentUrl);
+        if (redirectUrl.protocol !== 'https:') {
+          throw new Error('Non-HTTPS redirect');
+        }
+        await validateResolvedIp(redirectUrl.hostname);
+        currentUrl = redirectUrl.href;
+        continue;
+      }
+      break;
+    }
     clearTimeout(timeout);
 
     if (!res.ok) return { checked: true, disallowed: false };

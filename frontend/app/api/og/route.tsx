@@ -53,7 +53,38 @@ const CATEGORIES = [
   '06 Link & Navigation',
 ];
 
+// Simple in-memory sliding-window IP rate limiter (abuse guard)
+const ipCache = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_MINUTE = 10; // Max 10 requests per minute per IP
+
 export async function GET(request: NextRequest) {
+  // IP-based rate limiting
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+  const now = Date.now();
+
+  // Prune cache occasionally to prevent memory leaks
+  if (ipCache.size > 1000) {
+    for (const [key, val] of ipCache.entries()) {
+      if (now - val.lastReset > RATE_LIMIT_WINDOW_MS) {
+        ipCache.delete(key);
+      }
+    }
+  }
+
+  const clientData = ipCache.get(ip) || { count: 0, lastReset: now };
+  if (now - clientData.lastReset > RATE_LIMIT_WINDOW_MS) {
+    clientData.count = 1;
+    clientData.lastReset = now;
+  } else {
+    clientData.count += 1;
+  }
+  ipCache.set(ip, clientData);
+
+  if (clientData.count > MAX_REQUESTS_PER_MINUTE) {
+    return new Response('Too Many Requests', { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
 

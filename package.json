@@ -10,5 +10,8 @@
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces"
   },
+  "overrides": {
+    "undici": "^7.28.0"
+  },
   "license": "Apache-2.0"
 }

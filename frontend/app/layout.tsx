@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Archivo, Archivo_Black, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
 
@@ -80,6 +81,13 @@ export default function RootLayout({
       <body>
         <a href="#main-content" className="skip-link">Skip to main content</a>
         {children}
+        <Script
+          defer
+          src="https://plausible.io/js/pa-5xefz4Osqcq3TdHuvTTQD.js"
+        />
+        <Script id="plausible-init" strategy="afterInteractive">
+          {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
+        </Script>
       </body>
     </html>
   );

@@ -96,7 +96,7 @@ The distance between those two is one of the more interesting things this benchm
 
 ## The 50 selected sites
 
-> Curation in progress. Filled, with per-site rationale, before any scan runs. Committed as a "before" artifact under the locked criteria above.
+> Curation complete and published. Filled, with per-site rationale, before any scan runs. Committed as a "before" artifact under the locked criteria above.
 
 **On how these were chosen.** Within each vertical, sites were selected by maximum-variation sampling: deliberately spanning size, platform, and build type to cover the range, not chosen randomly and not chosen by predicted score. Random sampling is the wrong method at ten sites per vertical (it produces clustering by luck, not representativeness, which needs a far larger sample). Where two candidates were structurally identical (same size tier, same platform), the choice between them was made on category spread, not name recognition, so the selection axis is visible and defensible. Platform and build-type labels marked "verify" are best guesses pending confirmation (BuiltWith / Wappalyzer) before the final lock.
 

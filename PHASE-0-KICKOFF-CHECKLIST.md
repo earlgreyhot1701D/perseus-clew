@@ -1,5 +1,8 @@
 # Phase 0 Kickoff Checklist
 
+> [!NOTE]
+> **COMPLETE** — historical Phase 0 setup record. The product is live at [agentislux.io](https://agentislux.io).
+
 > Day 1 of building Agentis Lux. Work through this top-to-bottom before writing any Phase 1 code.
 
 **Status:** v2, May 27, 2026. Updated for Path B (Next.js on Vercel + AWS scan engine) and the v2 doc set. Expect 1-2 focused days (not just one) because Vercel + AWS first-time integration eats time even when no individual step is hard.
@@ -25,7 +28,7 @@ Use this checklist the first time you sit down to start Phase 0. Each item has t
 - [ ] AWS credits available in your account (verify via Billing dashboard)
 - [ ] IAM user `agentislux-dev` created with AdministratorAccess (or equivalent)
 - [ ] AWS CLI profile `agentislux` configured (`aws configure --profile agentislux`)
-- [ ] Region set to `us-west-2` (or your preferred region; use consistently)
+- [ ] Region set to `us-east-1` (or your preferred region; use consistently)
 
 **Vercel account ready:**
 
@@ -70,7 +73,7 @@ cd perseus-clew
 curl -o LICENSE https://www.apache.org/licenses/LICENSE-2.0.txt
 ```
 
-Create `NOTICE` with the content from BUILD-PLAN.md § Step 0.2.
+Create `NOTICE` with the content from the external BUILD-PLAN.md § Step 0.2.
 
 Create `.gitignore`:
 ```
@@ -160,16 +163,16 @@ EOF
 
 Copy these files from `/mnt/user-data/outputs/` (where they currently live) into `/docs/` in the repo:
 
-- [ ] PERSEUS-CLEW-PRODUCT-REVIEW.md
-- [ ] PERSEUS-CLEW-PROJECT-CHECKLIST.md
-- [ ] BUILD-PRINCIPLES.md
+- [ ] PERSEUS-CLEW-PRODUCT-REVIEW.md (external design document)
+- [ ] PERSEUS-CLEW-PROJECT-CHECKLIST.md (external design document)
+- [ ] BUILD-PRINCIPLES.md (external design document)
 - [ ] SCORING.md
 - [ ] ARCHITECTURE.md
 - [ ] BACKEND-SHARED.md
 - [ ] BACKEND-FRONTEND-CHECKS.md
 - [ ] BACKEND-API-CHECKS.md
 - [ ] FRONTEND-SPEC.md
-- [ ] BUILD-PLAN.md
+- [ ] BUILD-PLAN.md (external design document)
 
 And the design references into `/mockups/`:
 
@@ -230,7 +233,7 @@ npm install aws-cdk-lib constructs typescript @types/node ts-node
 npx cdk init app --language typescript
 ```
 
-Follow the CDK scaffolding in BUILD-PLAN.md § Step 0.5. Create the four stacks (no edge stack: Vercel handles the frontend, not CloudFront):
+Follow the CDK scaffolding in the external BUILD-PLAN.md § Step 0.5. Create the four stacks (no edge stack: Vercel handles the frontend, not CloudFront):
 
 - [ ] `lib/perseus-clew-base-stack.ts`
 - [ ] `lib/perseus-clew-data-stack.ts` (with all five tables: BenchmarkScans, ScanCounters, ScanResults [24h TTL], ScanCache [15m TTL], Users)
@@ -393,7 +396,7 @@ Commit when ready.
 
 Docker covers the backend (scan engine Lambda) and DynamoDB Local. The Next.js frontend runs via `next dev` against the dockerized backend.
 
-Copy the Dockerfile and docker-compose.yml contents from BUILD-PLAN.md § Steps 0.3 and 0.4 into the repo root. Compose includes `backend` and `dynamodb-local` services; the frontend is NOT in compose (Vercel handles it in production, `next dev` handles it locally).
+Copy the Dockerfile and docker-compose.yml contents from the external BUILD-PLAN.md § Steps 0.3 and 0.4 into the repo root. Compose includes `backend` and `dynamodb-local` services; the frontend is NOT in compose (Vercel handles it in production, `next dev` handles it locally).
 
 **Verify:**
 ```bash
@@ -431,7 +434,7 @@ Set up GitHub Actions secrets for AWS:
 ```bash
 gh secret set AWS_ACCESS_KEY_ID --body "..."
 gh secret set AWS_SECRET_ACCESS_KEY --body "..."
-gh secret set AWS_REGION --body "us-west-2"
+gh secret set AWS_REGION --body "us-east-1"
 ```
 
 **Connect Vercel to the repo:**
@@ -501,7 +504,7 @@ Phase 0 is foundation work. Nothing here is fast-and-loose. If something breaks:
 
 1. Stop. Do not proceed to the next step.
 2. Read the error carefully.
-3. Check the relevant BUILD-PLAN.md section for setup details.
+3. Check the relevant external BUILD-PLAN.md section for setup details.
 4. If AWS-related: check your profile, region, and credits.
 5. If Docker-related: check that Docker Desktop is running and has resources.
 6. If npm-related: check Node version matches `.nvmrc`.

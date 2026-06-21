@@ -5,8 +5,8 @@ For your second audience.
 
 Engine: Perseus Clew, part of the Clew suite. Public name: Agentis Lux. Domain: agentislux.io.
 
-> ### Status: pre-production
-> The scan engine is built, tested, and merged, with CI green. It has not been deployed yet, and it has not run against live sites. This repo is open to read, not yet to use. The benchmark predictions are pre-registered in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md), committed before any scan runs. The results will follow.
+> ### Status: Live
+> The scan engine is live and usable at [agentislux.io](https://agentislux.io).
 
 ## What this is
 
@@ -33,9 +33,7 @@ Built and merged:
 
 Pending:
 
-- Deployment. The engine has not been deployed, so there is no live scan yet.
-- Input types. The public scan reads a URL today. Repo scanning and spec upload are stubbed and return "not yet available."
-- The first 50-site benchmark run. The predictions are committed. The scan has not run.
+- Input types. The public scan reads a URL today. Repo scanning and spec upload are gated as "Team tier" in the UI.
 
 ## The bet
 
@@ -84,7 +82,7 @@ AWS services defined in the CDK stack:
 - **EventBridge:** a monthly rule to refresh the benchmark dataset.
 - **CloudWatch and SNS:** alarms on scan error rate and duration, wired to an alert topic.
 
-Everything above is defined in the stack and verified by a type-checking build in CI. None of it is deployed yet.
+Everything above is defined in the stack and verified by a type-checking build in CI.
 
 ## Project structure
 
@@ -130,7 +128,7 @@ perseus-clew/
 
 ## Running it locally
 
-This is the honest way to see the engine work today, since there is no hosted scan. The test suites exercise every check against fixtures.
+This is the way to run the engine locally for development. The test suites exercise every check against fixtures. There is also a live hosted scan available at [agentislux.io](https://agentislux.io).
 
 ```
 nvm use            # Node version from .nvmrc
@@ -144,7 +142,7 @@ Docker Compose runs the stack locally for development:
 docker compose up
 ```
 
-There is no "paste your URL" box yet. The scan runs in the tests today, and behind the API once it's deployed.
+The scan runs in the tests locally, behind the API, and on the live hosted scanner at [agentislux.io](https://agentislux.io).
 
 ## Methodology and docs
 

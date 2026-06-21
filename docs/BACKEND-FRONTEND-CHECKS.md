@@ -504,10 +504,11 @@ Full report shape, updated in v2 for the render-mode guardrail and the hero line
     requestId: 'abc-123',
     resultId: 'opaque-uuid',         // for shareable links; also the ScanResults PK
     scanType: 'url',
+    methodologyVersion: '1.1.1',
     targetDomain: 'example.com',
     durationMs: 3421,
     timestamp: '2026-05-27T16:22:15Z',
-    scannedAt: 'May 27, 2026 at 4:22 PM UTC',
+    scannedAt: '2026-05-27T16:22:15Z',
     fromCache: false                 // true if served from ScanCache
   },
   preScanFindings: [
@@ -537,8 +538,18 @@ Full report shape, updated in v2 for the render-mode guardrail and the hero line
   simulation: {
     // Layer 2: full agent-task narrative, distinct from the hero line.
     available: true,
-    text: 'An agent landing on this page...',
-    model: 'claude-haiku-4-5-20251001'
+    tasks: [
+      {
+        taskId: 'SIM-FE-CTA',
+        outcome: 'success',
+        narrative: '...',
+        linkedFindings: ['SEM-001'],
+        reasoning: '...'
+      }
+    ],
+    source: 'ai',
+    model: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+    durationMs: 1200
   },
   benchmark: {
     available: true,
@@ -558,9 +569,9 @@ Full report shape, updated in v2 for the render-mode guardrail and the hero line
 3. **Hash the target.** Compute `urlHash = sha256(normalize(target))` once. Used for the cache key. The full URL is never stored.
 4. **Check ScanCache.** `scan-store.readCache(urlHash)`. If a fresh entry exists (within the 15-min cache window), return that cached response with `meta.fromCache: true`. Done.
 5. **Branch on type:**
-   - `type: 'url'` â†’ call `fetchUrl(target)`
-   - `type: 'repo'` â†’ call `fetchRepo(owner, repo)`, pick the primary HTML file, optionally use apiSpec for later
-   - `type: 'spec'` â†’ skip fetch, use `target` directly (API scanning only; frontend checks don't apply)
+   - `type: 'url'` → call `fetchUrl(target)`
+   - `type: 'repo'` → 501 Not Implemented (gated on Team tier in UI)
+   - `type: 'spec'` → 501 Not Implemented (gated on Team tier in UI)
 6. **Parse.** Call `parseHtml(html)` for URL/repo paths. For spec input, skip to API check modules (covered in BACKEND-API-CHECKS).
 7. **Run checks sequentially.** Call each of the six check modules, one after another. Collect results. *Matches Hermes v1 pattern.*
 8. **Score (deterministic).** `calculateScore(categoryResults)`.

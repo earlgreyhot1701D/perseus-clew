@@ -70,8 +70,6 @@ Agentis Lux checks robots.txt before scanning. If a site disallows crawling for 
 **Redirect chain**
 If the URL redirected before returning HTML, the redirect chain is reported. Agents follow redirects but each hop adds latency and possibility of failure.
 
-**Content type and size**
-If the response was unusual in shape (non-HTML content type, exceptionally large response, partial content), that is reported as context for the scan results.
 
 ### API Scoring (backend only at launch, powers the benchmark and launch article)
 
@@ -88,7 +86,6 @@ Specifically checks:
 - Descriptions are long enough to explain behavior (minimum meaningful length).
 - `operationId` is present for stable agent references.
 - Response schema properties have descriptions or self-explaining names. `activeUserCount` is self-explaining; `auc` is not. (Paraskakis insight #5, credited.)
-- Summary and description do not contradict each other (one says "list users," the other says "create user"). When they contradict, agents follow the description, which can cause wrong behavior. (Paraskakis insight #2, credited.)
 - Top-level spec `info.description` explains what the API is for.
 
 Not flagged (Paraskakis Pitfall #2 mitigation): missing property-level descriptions when the parent schema description is comprehensive. Missing descriptions on shared schemas are counted once, not per reference.
@@ -168,7 +165,7 @@ Not flagged: API key authentication as inferior to OAuth. Standard rate limit he
 
 A second scoring layer that sends scanned content to a language model and asks it to attempt tasks against the input as an agent would. Results include what the agent could and could not do, with specific references linked back to Layer 1 findings. Layer 1 (the deterministic scan described above) is the foundation. Layer 2 adds context through observed behavior.
 
-Six simulation tasks at MVP, three per scan mode. Frontend tasks: find the primary call-to-action, identify the page purpose, attempt form submission. API tasks: identify the primary resource, attempt error recovery, discover lists of resources. Each task produces a structured narrative that appears in the report alongside the deterministic findings.
+Three simulation tasks at MVP, all frontend-only: find the primary call-to-action, identify the page purpose, attempt form submission. Each task produces a structured narrative that appears in the report alongside the deterministic findings.
 
 Layer 2 runs on Claude Haiku 4.5 via AWS Bedrock. Layer 2 is additive. If it fails for any reason (timeout, rate limit, malformed output, input too large), Layer 1 results still ship. The report shows Layer 2 when available and indicates when it was not attempted.
 
@@ -318,7 +315,7 @@ When we change anything in this document, the change is logged in the Changelog 
 ## Where to Go Deeper
 
 - **Full methodology:** `docs/SCORING-METHODOLOGY.md` (forthcoming, includes specific check definitions, examples, edge cases, and weight rationale)
-- **Benchmark data:** `docs/BENCHMARK-SITES.md` (forthcoming, the 50 curated sites and their scores)
+- **Benchmark data:** [BENCHMARK-SITES.md](file:///c:/Users/corde/projects/perseus-clew-initial/docs/BENCHMARK-SITES.md) (the 50 curated sites and their scores)
 - **Source code:** GitHub repository (link added at launch)
 
 ---
@@ -327,7 +324,7 @@ When we change anything in this document, the change is logged in the Changelog 
 
 | Version | Date | Change | Rationale |
 |---------|------|--------|-----------|
-| 1.1.1 | 2026-05-27 | Patch: corrected internal version inconsistency (body said 1.0.0); sharpened thesis framing (agents are a distinct audience, WCAG 2.1 AA is the baseline not the thesis); clarified anonymous 24h storage vs account-based trend tracking; stated rating band cutoffs (80/50/0) as the active values the hero label is computed from | Align public methodology with v5 product review and v2 architecture (Path B, 24h TTL storage, result hero). No weight or threshold changes, so scores remain comparable. |
+| 1.1.1 | 2026-06-19 | Patch: corrected internal version inconsistency (body said 1.0.0); sharpened thesis framing (agents are a distinct audience, WCAG 2.1 AA is the baseline not the thesis); clarified anonymous 24h storage vs account-based trend tracking; stated rating band cutoffs (80/50/0) as the active values the hero label is computed from | Align public methodology with v5 product review and v2 architecture (Path B, 24h TTL storage, result hero). No weight or threshold changes, so scores remain comparable. |
 | 1.1.0 | 2026-05-31 | Expanded API category detail (specific checks per category, Paraskakis insight credits inline, "Not flagged" mitigation notes), Layer 2 simulation moved from roadmap to MVP section, methodology version bumped | API methodology brought to match frontend detail level; Layer 2 is at MVP not future; public methodology aligned with engineering spec in BACKEND-API-CHECKS.md v1 |
 | 1.0.0 | 2026-05-31 | Initial methodology published | Repository launch |
 

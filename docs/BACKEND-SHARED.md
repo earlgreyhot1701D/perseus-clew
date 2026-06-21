@@ -669,7 +669,7 @@ The Lambda handler catches this, sets HTTP status 429, sets `Retry-After: 34` he
 
 ### What It Does
 
-Wraps the AWS Bedrock SDK for calling Claude Haiku 4.5. Takes a structured prompt, handles retries on transient failures, enforces timeouts, and returns the model's response. Used only by the simulation module (Layer 2).
+Wraps the AWS Bedrock SDK for calling Claude Haiku 4.5. Takes a structured prompt, handles retries on transient failures, enforces timeouts, and returns the model's response. Used by both the hero-line generation and the simulation module (Layer 2).
 
 Generic wrapper â€” the client doesn't know what prompt it's sending or what the response means. Prompt engineering lives in the simulation module.
 
@@ -795,7 +795,7 @@ Read functions return either the deserialized row (without the TTL attribute) or
 - URL hashing (the orchestrator hashes the URL once and passes the hash)
 - Sanitization (caller's responsibility)
 - The scan logic itself
-- Trend or history queries on the Users table (those live in a separate `user-store.js` introduced in the auth-stub block; deliberately kept separate so anonymous-scan storage and account-linked storage don't blur)
+- Trend or history queries on the Users table (note: no `user-store.js` exists in the repository since authentication remains unbuilt/deferred; deliberately kept separate so anonymous-scan storage and account-linked storage don't blur)
 
 ### Why fail-soft, async, never blocking
 

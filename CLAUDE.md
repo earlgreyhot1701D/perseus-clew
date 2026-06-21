@@ -69,9 +69,7 @@ The test that earns a finding's level is not "blocking vs non-blocking," it is
 "cheaper now than later." Something a later block builds on is FOLD-IN even if it
 doesn't block today.
 
-A deferred ledger exists (DEFERRED.md). Respect it: do not re-flag items already
-logged there. If the ledger is not in the repo, ask the human for it before a full
-review, or you will surface things already decided.
+A deferred ledger exists (managed externally, outside the repository). Respect it: do not re-flag items already logged there. If you need details on the ledger, ask the human for it before a full review, or you will surface things already decided.
 
 ---
 
@@ -142,13 +140,9 @@ review, or you will surface things already decided.
 
 ## Current status
 
-- **Block 0: closed.** Monorepo, Docker, 4 CDK stacks, CI safety net (green on PR #1),
-  5 DynamoDB tables, design tokens, ResultHero rendering from mock data.
-- **Backend: live** at API Gateway (us-east-1). /health and /scan both return correctly.
-  /scan returns a hardcoded mock report (score 62, "Partially Ready"). Real scanning is
-  not built yet; that is Phase 1.
-- **Frontend: live** on Vercel, wired to the backend via server-side env vars.
-- **Next:** Block 1A (backend shared infrastructure), then the Phase 1 block sequence.
+- **Phase 1+ (Scanning & Hardening): Shipped and Live.** The product is fully deployed. Real scanning is live, featuring a deterministic 6-category scan, AI-generated hero-line, and Layer 2 simulation. It is deployed and working at [agentislux.io](https://agentislux.io).
+- **Backend: live** at API Gateway (us-east-1) with ECR Lambda container images, DynamoDB database tables, and full security hardening (rate limiting, SSRF protection, IAM principles, dependency upgrades).
+- **Frontend: live** on Vercel, integrated with Plausible analytics, custom favicon mark, and Ephemeral scan mode.
 
 ---
 

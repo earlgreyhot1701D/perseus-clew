@@ -70,7 +70,7 @@ The site was not bare. It already had a meta description and a couple of Open Gr
 
 We fix the gaps the tool named. Then we run the same scan again and publish the after, right next to this. If the score does not move, that is a finding too, it would mean the fixes did not land. But we expect structured data to climb and the placeholder links to resolve.
 
-The raw scan result is in the repo (`docs/self-scan/self-scan-before-REAL-2026-06-19.json`) so you can check the number against the findings yourself.
+The raw scan result is in the repo ([self-scan-before.json](file:///c:/Users/corde/projects/perseus-clew-initial/docs/self-scan/before/self-scan-before.json)) so you can check the number against the findings yourself.
 
 ---
 

@@ -37,7 +37,7 @@ SEM-005: 1 group of repeated sibling elements appears to be a list but is not wr
 
 ## Captured on
 
-perseus-clew.vercel.app (the current live URL). Will refresh post-domain-wiring once agentislux.io is active (L-DOMAIN-1).
+Historically captured on `perseus-clew.vercel.app` (which was the deployment URL at the time of the before/after captures; the active production site is now live at [agentislux.io](https://agentislux.io)).
 
 ## Artifacts
 

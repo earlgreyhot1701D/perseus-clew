@@ -1,5 +1,8 @@
 # Frontend Spec: React App, Routes, Components, State
 
+> [!IMPORTANT]
+> **SUPERSEDED DESIGN INTENT** — This document details the v1 frontend design intent (originally conceived as a React/Vite client-polling app). The final implementation was built and deployed as a Next.js App Router application with ephemeral client state, no server-side storage of scans, and single-fetch loading. Many decision-level details (such as routes, polling, shareable URLs, and client-side storage) are superseded by the shipped Next.js app.
+
 > The public-facing Agentis Lux web application.
 > Translates the locked visual language (agentislux-landing.html, agentislux-app.html) into a React app.
 
@@ -120,7 +123,7 @@ Read top to bottom. Each component has a contract (props, state, events) but the
 â”‚   â”œâ”€â”€ lib/
 â”‚   â”‚   â”œâ”€â”€ api-client.js       # fetch wrapper with error handling
 â”‚   â”‚   â”œâ”€â”€ scan-storage.js     # localStorage for draft scans only (no results stored)
-â”‚   â”‚   â”œâ”€â”€ social-card.js      # Social card export to PNG via html2canvas
+â”‚   â”‚   â”œâ”€â”€ social-card.js      # Social card export to PNG by downloading the server-rendered /api/og image
 â”‚   â”‚   â”œâ”€â”€ report-export.js    # Report download (HTML or PDF)
 â”‚   â”‚   â””â”€â”€ analytics.js        # Plausible wrapper, no cookies, server-side only
 â”‚   â””â”€â”€ tests/
@@ -171,25 +174,18 @@ Alternative paths from /scan/:id/loading:
 Marketing page. Hero, manifesto, six categories, editorial thesis, report preview, call-to-action to `/scan`. Matches `agentislux-landing.html` exactly. Not part of the app's scanning flow.
 
 **`/scan` (ScanInputRoute)**
-Scan input view. Three input tabs (URL, GitHub repo, API spec upload). Validation, submit. On submit, calls scan API, receives a scan ID, navigates to `/scan/:id/loading`.
+Scan input view. Three input tabs are shown (URL, GitHub repo, API spec upload), but only the URL input tab is active; the GitHub and API Spec tabs are gated as 'Available on the Team tier' in the UI. On submit, calls scan API.
 
-**`/scan/:id/loading` (ScanningRoute)**
-Scanning state. Polls `/api/scans/:id` until status is `complete`, `error`, or `timeout`. Shows progress steps (fetch â†’ parse â†’ Layer 1 â†’ Layer 2 â†’ assemble). On success, navigates to `/scan/:id`. On error, navigates to `/scan/:id/error`.
+**Routes & ephemerality in the shipped Next.js app:**
+Only three primary routes exist in the deployed application:
+- `/` (Home/Landing page)
+- `/scan` (Scan page itself, serving the interactive scan form and ephemeral results view)
+- `/benchmark` (Static benchmark page, serving the 50-site median results)
 
-**`/scan/:id` (ResultsRoute)**
-Results dashboard. Fetches full scan result. The **result hero leads** (score 0-100 + rating label + AI-written agent narrative line, as one unit; see ResultHero component below). Below the hero: category breakdown, Layer 2 narratives, findings list with two-layer text, export actions. Scroll-based interaction within the route.
+Other routes listed in early planning (such as `/methodology`, `/about`, `/history`, `/sign-in`, and `/scan/:id/findings/:fid`) do not exist. About and methodology sections are integrated directly or link to external pages.
 
-**`/scan/:id/findings/:findingId` (FindingDetailRoute)**
-Finding detail view. Opened by clicking a finding on the dashboard. Breadcrumb back to results. Browser back button also works. This is a separate route (not a modal) so it has a URL, can be shared, and bookmarked.
-
-**`/scan/:id/error` (ErrorRoute)**
-Error view. Explains what went wrong and provides next-step actions. Replaces the loading/results state when scan fails.
-
-**`/history` (HistoryRoute, signed-in stub)**
-Scan history for the signed-in user. Renders the user's account-linked scan list. Empty state: "Run a scan to populate." NOT a trend chart (paid tier). Anonymous users redirected to `/scan` with the sign-up CTA visible.
-
-**`/sign-in` (SignInRoute, signed-in stub)**
-Email / magic-link sign-in. Auth provider TBD (Auth.js / Clerk / other; see checklist). Single field, single button, single-purpose.
+**Scan State Model:**
+No server-side database storage is used for anonymous scans in the live frontend app. The scan state is held in client-side React state during the session. Refreshing the browser resets the page to the input form. There are no shareable per-scan links (though a domain can be scanned again by passing a query parameter `/scan?url=domain`). There is no polling; when the user submits a URL to scan, a single backend HTTP POST request performs the scan in one end-to-end fetch.
 
 **`/methodology` (MethodologyRoute)**
 Public methodology page. Renders SCORING.md content. Linked from nav and from scan results.
@@ -239,7 +235,7 @@ This section describes what each component does from the user's perspective, not
 ### Shell components
 
 **`AppNav`**
-The top navigation bar. Agentis Lux wordmark on the left (links to `/`), nav links on the right (Scan, Methodology, Benchmark, About). Current route highlighted with orange underline. Matches the nav in all app views of the mockup.
+The top navigation bar. Agentis Lux wordmark on the left (links to `/`), nav links on the right: Home, Scan, Benchmark, and About (which links to Clew Labs). The landing page also includes links to Field Notes (linking to DEV.to) and the Repo (linking to GitHub). Current route highlighted with orange underline. Matches the nav in all app views of the mockup.
 
 **`AppFooter`**
 Bottom footer. Appears on marketing routes (`/`, `/about`, `/methodology`) but NOT on app flow routes (`/scan/*`) because those have their own footer (results footer with download/share actions).
@@ -304,7 +300,7 @@ The dashboard sub-header below the hero. Left side: scanned URL, scan metadata (
 Appears in anonymous results: "Sign up to track your scores over time." Single button to `/sign-in`. Discreet, not nagging. Hidden for signed-in users.
 
 **`ResultsFooter`**
-Sticky footer on results view. Left side: "Anonymous scans stored 24h for shareable links Â· No PII" disclaimer (truthful, matches the data policy; the old "Not stored server-side" line was superseded by 24h TTL storage). Right side: three buttons (Download report, Share card, Scan another).
+Sticky footer on results view. Left side: "Scans are ephemeral and not stored. No PII is collected or retained." Right side: two buttons (Download report, Share card).
 
 ### Social card components
 
@@ -487,14 +483,14 @@ Engineering-level specifications for each component. Props, state, events, side 
 1. User clicks "Share card" in ResultsFooter
 2. Component renders SocialCard off-screen at full 1200Ã—630
 3. User sees scaled preview
-4. User clicks "Download PNG" â†’ `html2canvas` captures the off-screen SocialCard at 2x scale â†’ downloads as `agentislux-scan-[domain]-[date].png`
-5. User clicks "Copy share URL" â†’ copies the scan URL to clipboard
-6. User clicks a social platform button â†’ opens share intent with the scan URL (the platform will fetch OG meta from the URL)
+4. User clicks "Download PNG" → downloads the dynamically constructed `/api/og` PNG directly from the server.
+5. User clicks "Copy share URL" → copies the scan URL to clipboard
+6. User clicks a social platform button → opens share intent with the scan URL (the platform will fetch OG meta from the URL)
 
 **Alternate path (server-rendered OG images):**
-At launch, the SocialCard is rendered client-side via html2canvas for download, AND server-rendered as a static PNG at scan completion for OG meta tags. Server-rendering is via a Lambda using `@vercel/og` or similar. The URL `https://agentislux.io/og/:scanId.png` returns the PNG; this URL is set as `og:image` in the dynamic meta tag on the results page.
+The OG image is served dynamically at `/api/og?domain=&score=&rating=&hero=...` using query parameters representing the current scan. Server-rendering is done via a Vercel Edge function using `@vercel/og`.
 
-This dual approach means the social card always renders consistently regardless of whether someone downloads it from the UI or it's fetched by a social platform.
+This approach means the social card always renders consistently regardless of whether someone downloads it from the UI or it's fetched by a social platform.
 
 ---
 
@@ -576,8 +572,8 @@ Response shape:
 **`GET /api/scans/:scanId/report.html`**
 Downloadable report as self-contained HTML. Returns: HTML blob. Used by the "Download report" button.
 
-**`GET /og/:scanId.png`**
-Server-rendered social card PNG. Used by OG meta tags. Returns: PNG image.
+**`GET /api/og?domain=&score=&rating=&hero=`**
+Server-rendered social card PNG generated dynamically using query parameters (domain, score, rating, and hero line text). Used by OG meta tags.
 
 ### API client wrapper
 
@@ -753,9 +749,9 @@ Every route includes Schema.org markup:
   "name": "Agentis Lux",
   "applicationCategory": "DeveloperApplication",
   "url": "https://agentislux.io",
-  "description": "See what AI agents experience on your site.",
+  "description": "Your site has a new audience: AI agents. Observe what the agent can and can't read.",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "creator": { "@type": "Organization", "name": "Clew Suite" }
+  "creator": { "@type": "Organization", "name": "Clew Labs" }
 }
 ```
 
@@ -969,14 +965,14 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 
 ### Low confidence (needs spike before build)
 
-- html2canvas reliability across browsers. Social card export is a visible feature; needs testing. Spike: render the SocialCard at 2x scale with html2canvas across Chrome, Safari, Firefox, mobile Safari, mobile Chrome. Verify pixel-accuracy and color fidelity.
+- Server-side PNG rendering reliability. Social card export is a visible feature; needs testing. Spike: verify dynamic generation of `/api/og` PNG across Chrome, Safari, Firefox, mobile Safari, mobile Chrome. Verify pixel-accuracy and color fidelity.
 - OG PNG rendering in Lambda. `@vercel/og` or alternatives. Spike: verify font loading and layout fidelity match the client-side render.
 - Mobile layout edge cases. The mockups show desktop. Mobile adaptations described above are based on general patterns but need a visual mockup pass before Phase 2. Deferred to BUILD-PLAN or a mobile-specific mockup session.
 
 ### Locked decisions (re-stated)
 
 - Public name Agentis Lux, domain agentislux.io (canonical), agentislux.com redirect
-- Primary tagline: "See what AI agents experience on your site."
+- Primary tagline H1 framing: "Your site has a new audience: AI agents. Observe what the agent can and can't read."
 - Secondary tagline: "For your second audience."
 - React 18 + Vite + React Router v6 + Vitest in this spec; **Path B target is Next.js (App Router) on Vercel.** Framework-detail conversion deferred to build time per the status note above. The decision-level content (routes, components, contracts) is current.
 - No Tailwind, no CSS-in-JS runtime (CSS modules per component, or Next.js equivalent at build)

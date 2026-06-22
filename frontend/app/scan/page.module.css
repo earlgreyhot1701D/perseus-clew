@@ -247,9 +247,19 @@
   }
 
   .scanInputLeft,
+  .scanningLeft,
   .scanInputRight {
     padding: 48px 32px;
   }
+}
+
+.scanningLeft {
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===========================================================================

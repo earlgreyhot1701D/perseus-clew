@@ -225,66 +225,109 @@ function ScanFlow() {
 
   return (
     <>
-      {viewState === 'input' && (
+      {(viewState === 'input' || viewState === 'scanning') && (
         <div className={styles.scanInputView}>
-          <div className={styles.scanInputLeft}>
-            <div className={styles.arcDecoration} aria-hidden="true">
-              <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                <g fill="none" stroke="var(--accent)" strokeWidth="2.5">
-                  <path d="M 300 300 A 280 280 0 0 0 20 20" />
-                  <path d="M 300 300 A 220 220 0 0 0 80 80" />
-                  <path d="M 300 300 A 160 160 0 0 0 140 140" />
-                  <path d="M 300 300 A 100 100 0 0 0 200 200" />
-                  <path d="M 300 300 A 60 60 0 0 0 240 240" />
-                </g>
-              </svg>
-            </div>
+          {viewState === 'input' ? (
+            <div className={styles.scanInputLeft}>
+              <div className={styles.arcDecoration} aria-hidden="true">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="none" stroke="var(--accent)" strokeWidth="2.5">
+                    <path d="M 300 300 A 280 280 0 0 0 20 20" />
+                    <path d="M 300 300 A 220 220 0 0 0 80 80" />
+                    <path d="M 300 300 A 160 160 0 0 0 140 140" />
+                    <path d="M 300 300 A 100 100 0 0 0 200 200" />
+                    <path d="M 300 300 A 60 60 0 0 0 240 240" />
+                  </g>
+                </svg>
+              </div>
 
-            <div className={styles.inputEyebrow}>Scan</div>
-            <h1 className={styles.inputTitle}>
-              See what AI agents <em>experience</em> on your site.
-            </h1>
-            <p className={styles.inputSubtitle}>
-              Paste a URL, connect a GitHub repo, or upload an API spec. Findings only. No fixes suggested.
-            </p>
+              <div className={styles.inputEyebrow}>Scan</div>
+              <h1 className={styles.inputTitle}>
+                See what AI agents <em>experience</em> on your site.
+              </h1>
+              <p className={styles.inputSubtitle}>
+                Paste a URL, connect a GitHub repo, or upload an API spec. Findings only. No fixes suggested.
+              </p>
 
-            <div className={styles.inputTypeTabs} role="tablist">
-              {TABS.map((label, i) => (
+              <div className={styles.inputTypeTabs} role="tablist">
+                {TABS.map((label, i) => (
+                  <button
+                    key={label}
+                    className={`${styles.tab} ${i === activeTab ? styles.tabActive : ''}`}
+                    role="tab"
+                    aria-selected={i === activeTab}
+                    onClick={() => { setActiveTab(i); setInputValue(''); }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              <div className={styles.scanInputField}>
+                <input
+                  type="text"
+                  placeholder="https://your-site.com"
+                  aria-label="Enter URL to scan"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleScan(); }}
+                />
                 <button
-                  key={label}
-                  className={`${styles.tab} ${i === activeTab ? styles.tabActive : ''}`}
-                  role="tab"
-                  aria-selected={i === activeTab}
-                  onClick={() => { setActiveTab(i); setInputValue(''); }}
+                  className={styles.scanBtn}
+                  type="button"
+                  onClick={handleScan}
+                  disabled={!inputValue.trim()}
                 >
-                  {label}
+                  Scan
                 </button>
-              ))}
-            </div>
+              </div>
 
-            <div className={styles.scanInputField}>
-              <input
-                type="text"
-                placeholder="https://your-site.com"
-                aria-label="Enter URL to scan"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleScan(); }}
-              />
-              <button
-                className={styles.scanBtn}
-                type="button"
-                onClick={handleScan}
-                disabled={!inputValue.trim()}
-              >
-                Scan
-              </button>
+              <p className={styles.inputHint}>
+                By scanning, you confirm you have the right to test this URL. Agentis Lux reads raw HTML. It does not execute JavaScript. Results are stored for 24 hours, then automatically deleted. No PII, no IP address, no tracking, no linkage between scans.
+              </p>
             </div>
+          ) : (
+            <div className={styles.scanningLeft}>
+              <div className={styles.arcDecoration} aria-hidden="true">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="none" stroke="var(--accent)" strokeWidth="2.5">
+                    <path d="M 300 300 A 280 280 0 0 0 20 20" />
+                    <path d="M 300 300 A 220 220 0 0 0 80 80" />
+                    <path d="M 300 300 A 160 160 0 0 0 140 140" />
+                    <path d="M 300 300 A 100 100 0 0 0 200 200" />
+                    <path d="M 300 300 A 60 60 0 0 0 240 240" />
+                  </g>
+                </svg>
+              </div>
 
-            <p className={styles.inputHint}>
-              By scanning, you confirm you have the right to test this URL. Agentis Lux reads raw HTML. It does not execute JavaScript. Results are stored for 24 hours, then automatically deleted. No PII, no IP address, no tracking, no linkage between scans.
-            </p>
-          </div>
+              <div className={styles.scanningContent}>
+                <div className={styles.scanningEyebrow}>Scanning {scanDomain}</div>
+                <h1 className={styles.scanningTitle}>
+                  Asking the <em>agent</em> what it sees.
+                </h1>
+                <p className={styles.scanningSubtitle}>
+                  This typically takes a few seconds. Results are stored for 24 hours, then automatically deleted.
+                </p>
+                <div className={styles.scanningProgress} role="status" aria-live="polite">
+                  <div className={styles.progressStep}>
+                    <span className={styles.progressNum}>01</span>
+                    <span>Fetching HTML</span>
+                    <span className={styles.progressStatus}>Active</span>
+                  </div>
+                  <div className={`${styles.progressStep} ${styles.progressPending}`}>
+                    <span className={styles.progressNum}>02</span>
+                    <span>Running Layer 1 checks</span>
+                    <span className={styles.progressStatus}>Pending</span>
+                  </div>
+                  <div className={`${styles.progressStep} ${styles.progressPending}`}>
+                    <span className={styles.progressNum}>03</span>
+                    <span>Generating agent narrative</span>
+                    <span className={styles.progressStatus}>Pending</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className={styles.scanInputRight}>
             <div className={`${styles.arcDecoration} ${styles.bottomLeft}`} aria-hidden="true">
@@ -312,41 +355,10 @@ function ScanFlow() {
                 Six frontend categories. Pattern matching, no AI. Same input, same score, every time.
               </li>
               <li>
-                <strong>Layer 2: agent narrative</strong>
-                A one-sentence summary of what an agent experiences on this page.
+                <strong>Layer 2: agent simulation</strong>
+                Three tasks attempted against your site as an agent would. Claude Haiku reports what it could and could not do. Linked back to Layer 1 findings.
               </li>
             </ol>
-          </div>
-        </div>
-      )}
-
-      {viewState === 'scanning' && (
-        <div className={styles.scanningView}>
-          <div className={styles.scanningContent}>
-            <div className={styles.scanningEyebrow}>Scanning {scanDomain}</div>
-            <h1 className={styles.scanningTitle}>
-              Asking the <em>agent</em> what it sees.
-            </h1>
-            <p className={styles.scanningSubtitle}>
-              This typically takes a few seconds. Results are stored for 24 hours, then automatically deleted.
-            </p>
-            <div className={styles.scanningProgress} role="status" aria-live="polite">
-              <div className={styles.progressStep}>
-                <span className={styles.progressNum}>01</span>
-                <span>Fetching HTML</span>
-                <span className={styles.progressStatus}>Active</span>
-              </div>
-              <div className={`${styles.progressStep} ${styles.progressPending}`}>
-                <span className={styles.progressNum}>02</span>
-                <span>Running Layer 1 checks</span>
-                <span className={styles.progressStatus}>Pending</span>
-              </div>
-              <div className={`${styles.progressStep} ${styles.progressPending}`}>
-                <span className={styles.progressNum}>03</span>
-                <span>Generating agent narrative</span>
-                <span className={styles.progressStatus}>Pending</span>
-              </div>
-            </div>
           </div>
         </div>
       )}

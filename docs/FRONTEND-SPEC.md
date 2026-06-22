@@ -6,7 +6,7 @@
 > The public-facing Agentis Lux web application.
 > Translates the locked visual language (agentislux-landing.html, agentislux-app.html) into a React app.
 
-**Status:** v2, May 27, 2026. v1 defined the React/Vite frontend on CloudFront + S3. v2 updates the decision-level content for Path B: Next.js on Vercel with API routes that do real work, the result hero leading the results view, two-layer finding text, the 24h shareable-link lifetime, and the signed-in auth stub. **Framework-detail conversion deferred:** filenames, routing, state idioms, and Vite config below remain in React form. Read them as "the frontend" pending the build-time conversion to Next.js App Router (the conversion happens against real components, not reconstructed in this doc from memory). The decision-level content here is current.
+**Status:** v2, May 27, 2026. v1 defined the React/Vite frontend on CloudFront + S3. v2 updates the decision-level content for Path B: Next.js on Vercel with API routes that do real work, the result hero leading the results view, two-layer finding text, and the signed-in auth stub. **Framework-detail conversion deferred:** filenames, routing, state idioms, and Vite config below remain in React form. Read them as "the frontend" pending the build-time conversion to Next.js App Router (the conversion happens against real components, not reconstructed in this doc from memory). The decision-level content here is current.
 
 **Naming:** The public product is **Agentis Lux**. Every user-facing string in the app references Agentis Lux. Internal file names, component names, and code comments may reference Perseus Clew where they describe the engine (e.g., "fetches results from the Perseus Clew scan Lambda"). All marketing, UI copy, and error messages use Agentis Lux.
 
@@ -252,7 +252,7 @@ The input field and scan button, with tab selector for URL / repo / spec. Valida
 Three tabs with active state. Switching tabs clears the input field and changes the validation rules and placeholder text.
 
 **`ScanProgress`**
-Five-step progress indicator. States: done (teal), active (orange, cream-warm background), pending (faded). Polls backend every 1.5 seconds while the scan is active. Updates step state as the backend reports progress. Has a timeout at 30 seconds. If still not complete, navigates to error view.
+Five-step progress indicator. States: done (teal), active (orange, cream-warm background), pending (faded). Shows progress animation during the single end-to-end fetch request. Has a timeout at 30 seconds. If still not complete, shows the error view.
 
 **`ScoreRing`**
 **`ResultHero`** (the demo-critical component, leads the results view)
@@ -305,7 +305,7 @@ Sticky footer on results view. Left side: "Scans are ephemeral and not stored. N
 ### Social card components
 
 **`SocialCard`**
-The visual card at 1200Ã—630. Reads from scan state context. Renders to a DOM element that can be captured by `html2canvas` for PNG export. Also used as the inline preview in `SocialCardExport`.
+The visual card at 1200Ã—630. Reads from scan state context. Renders visually as the inline preview in `SocialCardExport`.
 
 **`SocialCardExport`**
 The share UI. Shows the SocialCard at scaled preview size, with buttons: Copy image, Download PNG, Copy share URL (deep link to the scan), Share to Twitter, Share to LinkedIn. Share buttons open pre-populated share intents with the OG preview URL.
@@ -327,7 +327,7 @@ Three variants: primary (orange), secondary (bordered), ghost (text-only). Takes
 Inline or block code display using JetBrains Mono. Used in finding detail "Location in markup" sections.
 
 **`LoadingDots`**
-Three-dot loading animation in orange. Used for inline loading states (e.g., while polling, before progress steps render).
+Three-dot loading animation in orange. Used for inline loading states (e.g., while loading results, before progress steps render).
 
 ---
 
@@ -400,8 +400,8 @@ Engineering-level specifications for each component. Props, state, events, side 
 **Props:**
 ```
 {
-  scanId: string,
-  onComplete: () => void,
+  scanPayload: ScanPayload,
+  onComplete: (result: ScanResult) => void,
   onError: (error: ErrorShape) => void
 }
 ```
@@ -410,16 +410,12 @@ Engineering-level specifications for each component. Props, state, events, side 
 - `currentStep`: 1 through 5
 - `completedSteps`: Set<number>
 - `startTime`: timestamp
-- `pollCount`: number (for timeout)
 
 **Effects:**
-- Poll `GET /api/scans/:scanId` every 1500ms
-- On response:
-  - If `status === "in_progress"`, update `currentStep` based on `response.currentPhase`
-  - If `status === "complete"`, call `onComplete`
-  - If `status === "error"`, call `onError(response.error)`
-- Timeout at 30 seconds â†’ `onError({ code: "TIMEOUT" })`
-- Unmount: cancel any in-flight poll
+- Calls the single end-to-end scan API endpoint via a single fetch request.
+- Simulates step progress visually through `currentStep` updates as phases complete or via a timed animation sequence during the fetch.
+- Timeout at 30 seconds → `onError({ code: "TIMEOUT" })`
+- Unmount: abort the in-flight scan request.
 
 **Accessibility:**
 - `role="status"`, `aria-live="polite"` on the progress container
@@ -525,9 +521,8 @@ The only global state. Uses React Context + useReducer. Shared across routes in 
 - `SCAN_RESET`: clears everything (used when user starts a new scan)
 
 **Persistence:**
-- Not persisted. Refreshing the browser on a results page re-fetches the scan by ID from the backend.
-- No localStorage for scan results. Results live server-side in ScanResults (24h TTL, anonymous) and are fetched by `resultId`. The frontend is stateless across sessions for anonymous users; signed-in users retrieve from the Users partition.
-- One exception: the current scan ID is kept in `sessionStorage` only to survive a refresh within the scan flow. Cleared when a new scan starts.
+- Not persisted. Scans are ephemeral and held in client-side React state. Refreshing the browser resets the app state.
+- No localStorage or server-side ScanResults table is used for anonymous scan persistence. The frontend is stateless across page reloads.
 
 ### Local component state
 
@@ -578,8 +573,8 @@ Server-rendered social card PNG generated dynamically using query parameters (do
 ### API client wrapper
 
 `api-client.js` wraps fetch and provides:
-- **Timeout** (30 seconds for scan status polling, 60 seconds for submit)
-- **Structured error mapping** (HTTP status codes â†’ ErrorShape)
+- **Timeout** (30 seconds for the scan fetch, 60 seconds for submit)
+- **Structured error mapping** (HTTP status codes → ErrorShape)
 - **Request duration logging** (anonymous, for Plausible / CloudWatch correlation)
 - **AbortController support** (cancels in-flight requests when the component unmounts)
 
@@ -587,7 +582,7 @@ Example:
 ```
 import { apiClient } from './api-client';
 
-const { data, error } = await apiClient.get(`/api/scans/${scanId}`, {
+const { data, error } = await apiClient.post('/api/scans', {
   timeoutMs: 30000,
   signal: abortController.signal
 });
@@ -720,7 +715,7 @@ Sitemap: https://agentislux.io/sitemap.xml
 
 ### sitemap.xml (generated at build)
 
-Lists every static route (`/`, `/scan`, `/methodology`, `/benchmark`, `/about`). Dynamic scan routes are not indexed (transient, ephemeral, not shareable beyond their cache TTL).
+Lists every static route (`/`, `/scan`, `/benchmark`). Dynamic scan routes are not indexed (transient, ephemeral).
 
 ### Meta tags (per-route)
 
@@ -766,7 +761,7 @@ Every route includes Schema.org markup:
 }
 ```
 
-**Scan result page (`/scan/:id`):** No structured data (ephemeral, not indexed).
+**Scan result page (`/scan` / ephemeral):** No structured data (ephemeral, not indexed).
 
 ### Headings hierarchy
 
@@ -948,18 +943,18 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 
 - File structure (routes, components, lib, state)
 - Tech stack (React 18, React Router v6, Vite, Vitest, CSS modules)
-- Route flow (landing â†’ scan â†’ scanning â†’ results â†’ finding detail, with error branches)
-- Scan ID model (backend-assigned opaque resultId, 24h ScanResults TTL for shareable links, 404 after expiry)
+- Route flow (landing → scan/results)
+- Scan model (client-side ephemeral state, no server-side result storage)
 - ScanContext + useReducer for scan state
 - Error handling strategy (no blank screens, specific messages, next-step actions)
 - WCAG 2.1 AA compliance requirements
-- Social card dual rendering (client-side html2canvas + server-side OG PNG)
+- Social card rendering (server-side dynamically generated OG PNG)
 - Discoverability setup (robots.txt, sitemap, per-route meta, JSON-LD)
 
 ### Medium confidence (open questions flagged)
 
 - Self-scan threshold (score 80 minimum). Reasonable starting value, may adjust after first benchmark run
-- Polling interval (1500ms). Balances UX and backend load, may tune based on real latency
+- Polling interval (superseded: polling is not used in the shipped single-fetch app)
 - Timeout threshold (30s for scan). Matches backend timeout; conservative for real-world network conditions
 - Report download format at launch (HTML only, PDF later). May ship PDF earlier if users ask
 
@@ -976,7 +971,7 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 - Secondary tagline: "For your second audience."
 - React 18 + Vite + React Router v6 + Vitest in this spec; **Path B target is Next.js (App Router) on Vercel.** Framework-detail conversion deferred to build time per the status note above. The decision-level content (routes, components, contracts) is current.
 - No Tailwind, no CSS-in-JS runtime (CSS modules per component, or Next.js equivalent at build)
-- Anonymous scans require no account; the signed-in tier is opt-in (auth + history stub at MVP). Anonymous scan results stored 24h server-side for shareable links, then auto-deleted. Signed-in scans persist in the Users partition.
+- Anonymous scans require no account; the signed-in tier is opt-in (auth + history stub at MVP). Anonymous scan results are ephemeral and not stored.
 - Self-scanning enforced in CI
 - WCAG 2.1 AA is minimum bar
 

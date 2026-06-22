@@ -9,7 +9,7 @@
 
 **Scope:** Ten shared modules (`errors`, `logger`, `fetch-url`, `fetch-repo`, `parse-html`, `parse-spec`, `sanitize`, `rate-limit`, `bedrock-client`, `scan-store`). These get built first in Phase 1 because everything else depends on them.
 
-**Not in this doc:** Check modules, scoring, orchestrators, simulation prompts, DynamoDB schema. Those live in sibling specs (BACKEND-FRONTEND-CHECKS, BACKEND-API-CHECKS, FRONTEND-SPEC, BUILD-PLAN).
+**Not in this doc:** Check modules, scoring, orchestrators, simulation prompts, DynamoDB schema. Those live in sibling specs (BACKEND-FRONTEND-CHECKS, BACKEND-API-CHECKS, FRONTEND-SPEC, BUILD-PLAN; external design document).
 
 ---
 
@@ -832,7 +832,7 @@ Every shared module is unit tested. Tests use Vitest.
 - **Lambda orchestrator** (the function that ties fetch + parse + checks + score together) â€” see BACKEND-FRONTEND-CHECKS
 - **Layer 2 simulation prompts and logic** â€” see BACKEND-API-CHECKS or a dedicated SIMULATION-SPEC (TBD)
 - **DynamoDB table schemas** â€” see ARCHITECTURE.md Section 6
-- **CDK deployment config** â€” see BUILD-PLAN
+- **CDK deployment config** â€” see BUILD-PLAN (external design document)
 - **Frontend behavior** â€” see FRONTEND-SPEC
 
 ---
@@ -840,9 +840,9 @@ Every shared module is unit tested. Tests use Vitest.
 ## References
 
 - **ARCHITECTURE.md** â€” system view, tech stack, data flow
-- **PERSEUS-CLEW-PRODUCT-REVIEW.md** â€” scope, philosophy, scan constraints
+- **PERSEUS-CLEW-PRODUCT-REVIEW.md** (external design document) â€” scope, philosophy, scan constraints
 - **SCORING.md** â€” public scoring methodology (what findings look like)
-- **BUILD-PRINCIPLES.md** â€” 38 principles referenced throughout this doc
+- **BUILD-PRINCIPLES.md** (external design document) â€” 38 principles referenced throughout this doc
 - **Paraskakis checklist** (Â© 2026 Level 250 Inc.) â€” referenced for Pitfall #2 in parse-spec.js
 - **Hermes Clew v1 codebase** â€” `scan/file_finder.py` confirmed file filter patterns used in fetch-repo.js
 

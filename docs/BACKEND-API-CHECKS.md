@@ -9,7 +9,7 @@
 
 **Scope:** Six API check modules, the API scoring module, and the Layer 2 agent simulation Lambda (includes task library, prompt design, structured output contract, graceful degradation). Also covers the orchestrator extensions that tie API scanning into the existing scan flow.
 
-**Not in this doc:** Shared infrastructure (see BACKEND-SHARED), frontend check modules (see BACKEND-FRONTEND-CHECKS), Next.js UI (see FRONTEND-SPEC), CDK deploy and build sequence (see BUILD-PLAN).
+**Not in this doc:** Shared infrastructure (see BACKEND-SHARED), frontend check modules (see BACKEND-FRONTEND-CHECKS), Next.js UI (see FRONTEND-SPEC), CDK deploy and build sequence (see BUILD-PLAN; external design document).
 
 ---
 
@@ -900,7 +900,7 @@ Same input + same scan ID = same output. Deterministic across Layer 1. Layer 2 u
 
 - **High confidence:** The flow structure, idempotency model.
 - **Medium confidence:** The parallel Layer 2 task execution. Tasks don't share state, so parallelism is safe. Coordination error cases (one task fails, others succeed) handled by graceful degradation per task.
-- **Low confidence:** Backend-only API scan gating via flag. The flag approach works but an attacker could potentially forge the flag if Lambda is invoked without authentication. BACKEND-SHARED rate-limit and auth enforcement (public UI Lambda has an AWS-internal auth check) mitigate but do not eliminate. Worth revisiting in BUILD-PLAN security section.
+- **Low confidence:** Backend-only API scan gating via flag. The flag approach works but an attacker could potentially forge the flag if Lambda is invoked without authentication. BACKEND-SHARED rate-limit and auth enforcement (public UI Lambda has an AWS-internal auth check) mitigate but do not eliminate. Worth revisiting in BUILD-PLAN (external design document) security section.
 
 ---
 
@@ -938,7 +938,7 @@ The public methodology in SCORING.md is the trust document. This doc is the engi
 - Rating band thresholds (80/50, starting values)
 - "Self-explaining name" heuristic (allowlist will grow)
 - Summary/description contradiction detection (heuristic, false positives possible)
-- Backend-only API scan gating (flag approach, hardening in BUILD-PLAN)
+- Backend-only API scan gating (flag approach, hardening in BUILD-PLAN; external design document)
 
 ### Low confidence (needs spike before build)
 

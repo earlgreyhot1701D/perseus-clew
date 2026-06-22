@@ -5,16 +5,16 @@
 
 **Status:** May 27, 2026. Next.js on Vercel with an API route that does real work (scan initiation). The benchmark page serves static data. Entering into the H0 Hackathon (B2B track, deadline June 29). The scan engine, Bedrock simulation, and EventBridge refresh stay on AWS. Written for Kiro, future contributors, and the builder returning after a break.
 
-**Naming:** Perseus Clew is the engine name used throughout this document and the rest of the engineering artifacts. The public-facing product is **Agentis Lux**, which is what end users see in the UI, on the website (agentislux.io), and in marketing. Architecture, backend specs, and code all use "Perseus Clew" because that's where the engineering identity lives. See the Project Checklist "Naming Convention" section for details.
+**Naming:** Perseus Clew is the engine name used throughout this document and the rest of the engineering artifacts. The public-facing product is **Agentis Lux**, which is what end users see in the UI, on the website (agentislux.io), and in marketing. Architecture, backend specs, and code all use "Perseus Clew" because that's where the engineering identity lives. See the Project Checklist (external design document) "Naming Convention" section for details.
 
 **Scope:** This document is the system view. It names the parts and describes how they relate. Detailed specs live in sibling documents:
 
 - `BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md` â€” scan engine, module contracts, check definitions at the interface level
 - `FRONTEND-SPEC.md` â€” Next.js app (App Router), routes, API routes, components, state
-- `BUILD-PLAN.md` â€” security implementation, testing strategy, build sequence, risks
+- `BUILD-PLAN.md` (external design document) â€” security implementation, testing strategy, build sequence, risks
 - `SCORING.md` â€” public scoring methodology (already published)
 
-**Source of truth:** This document derives from the Perseus Clew Product Review (v5, signed off) and the Project Checklist. Any contradiction with those documents is a bug in this one.
+**Source of truth:** This document derives from the Perseus Clew Product Review (v5, signed off; external design document) and the Project Checklist (external design document). Any contradiction with those documents is a bug in this one.
 
 ---
 
@@ -490,7 +490,7 @@ Plausible tracks page views, traffic sources, device/browser, country-level geog
 
 ## 9. Security Model
 
-The 11-point checklist (from build principles #17) is applied throughout. This section describes the architectural posture. Implementation detail lives in `BUILD-PLAN.md`.
+The 11-point checklist (from build principles #17) is applied throughout. This section describes the architectural posture. Implementation detail lives in `BUILD-PLAN.md` (external design document).
 
 - **Authorization:** Anonymous scans require none (public endpoints). The signed-in tier adds auth (email/magic link at MVP; provider TBD per checklist). Architecturally, the Lambda never trusts the frontend, including the Vercel API routes: all validation happens server-side on the Lambda even though the Vercel route validates first.
 
@@ -581,13 +581,13 @@ From the checklist's Open Questions. These are not blocking MVP. The architectur
 
 ### Perseus Clew documents
 
-- **Product Review** (`PERSEUS-CLEW-PRODUCT-REVIEW.md`) â€” source of truth for scope, philosophy, and stack. Signed off.
-- **Project Checklist** (`PERSEUS-CLEW-PROJECT-CHECKLIST.md`) â€” living tracker. Contains decisions, open questions, methodology decisions log, and build sequence.
-- **Build Principles** (`BUILD-PRINCIPLES.md`) â€” 38 principles applied throughout this architecture.
+- **Product Review** (`PERSEUS-CLEW-PRODUCT-REVIEW.md` — external design document) â€” source of truth for scope, philosophy, and stack. Signed off.
+- **Project Checklist** (`PERSEUS-CLEW-PROJECT-CHECKLIST.md` — external design document) â€” living tracker. Contains decisions, open questions, methodology decisions log, and build sequence.
+- **Build Principles** (`BUILD-PRINCIPLES.md` — external design document) â€” 38 principles applied throughout this architecture.
 - **Scoring** (`SCORING.md`) â€” public scoring methodology. What each category measures and why.
 - **Frontend Spec** (`FRONTEND-SPEC.md`) â€” Next.js app, routes, API routes, components, state. Written (v1; Path B update in progress).
 - **Backend Specs** (`BACKEND-SHARED.md`, `BACKEND-FRONTEND-CHECKS.md`, `BACKEND-API-CHECKS.md`) â€” module contracts, check definitions, orchestrator flow, Layer 2 simulation. Written.
-- **Build Plan** (`BUILD-PLAN.md`) â€” security implementation, testing strategy, block-by-block build sequence. Written.
+- **Build Plan** (`BUILD-PLAN.md` — external design document) â€” security implementation, testing strategy, block-by-block build sequence. Written.
 
 ### External references
 

@@ -118,12 +118,12 @@ export const handler = async (event) => {
   // --- Repo and spec: stubbed (501) ---
   if (type === 'repo') {
     // STUB: fetch-repo.js exists (1A) but repo scan orchestration is a separate milestone.
-    // See BUILD-PLAN.md Block 2B for the repo scanning path.
+    // Repo scanning path is deferred/planned for a future milestone.
     return jsonResponse(501, { error: 'NOT_IMPLEMENTED', message: 'Repository scanning is not yet available.' });
   }
   if (type === 'spec') {
     // STUB: parse-spec.js exists (1A) but spec upload orchestration is a separate milestone.
-    // See BUILD-PLAN.md Block 2C for the spec upload path.
+    // Spec upload path is deferred/planned for a future milestone.
     return jsonResponse(501, { error: 'NOT_IMPLEMENTED', message: 'Spec upload scanning is not yet available.' });
   }
 

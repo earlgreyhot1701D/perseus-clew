@@ -314,7 +314,7 @@ When we change anything in this document, the change is logged in the Changelog 
 
 ## Where to Go Deeper
 
-- **Full methodology:** `docs/SCORING-METHODOLOGY.md` (forthcoming, includes specific check definitions, examples, edge cases, and weight rationale)
+- **Full methodology:** [SCORING.md](file:///c:/Users/corde/projects/perseus-clew-initial/docs/SCORING.md) (this document itself contains the full scoring methodology, including category weights, rating band cutoffs, and check specifications)
 - **Benchmark data:** [BENCHMARK-SITES.md](file:///c:/Users/corde/projects/perseus-clew-initial/docs/BENCHMARK-SITES.md) (the 50 curated sites and their scores)
 - **Source code:** GitHub repository (link added at launch)
 

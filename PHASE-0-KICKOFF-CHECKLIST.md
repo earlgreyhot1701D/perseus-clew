@@ -514,7 +514,7 @@ Phase 0 is foundation work. Nothing here is fast-and-loose. If something breaks:
 
 ## After Phase 0
 
-Once this checklist is complete, you are ready for Phase 1 Block 0 (Hello World end-to-end, see BUILD-PLAN.md § Block 0).
+Once this checklist is complete, you are ready for Phase 1 Block 0 (Hello World end-to-end, see the external BUILD-PLAN.md § Block 0).
 
 Remember: at the start of each Phase 1 session, declare the build block to Kiro so the scope-guard hook works correctly:
 

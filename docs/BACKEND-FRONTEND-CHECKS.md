@@ -9,7 +9,7 @@
 
 **Scope:** Six frontend check modules, one scoring module, one scan orchestrator Lambda. What each one inputs, outputs, and must never do. What findings look like. How failure modes produce user-facing messages.
 
-**Not in this doc:** Shared infrastructure (see BACKEND-SHARED), API check modules (see BACKEND-API-CHECKS), React UI (see FRONTEND-SPEC), CDK deploy (see BUILD-PLAN).
+**Not in this doc:** Those live in sibling specs (BACKEND-SHARED, BACKEND-API-CHECKS, FRONTEND-SPEC, BUILD-PLAN, PRODUCT-REVIEW, BUILD-PRINCIPLES; external design documents).
 
 ---
 
@@ -669,7 +669,7 @@ Open the test file. Read the `describe` and `it` descriptions. Each one should m
 - **Layer 2 simulation prompt design** â€” see BACKEND-API-CHECKS or a dedicated SIMULATION spec
 - **DynamoDB schemas (cache table, benchmark table)** â€” see ARCHITECTURE.md Section 6
 - **React UI, report rendering** â€” see FRONTEND-SPEC
-- **Security implementation details, CDK deploy** â€” see BUILD-PLAN
+- **Security implementation details, CDK deploy** â€” see BUILD-PLAN (external design document)
 
 ---
 
@@ -678,8 +678,8 @@ Open the test file. Read the `describe` and `it` descriptions. Each one should m
 - **ARCHITECTURE.md** â€” system view, scan pipeline overview
 - **BACKEND-SHARED.md** â€” shared infrastructure modules that every check depends on
 - **SCORING.md** â€” public scoring methodology, category weights, band descriptions
-- **PERSEUS-CLEW-PRODUCT-REVIEW.md** â€” product tone, scan prerequisites
-- **BUILD-PRINCIPLES.md** â€” 38 principles referenced throughout
+- **PERSEUS-CLEW-PRODUCT-REVIEW.md** (external design document) â€” product tone, scan prerequisites
+- **BUILD-PRINCIPLES.md** (external design document) â€” 38 principles referenced throughout
 - **Hermes Clew v1 codebase** â€” `scan/scanner.py`, `scan/check_semantic_html.py`, `scan/scoring.py` (patterns ported from Python to JavaScript)
 
 ---

@@ -12,7 +12,7 @@
 
 **Scope:** The React app that serves agentislux.io. Covers app architecture, routing, core components, state management, API integration, error handling, report download, social card generation, discoverability markup, WCAG 2.1 AA requirements, and the self-scanning mechanism.
 
-**Not in this doc:** Backend Lambda details (see BACKEND-SHARED, BACKEND-FRONTEND-CHECKS, BACKEND-API-CHECKS), infrastructure and deployment (see BUILD-PLAN), scoring methodology (see SCORING.md).
+**Not in this doc:** Backend Lambda details (see BACKEND-SHARED, BACKEND-FRONTEND-CHECKS, BACKEND-API-CHECKS), infrastructure and deployment (see BUILD-PLAN; external design document), scoring methodology (see SCORING.md).
 
 **Visual references:**
 - `agentislux-landing.html`: the marketing landing page, locked design direction
@@ -962,7 +962,7 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 
 - Server-side PNG rendering reliability. Social card export is a visible feature; needs testing. Spike: verify dynamic generation of `/api/og` PNG across Chrome, Safari, Firefox, mobile Safari, mobile Chrome. Verify pixel-accuracy and color fidelity.
 - OG PNG rendering in Lambda. `@vercel/og` or alternatives. Spike: verify font loading and layout fidelity match the client-side render.
-- Mobile layout edge cases. The mockups show desktop. Mobile adaptations described above are based on general patterns but need a visual mockup pass before Phase 2. Deferred to BUILD-PLAN or a mobile-specific mockup session.
+- Mobile layout edge cases. The mockups show desktop. Mobile adaptations described above are based on general patterns but need a visual mockup pass before Phase 2. Deferred to BUILD-PLAN (external design document) or a mobile-specific mockup session.
 
 ### Locked decisions (re-stated)
 

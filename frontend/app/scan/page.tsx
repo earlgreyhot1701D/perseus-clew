@@ -282,7 +282,7 @@ function ScanFlow() {
             </div>
 
             <p className={styles.inputHint}>
-              By scanning, you confirm you have the right to test this URL. Agentis Lux reads raw HTML. It does not execute JavaScript. Scans are ephemeral and not stored.
+              By scanning, you confirm you have the right to test this URL. Agentis Lux reads raw HTML. It does not execute JavaScript. Results are stored for 24 hours, then automatically deleted. No PII, no IP address, no tracking, no linkage between scans.
             </p>
           </div>
 
@@ -328,7 +328,7 @@ function ScanFlow() {
               Asking the <em>agent</em> what it sees.
             </h1>
             <p className={styles.scanningSubtitle}>
-              This typically takes a few seconds. Scans are not stored.
+              This typically takes a few seconds. Results are stored for 24 hours, then automatically deleted.
             </p>
             <div className={styles.scanningProgress} role="status" aria-live="polite">
               <div className={styles.progressStep}>

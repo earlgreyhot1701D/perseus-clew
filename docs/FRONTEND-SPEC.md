@@ -1,7 +1,7 @@
 # Frontend Spec: React App, Routes, Components, State
 
 > [!IMPORTANT]
-> **SUPERSEDED DESIGN INTENT** — This document details the v1 frontend design intent (originally conceived as a React/Vite client-polling app). The final implementation was built and deployed as a Next.js App Router application with ephemeral client state, no server-side storage of scans, and single-fetch loading. Many decision-level details (such as routes, polling, shareable URLs, and client-side storage) are superseded by the shipped Next.js app.
+> **SUPERSEDED DESIGN INTENT** — This document details the v1 frontend design intent (originally conceived as a React/Vite client-polling app). The final implementation was built and deployed as a Next.js App Router application with ephemeral client state, 24-hour server-side result storage (no UI shareable links exposed), and single-fetch loading. Many decision-level details (such as routes, polling, shareable URLs, and client-side storage) are superseded by the shipped Next.js app.
 
 > The public-facing Agentis Lux web application.
 > Translates the locked visual language (agentislux-landing.html, agentislux-app.html) into a React app.
@@ -185,7 +185,7 @@ Only three primary routes exist in the deployed application:
 Other routes listed in early planning (such as `/methodology`, `/about`, `/history`, `/sign-in`, and `/scan/:id/findings/:fid`) do not exist. About and methodology sections are integrated directly or link to external pages.
 
 **Scan State Model:**
-No server-side database storage is used for anonymous scans in the live frontend app. The scan state is held in client-side React state during the session. Refreshing the browser resets the page to the input form. There are no shareable per-scan links (though a domain can be scanned again by passing a query parameter `/scan?url=domain`). There is no polling; when the user submits a URL to scan, a single backend HTTP POST request performs the scan in one end-to-end fetch.
+The backend stores anonymous results for 24h (TTL), but the current UI does not surface or resolve shareable per-scan links; results display ephemerally on `/scan`. The active scan state is held in client-side React state during the session. Refreshing the browser resets the page to the input form. There are no shareable per-scan links exposed (though a domain can be scanned again by passing a query parameter `/scan?url=domain`). There is no polling; when the user submits a URL to scan, a single backend HTTP POST request performs the scan in one end-to-end fetch.
 
 **`/methodology` (MethodologyRoute)**
 Public methodology page. Renders SCORING.md content. Linked from nav and from scan results.
@@ -300,7 +300,7 @@ The dashboard sub-header below the hero. Left side: scanned URL, scan metadata (
 Appears in anonymous results: "Sign up to track your scores over time." Single button to `/sign-in`. Discreet, not nagging. Hidden for signed-in users.
 
 **`ResultsFooter`**
-Sticky footer on results view. Left side: "Scans are ephemeral and not stored. No PII is collected or retained." Right side: two buttons (Download report, Share card).
+Sticky footer on results view. Left side: "Results are stored for 24 hours, then automatically deleted. No PII is collected." Right side: two buttons (Download report, Share card).
 
 ### Social card components
 
@@ -944,7 +944,7 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 - File structure (routes, components, lib, state)
 - Tech stack (React 18, React Router v6, Vite, Vitest, CSS modules)
 - Route flow (landing → scan/results)
-- Scan model (client-side ephemeral state, no server-side result storage)
+- Scan model (client-side ephemeral state, 24-hour server-side result storage)
 - ScanContext + useReducer for scan state
 - Error handling strategy (no blank screens, specific messages, next-step actions)
 - WCAG 2.1 AA compliance requirements
@@ -971,7 +971,7 @@ Agentis Lux works on mobile. Not mobile-first, but responsive and functional at 
 - Secondary tagline: "For your second audience."
 - React 18 + Vite + React Router v6 + Vitest in this spec; **Path B target is Next.js (App Router) on Vercel.** Framework-detail conversion deferred to build time per the status note above. The decision-level content (routes, components, contracts) is current.
 - No Tailwind, no CSS-in-JS runtime (CSS modules per component, or Next.js equivalent at build)
-- Anonymous scans require no account; the signed-in tier is opt-in (auth + history stub at MVP). Anonymous scan results are ephemeral and not stored.
+- Anonymous scans require no account; the signed-in tier is opt-in (auth + history stub at MVP). Anonymous scan results are stored for 24 hours (TTL) on the backend but are ephemeral in the UI.
 - Self-scanning enforced in CI
 - WCAG 2.1 AA is minimum bar
 

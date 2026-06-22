@@ -70,37 +70,20 @@ Every API check module returns the same shape:
 
 ```
 output: {
-  checkId: string,              // e.g., "naming-descriptions"
-  rawScore: number,             // 0 to maxPoints for this category
-  maxPoints: number,            // the category weight from SCORING.md
-  findings: Finding[],          // list of observations
-  metadata: {
-    instancesScanned: number,   // how many endpoints/schemas/etc. were examined
-    instancesFlagged: number,   // how many had findings
-    zeroInstance: boolean,      // true if this category had nothing to scan
-    durationMs: number
-  }
+  passed: number,               // number of sub-checks that passed
+  total: number,                // total number of sub-checks run
+  findings: Finding[]           // list of observations
 }
 ```
 
-The `Finding` shape matches the one from BACKEND-FRONTEND-CHECKS for consistency across the report UI:
+The `Finding` shape:
 
 ```
 Finding = {
-  id: string,                   // stable identifier, e.g., "API-ND-001"
-  category: string,             // "Naming & Descriptions"
-  severity: "low" | "medium" | "high",  // affects weight reduction
-  title: string,                // short, agent-perspective phrasing
-  detail: string,               // longer explanation from agent's perspective
-  location: {
-    type: "endpoint" | "schema" | "operation" | "global",
-    path?: string,              // e.g., "/users/{userId}"
-    method?: string,            // e.g., "GET"
-    schemaName?: string,        // e.g., "User"
-    propertyPath?: string       // e.g., "User.email"
-  },
-  confidence: "high" | "medium" | "low",
-  points_deducted: number       // what this finding cost in score
+  id: string,                   // stable identifier, e.g., "API-DISC-001"
+  text: string,                 // agent-perspective finding text
+  count: number | null,         // number of instances flagged
+  examples?: string[]           // list of example endpoints/parameters flagged
 }
 ```
 
@@ -140,8 +123,7 @@ Draws from multiple sources: the Paraskakis checklist (insights #1, #2, #5 credi
 - Descriptions are at least 20 characters long. Very short descriptions like "gets users" or "creates it" don't give the agent enough context. Source: Paraskakis insight #2 ("Descriptions can override schema").
 - Operation `operationId` is present. Agents prefer stable identifiers over constructing method+path strings. Source: common OpenAPI best practice, not Paraskakis-specific.
 
-**Operation summary/description mismatch detection**
-- When a `summary` and `description` are both present, they should not contradict each other. Example: summary says "List users" but description says "Creates a new user." This is rare but catastrophic for agents. High-severity finding if detected via keyword divergence (create/list/update/delete conflict). Source: Paraskakis insight #2 directly.
+
 
 **Schema and property descriptions**
 - Every response schema property has a `description` OR a self-explaining name. Self-explaining means the property name contains a full word that indicates type or purpose: `activeUserCount` is self-explaining, `auc` is not. The check uses a minimum-meaningful-length heuristic (property name must be at least 4 characters and contain at least one recognizable English word fragment) plus a common-abbreviation allowlist (`id`, `url`, `api`, etc.). Source: Paraskakis insight #5 ("Descriptive response field names eliminate extra API calls") credited.
@@ -168,17 +150,10 @@ Bad (would violate the voice rules â€” never ship these):
 
 ### Scoring math
 
-Points deducted per finding, capped at the category max:
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 25)`
 
-| Severity | Points per finding | Cap |
-|----------|-------------------|-----|
-| Low | 1 | Max 5 findings counted |
-| Medium | 3 | Max 6 findings counted |
-| High | 5 | Max 4 findings counted |
-
-Maximum deduction from this category: 25 points (category weight). Score floor: 0.
-
-Zero-instance rule: if the spec has no `paths` at all (e.g., an empty or malformed spec that parsed without error), this module returns `rawScore: maxPoints, zeroInstance: true` with a finding noting there was nothing to evaluate. See SCORING.md for the rationale.
+Zero-instance rule: if the spec has no `paths` at all (e.g., an empty or malformed spec that parsed without error), the module returns `passed: 1, total: 1` (full credit) with a finding noting there was nothing to evaluate. See SCORING.md for the rationale.
 
 ### How you'll know it works
 
@@ -243,9 +218,10 @@ Good:
 
 ### Scoring math
 
-Same severity tiers as Module 1. Maximum deduction: 20 points.
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 20)`
 
-Zero-instance rule: if a spec has no operations that would reasonably return errors (e.g., read-only spec with all 2xx responses and no inputs), returns `rawScore: maxPoints, zeroInstance: true`.
+Zero-instance rule: if a spec has no operations that would reasonably return errors (e.g., read-only spec with all 2xx responses and no inputs), returns `passed: 1, total: 1` (full credit).
 
 ### How you'll know it works
 
@@ -302,9 +278,10 @@ Good:
 
 ### Scoring math
 
-Same severity tiers as previous modules. Maximum deduction: 20 points.
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 20)`
 
-Zero-instance rule: if the spec has no parameterized paths at all (no `{id}` segments), returns `rawScore: maxPoints, zeroInstance: true`.
+Zero-instance rule: if the spec has no parameterized paths at all (no `{id}` segments), returns `passed: 1, total: 1` (full credit).
 
 ### How you'll know it works
 
@@ -363,9 +340,10 @@ Good:
 
 ### Scoring math
 
-Same severity tiers. Maximum deduction: 15 points.
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 15)`
 
-Zero-instance rule: if the spec has no response schemas at all, returns `rawScore: maxPoints, zeroInstance: true`.
+Zero-instance rule: if the spec has no response schemas at all, returns `passed: 1, total: 1` (full credit).
 
 ### How you'll know it works
 
@@ -422,9 +400,10 @@ Good:
 
 ### Scoring math
 
-Same severity tiers. Maximum deduction: 10 points.
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 10)`
 
-Zero-instance rule: if the spec has no state-mutating operations (read-only API), idempotency findings don't apply and return default credit. If no operations are deprecated, deprecation findings don't apply and return default credit.
+Zero-instance rule: if the spec has no state-mutating operations (read-only API) and no deprecated operations, returns `passed: 1, total: 1` (full credit).
 
 ### How you'll know it works
 
@@ -484,9 +463,10 @@ Good:
 
 ### Scoring math
 
-Same severity tiers. Maximum deduction: 10 points.
+The module returns the count of sub-checks passed and total sub-checks run. The category score is computed proportionally:
+`earned = Math.round((passed / total) * 10)`
 
-Zero-instance rule: if the spec has no `security` declarations and no operations requiring auth, authentication findings don't apply and return default credit.
+Zero-instance rule: if the spec has no `security` declarations and no operations requiring auth, returns `passed: 1, total: 1` (full credit).
 
 ### How you'll know it works
 
@@ -629,24 +609,24 @@ Array of six check module outputs, one per category:
   ],
   totalFindings: 14,
   scannedAt: "2026-06-19T12:00:00.000Z",
-  methodologyVersion: "1.1.0"  // will be bumped when SCORING.md is updated alongside this doc
+  methodologyVersion: "1.1.1"  // matches the methodologyVersion in flow.js and api-flow.js
 }
 ```
 
 ### Scoring math
 
-1. Sum `rawScore` across all six check modules to get `totalScore` (0-100).
-2. Apply rating bands:
+1. For each category, compute: `earned = Math.round((passed / total) * max)` where `max` is the category weight. If `total === 0`, `earned = max`.
+2. Sum the category `earned` scores to produce the total score (0-100).
+3. Apply rating bands to the total score:
    - 80-100: "Agent-Ready"
    - 50-79: "Partially Ready"
    - 0-49: "Not Yet Readable"
-3. Per-category percentages calculated as `(rawScore / maxPoints) * 100`, rounded to whole numbers.
 
 ### Zero-instance handling
 
-If any check module returns `zeroInstance: true`, that category gets full points (the category weight) with a `zeroInstance: true` flag in the category output. The flag is surfaced in the report UI as a note ("This category did not apply to your spec") so users understand why the score is what it is.
+If any check module returns `total === 0` (indicating no scannable instances for that category, which defaults to `passed: 1, total: 1`), that category receives full points (the category weight) with a note explaining the absence of instances (e.g., "no parameterized paths").
 
-If ALL six modules return `zeroInstance: true`, the score is 100/100 but the rating is downgraded to "Not Evaluable" with a banner explaining the spec had no scannable structure. This avoids the misleading "perfect score on empty spec" outcome.
+Determining "Not Evaluable" (where the spec is entirely empty or trivial) is handled upstream in the orchestrator before check modules are executed, rather than inside the scoring module.
 
 ### Combined scoring with frontend (when both present)
 
@@ -729,41 +709,21 @@ Upgrade path (documented, not built at MVP): if latency or cost become problems,
 
 ### Task library
 
-The task library defines what the LLM tries to do against each scanned artifact. Six tasks at MVP: three frontend, three API. Each task has a fixed prompt template, an expected output structure, and a linkage map to Layer 1 categories.
+The task library defines what the LLM tries to do against each scanned HTML document. There are three frontend-only simulation tasks at MVP (and no API-specific simulation tasks):
 
 #### Frontend tasks
 
-**FE-1: Find the primary call-to-action**
-- Prompt the LLM with summarized HTML and ask: "Identify the primary call-to-action on this page (the main action the user is expected to take). Report the element, whether it is a semantic button or link, and whether the purpose is clear from the markup alone."
-- Expected output: `{ foundCta: boolean, elementDescription: string, isSemantic: boolean, purposeClear: boolean, reasoning: string }`
+**SIM-FE-CTA: Find the primary call-to-action**
+- Prompt: "Identify the primary call-to-action on this page (the main action the page wants the user to take). Report the element tag, its text content, and whether it is a semantic interactive element (button or anchor)."
 - Links to Layer 1 categories: Semantic HTML, Content in HTML.
 
-**FE-2: Identify the page's purpose**
-- Prompt: "From this HTML alone (no JavaScript, no images rendered), what is this page for? What would an agent be able to do here?"
-- Expected output: `{ purposeClear: boolean, purposeStatement: string, availableActions: string[], reasoning: string }`
+**SIM-FE-PURPOSE: Identify the page's purpose**
+- Prompt: "From this HTML alone (no JavaScript execution, no images rendered), determine what this page is for. What would an agent be able to understand about this page without rendering it?"
 - Links to: Structured Data, Semantic HTML, Content in HTML.
 
-**FE-3: Attempt a form submission**
-- Prompt: "This page contains a form. Describe what an agent filling out this form would need to provide. Can the agent determine what each field expects from the markup alone?"
-- Expected output: `{ formFound: boolean, fields: [{ name, expectedInput, labelClear }], submissionPathClear: boolean, reasoning: string }`
-- Links to: Form Accessibility, ARIA & Accessibility.
-
-#### API tasks
-
-**API-1: Identify the primary resource**
-- Prompt the LLM with the summarized OpenAPI spec and ask: "From this spec, what is the primary resource this API manages? What can an agent do with it?"
-- Expected output: `{ primaryResource: string, availableOperations: string[], purposeClear: boolean, reasoning: string }`
-- Links to: Naming & Descriptions, Discoverability.
-
-**API-2: Attempt error recovery**
-- Prompt: "If an agent called POST to create a resource and received a 400 response, how would it know what went wrong from this spec? What information would the error response provide?"
-- Expected output: `{ errorRecoveryPossible: boolean, errorInfoProvided: string[], wouldNeedAnotherCall: boolean, reasoning: string }`
-- Links to: Error Design.
-
-**API-3: Discover list of resources**
-- Prompt: "If an agent needs to find all [primary resource] in this system, which endpoints would it use? Can it paginate? Can it filter?"
-- Expected output: `{ discoveryPossible: boolean, listEndpointPath: string | null, paginationSupported: boolean, filteringSupported: boolean, reasoning: string }`
-- Links to: Discoverability, Response Efficiency.
+**SIM-FE-NAV: Identify navigation structure**
+- Prompt: "Identify the navigation structure of this page. Can you find a nav element? Where do links lead? Can you determine where this page sits in the site hierarchy?"
+- Links to: Link & Navigation, ARIA & Accessibility.
 
 ### Input summarization
 
@@ -810,30 +770,33 @@ Respond with JSON matching this schema:
 [expected output schema for this task]
 ```
 
-### Structured output contract
-
-Simulation Lambda returns:
+### Structured output contract:
 
 ```
 {
-  simulationVersion: "1.0",
+  available: true,
   tasks: [
     {
-      taskId: "FE-1",
-      taskName: "Find the primary call-to-action",
-      status: "completed" | "failed" | "skipped",
-      result: {...},                 // matches task's expected output schema
-      relatedFindings: ["SEM-001", "SEM-003"],  // Layer 1 finding IDs
-      narrative: string,             // rendered agent-perspective description for the UI
-      confidence: "high" | "medium" | "low",
-      durationMs: number,
-      tokensUsed: number
-    },
-    ...
+      taskId: string,               // e.g. "SIM-FE-CTA"
+      outcome: "success" | "partial" | "failure",
+      narrative: string,            // present-tense agent narrative (under 150 chars)
+      linkedFindings: string[],     // Layer 1 finding IDs, validated against computed findings
+      reasoning: string             // model's reasoning
+    }
   ],
-  cacheHit: boolean,
-  totalDurationMs: number,
+  source: "ai",
+  model: string,                    // Bedrock model ID used
+  durationMs: number,               // elapsed time for the call
   totalTokensUsed: number
+}
+```
+
+On Bedrock failure, rate-limiting, or parsing error, it degrades gracefully to:
+
+```
+{
+  available: false,
+  reason: string                    // "timeout", "throttle", "parse-error", etc.
 }
 ```
 
@@ -880,9 +843,9 @@ Per-task budget estimate:
 - Output: ~1k tokens typical (structured JSON response) = $0.005
 - Per-task cost: ~$0.025
 
-Six tasks per full scan = ~$0.15 per scan with both frontend and API.
+Three tasks per full scan = ~$0.075 per scan.
 
-At 1000 scans/day, that's $150/day or $4500/month in Bedrock costs. Covered by AWS credits for initial period. Cost alarms set at $50/day during MVP as an early warning.
+At 1000 scans/day, that's $75/day or $2250/month in Bedrock costs. Covered by AWS credits for initial period. Cost alarms set at $50/day during MVP as an early warning.
 
 If costs grow beyond expected, levers available:
 - Reduce task count (currently 6, could drop to 3)
@@ -895,7 +858,7 @@ None needed at MVP. All are documented fallbacks.
 ### Confidence notes
 
 - **High confidence:** The structured output contract, graceful degradation patterns, caching strategy, sanitization requirements.
-- **Medium confidence:** The specific task library (six tasks). May expand or refine based on real-world results. Task library file is designed as a JS module that exports task definitions, so adding or adjusting tasks post-launch is a contained change.
+- **Medium confidence:** The specific task library (three tasks). May expand or refine based on real-world results. Task library file is designed as a JS module that exports task definitions, so adding or adjusting tasks post-launch is a contained change.
 - **Low confidence:** Input summarization token targets. Real specs and pages vary wildly. Summarization may under-trim on some inputs and over-trim on others. Will need tuning against the 50-site benchmark. Truncation flag exists as a safety net.
 
 ---
@@ -911,7 +874,7 @@ The scan orchestrator Lambda (specced in BACKEND-FRONTEND-CHECKS) is extended to
 3. **Run Layer 1 frontend checks.** Same as before (six modules, sequential).
 4. **Run Layer 1 API checks.** If spec present: six modules, sequential. If no spec: skip this step.
 5. **Compute Layer 1 scoring.** Frontend score, API score, combined score if both present.
-6. **Run Layer 2 simulation.** Six tasks (three frontend, three API) or subset based on what's available. Run in parallel across tasks (Bedrock can handle concurrent invocations).
+6. **Run Layer 2 simulation.** Three frontend tasks. Run concurrently (Bedrock can handle concurrent invocations).
 7. **Assemble report.** Combine Layer 1 + Layer 2 + methodology version + scan metadata.
 8. **Return response.** Scan response goes to the client.
 
@@ -943,13 +906,13 @@ Same input + same scan ID = same output. Deterministic across Layer 1. Layer 2 u
 
 ## Integration with SCORING.md
 
-This doc and SCORING.md are kept in sync. When this doc is signed off, SCORING.md is updated to v1.1.0 with:
+This doc and SCORING.md are kept in sync. When this doc is signed off, SCORING.md is updated to v1.1.1 with:
 
 - API category sections expanded to match the detail already in the frontend sections
 - Paraskakis Pitfall #2 mitigations explained in public-facing language
 - Layer 2 simulation described (not full technical detail, just what users see in the report)
 - Zero-instance rule confirmed for API modules
-- Changelog entry: "1.1.0 â€” Expanded API methodology to match engineering spec in BACKEND-API-CHECKS.md v1."
+- Changelog entry: "1.1.1 — Expanded API methodology to match engineering spec in BACKEND-API-CHECKS.md v1."
 
 The public methodology in SCORING.md is the trust document. This doc is the engineering contract. They describe the same system at different depths.
 
@@ -971,7 +934,7 @@ The public methodology in SCORING.md is the trust document. This doc is the engi
 
 - API category weights (from SCORING.md, starting values, may adjust post-benchmark)
 - Combined frontend/API scoring weight (50/50 starting, test against benchmark)
-- Task library scope (six tasks, may expand based on usage)
+- Task library scope (three tasks, may expand based on usage)
 - Rating band thresholds (80/50, starting values)
 - "Self-explaining name" heuristic (allowlist will grow)
 - Summary/description contradiction detection (heuristic, false positives possible)
@@ -985,9 +948,9 @@ The public methodology in SCORING.md is the trust document. This doc is the engi
 
 ### Locked decisions (re-stated for clarity)
 
-- 6 API check modules with weights from SCORING.md v1.0.0
-- Layer 2 simulation at MVP with 6 tasks (3 frontend, 3 API)
-- Claude Haiku 4.5 for simulation (model ID: `claude-haiku-4-5-20251001`)
+- 6 API check modules with weights from SCORING.md v1.1.1
+- Layer 2 simulation at MVP with 3 frontend-only tasks
+- Claude Haiku 4.5 for simulation (model ID: `us.anthropic.claude-haiku-4-5-20251001-v1:0`)
 - Synchronous simulation at MVP, async upgrade path documented
 - 15-minute cache TTL (env-configurable)
 - Backend-only API scan for public UI at launch (UI exposes frontend only)

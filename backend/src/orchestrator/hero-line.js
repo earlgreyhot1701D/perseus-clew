@@ -61,7 +61,7 @@ CONTENT:
 - Describe what a web agent CAN and CANNOT do on this page.
 - Present tense. Lead with what works, then what does not.
 - Name the domain once, at the start: "An agent visiting {domain}..."
-- Pick ONE key observation only. Be concise.
+- Pick ONE (at most TWO) key observations from the findings. Do NOT try to list all findings; over-packing details will make your response fail validation. Be concise.
 
 BANNED WORDS (never use): ${ALL_BANNED_WORDS.join(', ')}.
 
@@ -86,11 +86,21 @@ const TEMPLATES = {
  */
 export async function generateHeroLine(score, rating, findings, domain) {
   try {
-    const userPrompt = buildUserPrompt(score, rating, findings, domain);
+    const baseUserPrompt = buildUserPrompt(score, rating, findings, domain);
+    let prevCleaned = '';
+    let prevValidationFailure = '';
 
     // Attempt up to 2 tries (original + one retry). Fail-soft to template.
     for (let attempt = 0; attempt < 2; attempt++) {
-      const result = await invokeBedrock(SYSTEM_PROMPT, userPrompt, {
+      let systemPrompt = SYSTEM_PROMPT;
+      let userPrompt = baseUserPrompt;
+
+      if (attempt === 1) {
+        systemPrompt = `${SYSTEM_PROMPT}\n\nRETRY WARNING: Your previous attempt failed validation for: "${prevValidationFailure}". You MUST make this sentence shorter and simpler. Pick exactly ONE finding, use simple language, and keep it under 120 characters total.`;
+        userPrompt = `${baseUserPrompt}\n\nRETRY INSTRUCTION: Your previous response "${prevCleaned}" failed validation because it was too long or violated guidelines. Write a much shorter one-sentence summary. Focus on only ONE key finding. Hard maximum is 120 characters.`;
+      }
+
+      const result = await invokeBedrock(systemPrompt, userPrompt, {
         maxTokens: 100,
         temperature: attempt === 0 ? 0.4 : 0.2
       });
@@ -101,6 +111,9 @@ export async function generateHeroLine(score, rating, findings, domain) {
       if (!validationFailure) {
         return { text: cleaned, source: 'ai', model: result.modelId };
       }
+
+      prevCleaned = cleaned;
+      prevValidationFailure = validationFailure;
 
       // Log and retry once, or fall back after second attempt
       logger.warn('Hero line validation failed', {
@@ -142,7 +155,7 @@ function buildUserPrompt(score, rating, findings, domain) {
   }
 
   const findingLines = topFindings.map(f => `- ${f}`).join('\n');
-  return `Domain: ${domain}\nScore: ${score}/100 (${rating})\n\nTop findings (what the agent cannot do):\n${findingLines}`;
+  return `Domain: ${domain}\nScore: ${score}/100 (${rating})\n\nTop findings (what the agent cannot do):\n${findingLines}\n\nINSTRUCTION: Pick ONE, at most TWO, findings from the list above to write your summary. Do NOT try to pack all of them into the sentence.`;
 }
 
 function getTopFindings(findings, limit) {

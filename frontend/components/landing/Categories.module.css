@@ -232,3 +232,172 @@
     border-bottom: 0 !important;
   }
 }
+
+/* Before/After Case Study styles */
+.beforeAfterGrid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1.5px solid var(--teal);
+}
+
+.beforeAfterCard {
+  position: relative;
+  padding: 40px 36px 36px;
+  background: var(--cream);
+  overflow: hidden;
+  transition: background 200ms ease;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.beforeAfterCard:first-child {
+  border-right: 1.5px solid var(--teal);
+}
+
+.beforeAfterCard:hover {
+  background: var(--cream-warm);
+}
+
+.scoreLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: -8px;
+}
+
+.scoreNum {
+  font-family: var(--font-serif);
+  font-size: 84px;
+  line-height: 0.85;
+  color: var(--teal);
+  font-style: italic;
+  display: flex;
+  align-items: baseline;
+}
+
+.scoreDenom {
+  font-size: 28px;
+  color: var(--muted);
+  font-style: italic;
+  margin-left: 2px;
+}
+
+.ratingBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  align-self: flex-start;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.ringTrack {
+  height: 6px;
+  background: rgba(15, 61, 66, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 280px;
+}
+
+.ringFill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.narrativeTitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.narrativeLine {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--teal);
+  margin: 0;
+}
+
+.findingList {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.findingItem {
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 61, 66, 0.1);
+  border-radius: 2px;
+  background: rgba(241, 235, 220, 0.5);
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  gap: 8px;
+}
+
+.findingId {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--sienna);
+  white-space: nowrap;
+}
+
+.findingText {
+  color: var(--teal);
+  margin: 0;
+}
+
+.fixedText {
+  color: var(--teal-mid);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.resolvedBadge {
+  background: rgba(27, 109, 116, 0.1);
+  color: var(--teal-mid);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .beforeAfterGrid {
+    grid-template-columns: 1fr;
+  }
+  .beforeAfterCard:first-child {
+    border-right: none;
+    border-bottom: 1.5px solid var(--teal);
+  }
+}

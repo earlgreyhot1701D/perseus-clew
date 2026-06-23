@@ -1,7 +1,6 @@
 /**
- * ReportPreview: single demo card showing post-scan state.
- * Ported from mockups/agentislux-landing.html.
- * Reuses .cat-card styles from Categories.module.css.
+ * ReportPreview: Before/After case study showing the self-scan comparison.
+ * Reuses design tokens, typography, and styles from Categories.module.css.
  */
 
 import styles from './Categories.module.css';
@@ -20,59 +19,118 @@ export default function ReportPreview() {
             className={styles.catHeadH2}
             style={{ fontSize: 'clamp(24px, 2.4vw, 32px)' }}
           >
-            Report Preview. <span className={styles.catHeadItal}>Post-scan state.</span>
+            Case Study. <span className={styles.catHeadItal}>Before &amp; After.</span>
           </h2>
           <div className={styles.catMeta}>
-            <div className={styles.catMetaTop}>Component Study · 01</div>
-            <div className={styles.catMetaBot}>Not shown on live page</div>
+            <div className={styles.catMetaTop}>Self-Scan · dogfooding</div>
+            <div className={styles.catMetaBot}>Agentis Lux scanned its own site</div>
           </div>
         </header>
 
         <div className={styles.tripleRule} aria-hidden="true"><span /></div>
 
-        <div
-          className={styles.catGrid}
-          style={{ gridTemplateColumns: '1fr', maxWidth: 520, marginTop: 28 }}
-        >
-          <article className={styles.catCard} style={{ borderRight: 0, borderBottom: 0 }}>
+        <div className={styles.beforeAfterGrid}>
+          {/* Card 1: Before Fixes */}
+          <article className={styles.beforeAfterCard}>
             <svg className={styles.catArcs} aria-hidden="true">
               <use href="#arcs-tr" />
             </svg>
             <div className={styles.catTop}>
-              <span className={styles.catNum}>01 / 06 · Scored</span>
-              <span className={styles.catScore}>
-                <span style={{ color: 'var(--teal)' }}>18</span>
-                <span style={{ fontSize: '0.5em', color: 'var(--muted)' }}> / 25</span>
-              </span>
-            </div>
-            <h3 className={styles.catName}>Semantic<br />HTML</h3>
-            <div
-              style={{
-                height: 4,
-                background: 'rgba(15,61,66,0.12)',
-                margin: '2px 0 14px',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <div style={{ position: 'absolute', inset: '0 28% 0 0', background: 'var(--sienna)' }} />
-            </div>
-            <p className={styles.catDesc}>
-              Whether interactive elements use semantic tags instead of styled divs. Agents identify elements by tag name. A div is not a button.
-            </p>
-            <div className={styles.catFoot} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Score · 72% · 4 findings</span>
-              <span
-                style={{
-                  color: 'var(--sienna)',
-                  fontFamily: 'var(--font-mono)',
-                  textTransform: 'uppercase',
-                  fontSize: '10.5px',
-                  letterSpacing: '0.12em'
-                }}
+              <div>
+                <span className={styles.scoreLabel}>Before Fixes</span>
+                <div className={styles.scoreNum}>
+                  70<span className={styles.scoreDenom}>/100</span>
+                </div>
+              </div>
+              <div
+                className={styles.ratingBadge}
+                style={{ backgroundColor: 'var(--ochre)', color: 'var(--teal)' }}
               >
-                View findings &#8594;
-              </span>
+                <span className={styles.statusDot} style={{ backgroundColor: 'var(--teal)' }} />
+                Partially Ready
+              </div>
+            </div>
+            
+            <div className={styles.ringTrack}>
+              <div className={styles.ringFill} style={{ width: '70%', background: 'var(--sienna)' }} />
+            </div>
+
+            <div>
+              <span className={styles.narrativeTitle}>What an agent experiences</span>
+              <p className={styles.narrativeLine}>
+                “An agent visiting perseus-clew.vercel.app can read page content and interact with styled elements, but cannot follow 10 placeholder links or identify page type from missing structured data.”
+              </p>
+            </div>
+
+            <div style={{ marginTop: 8 }}>
+              <span className={styles.narrativeTitle}>Representative Findings (Gaps Flagged)</span>
+              <ul className={styles.findingList}>
+                <li className={styles.findingItem}>
+                  <span className={styles.findingId}>SDATA-001</span>
+                  <p className={styles.findingText}>
+                    No JSON-LD structured data is present. Agents cannot identify page type.
+                  </p>
+                </li>
+                <li className={styles.findingItem}>
+                  <span className={styles.findingId}>LINK-002</span>
+                  <p className={styles.findingText}>
+                    10 anchors use placeholder hrefs like &apos;#&apos;. Agents arrive at no destination.
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          {/* Card 2: After Fixes */}
+          <article className={styles.beforeAfterCard}>
+            <svg className={styles.catArcs} aria-hidden="true">
+              <use href="#arcs-tr" />
+            </svg>
+            <div className={styles.catTop}>
+              <div>
+                <span className={styles.scoreLabel}>After Fixes</span>
+                <div className={styles.scoreNum}>
+                  96<span className={styles.scoreDenom}>/100</span>
+                </div>
+              </div>
+              <div
+                className={styles.ratingBadge}
+                style={{ backgroundColor: 'var(--teal-mid)', color: 'var(--cream)' }}
+              >
+                <span className={styles.statusDot} style={{ backgroundColor: 'var(--cream)' }} />
+                Agent-Ready
+              </div>
+            </div>
+
+            <div className={styles.ringTrack}>
+              <div className={styles.ringFill} style={{ width: '96%', background: 'var(--teal-mid)' }} />
+            </div>
+
+            <div>
+              <span className={styles.narrativeTitle}>What an agent experiences</span>
+              <p className={styles.narrativeLine}>
+                “An agent visiting perseus-clew.vercel.app can read text and follow links, but cannot identify repeated sibling elements as lists without ul or ol wrappers.”
+              </p>
+            </div>
+
+            <div style={{ marginTop: 8 }}>
+              <span className={styles.narrativeTitle}>Gaps Resolved (Search Crawler Optimization)</span>
+              <ul className={styles.findingList}>
+                <li className={styles.findingItem}>
+                  <span className={styles.findingId} style={{ color: 'var(--teal-mid)' }}>SDATA-001</span>
+                  <p className={styles.findingText}>
+                    WebApplication JSON-LD structured data schema added.
+                  </p>
+                  <span className={styles.resolvedBadge}>Resolved</span>
+                </li>
+                <li className={styles.findingItem}>
+                  <span className={styles.findingId} style={{ color: 'var(--teal-mid)' }}>LINK-002</span>
+                  <p className={styles.findingText}>
+                    Mapped all placeholder anchors to real, traversable URL destinations.
+                  </p>
+                  <span className={styles.resolvedBadge}>Resolved</span>
+                </li>
+              </ul>
             </div>
           </article>
         </div>

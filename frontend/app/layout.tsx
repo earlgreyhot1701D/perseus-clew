@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/api/og?domain=agentislux.io&score=70&rating=Partially+Ready&hero=For+your+second+audience.',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Agentis Lux: agent-readiness scanner for your second audience',
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Agentis Lux',
     description: 'See what AI agents experience on your site. For your second audience.',
-    images: ['/api/og?domain=agentislux.io&score=70&rating=Partially+Ready&hero=For+your+second+audience.'],
+    images: ['/og-image.png'],
   },
 };
 

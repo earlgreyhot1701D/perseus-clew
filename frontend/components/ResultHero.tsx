@@ -32,6 +32,7 @@ interface ResultHeroProps {
     text: string;
     source: 'ai' | 'template';
   };
+  domain: string;
   onDownloadReport?: () => void;
   onDownloadCard?: () => void;
 }
@@ -54,7 +55,7 @@ function getRatingTextColor(rating: string): string {
   }
 }
 
-export default function ResultHero({ score, heroLine, onDownloadReport, onDownloadCard }: ResultHeroProps) {
+export default function ResultHero({ score, heroLine, domain, onDownloadReport, onDownloadCard }: ResultHeroProps) {
   const fillWidth = `${score.total}%`;
   const ratingColor = getRatingColor(score.rating);
   const ratingTextColor = getRatingTextColor(score.rating);
@@ -96,6 +97,15 @@ export default function ResultHero({ score, heroLine, onDownloadReport, onDownlo
           <path d="M 340 360 A 105 105 0 0 0 235 250" />
         </g>
       </svg>
+
+      <div className={styles.heroHeader}>
+        <span className={styles.headerTitle}>Agent Experience Report</span>
+        <div className={styles.domainWrapper}>
+          <span className={styles.domainText}>{domain}</span>
+          <span className={styles.domainDot} style={{ backgroundColor: ratingColor }} />
+        </div>
+      </div>
+      <div className={styles.headerDivider} />
 
       <div className={styles.heroGrid}>
         <div className={styles.scoreBlock}>

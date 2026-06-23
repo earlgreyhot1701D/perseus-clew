@@ -398,6 +398,7 @@ function ScanFlow() {
           <ResultHero
             score={report.scoredViews.rawHtml.score}
             heroLine={report.scoredViews.rawHtml.heroLine}
+            domain={report.meta.targetDomain}
             onDownloadReport={handleDownloadReport}
             onDownloadCard={handleDownloadCard}
           />

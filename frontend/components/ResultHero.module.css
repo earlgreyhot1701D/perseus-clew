@@ -173,6 +173,47 @@
   border-color: rgba(241, 235, 220, 0.5);
 }
 
+.heroHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.headerTitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.domainWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+}
+
+.domainText {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+}
+
+.domainDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.headerDivider {
+  height: 1px;
+  background: rgba(241, 235, 220, 0.15);
+  margin-bottom: 24px;
+}
+
 /* Mobile: stack vertically */
 @media (max-width: 680px) {
   .heroGrid {

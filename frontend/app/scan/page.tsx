@@ -43,7 +43,16 @@ interface ScanReport {
       findings: Record<string, Array<{ id: string; text: string; count: number | null; examples?: string[] }>>;
     };
   };
-  simulation: { available: boolean };
+  simulation: {
+    available: boolean;
+    tasks?: Array<{
+      taskId: string;
+      outcome: 'success' | 'partial' | 'failure';
+      narrative: string;
+      linkedFindings: string[];
+      reasoning: string;
+    }>;
+  };
 }
 
 interface ScanError {
@@ -164,7 +173,6 @@ function ScanFlow() {
         setViewState('error');
         return;
       }
-
       setReport(data as ScanReport);
       setViewState('results');
     } catch {
@@ -460,6 +468,44 @@ function ScanFlow() {
                 </div>
               );
             })}
+          </section>
+
+          {/* Agent Simulation Section */}
+          <section className={styles.simulationSection}>
+            <div className={styles.sectionEyebrow}>Layer 2</div>
+            <h3 className={styles.sectionTitle}>Agent <em>simulation.</em></h3>
+            
+            {report.simulation?.available && report.simulation.tasks && report.simulation.tasks.length > 0 ? (
+              <>
+                <p className={styles.simulationNote}>
+                  Three tasks attempted against the page as an agent would. Emits narrative details, outcomes, and links to determinant gaps.
+                </p>
+                <div className={styles.tasksList}>
+                  {report.simulation.tasks.map((task) => (
+                    <div key={task.taskId} className={styles.taskCard}>
+                      <div className={styles.taskHeader}>
+                        <strong className={styles.taskId}>{task.taskId}</strong>
+                        <span className={`${styles.outcomeBadge} ${styles[`outcome_${task.outcome}`]}`}>
+                          {task.outcome}
+                        </span>
+                      </div>
+                      <p className={styles.taskNarrative}>{task.narrative}</p>
+                      {task.linkedFindings && task.linkedFindings.length > 0 && (
+                        <p className={styles.taskLinked}>
+                          Related gaps: {task.linkedFindings.join(', ')}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className={styles.simulationUnavailable}>
+                <p className={styles.unavailableText}>
+                  Agent simulation was not available for this scan.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* Scan another */}

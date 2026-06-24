@@ -801,3 +801,22 @@
   color: var(--muted);
 }
 
+.tabGated {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tierBadge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--ochre);
+  color: var(--teal);
+  padding: 1px 5px;
+  border-radius: 2px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+

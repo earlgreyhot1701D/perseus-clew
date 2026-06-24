@@ -61,7 +61,11 @@ interface ScanError {
   status: number;
 }
 
-const TABS = ['URL', 'GitHub repo', 'API spec upload'] as const;
+const TABS = [
+  { id: 'url', label: 'URL', gated: false },
+  { id: 'github', label: 'GitHub repo', gated: true },
+  { id: 'api', label: 'API spec upload', gated: true },
+] as const;
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_URL: 'This URL cannot be scanned. Check the format and try again.',
@@ -123,6 +127,9 @@ function ScanFlow() {
       if (!hasAutoScanned.current) {
         hasAutoScanned.current = true;
         handleScan(prefill);
+        if (typeof window !== 'undefined') {
+          window.history.replaceState(null, '', '/scan');
+        }
       }
     }
   }, [searchParams]);
@@ -186,6 +193,9 @@ function ScanFlow() {
     setReport(null);
     setScanError(null);
     setInputValue('');
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', '/scan');
+    }
   }
 
   // --- Download handlers (Block 1I wiring) ---
@@ -254,19 +264,23 @@ function ScanFlow() {
                 See what AI agents <em>experience</em> on your site.
               </h1>
               <p className={styles.inputSubtitle}>
-                Paste a URL, connect a GitHub repo, or upload an API spec. Findings only. No fixes suggested.
+                Paste a URL to scan. Findings only. No fixes suggested.
               </p>
 
               <div className={styles.inputTypeTabs} role="tablist">
-                {TABS.map((label, i) => (
+                {TABS.map((tab, i) => (
                   <button
-                    key={label}
-                    className={`${styles.tab} ${i === activeTab ? styles.tabActive : ''}`}
+                    key={tab.id}
+                    className={`${styles.tab} ${i === activeTab ? styles.tabActive : ''} ${tab.gated ? styles.tabGated : ''}`}
                     role="tab"
                     aria-selected={i === activeTab}
-                    onClick={() => { setActiveTab(i); setInputValue(''); }}
+                    aria-disabled={tab.gated ? true : undefined}
+                    tabIndex={tab.gated ? -1 : (i === activeTab ? 0 : -1)}
+                    onClick={() => { if (!tab.gated) { setActiveTab(i); setInputValue(''); } }}
+                    type="button"
                   >
-                    {label}
+                    {tab.label}
+                    {tab.gated && <span className={styles.tierBadge}>Team</span>}
                   </button>
                 ))}
               </div>
@@ -356,7 +370,7 @@ function ScanFlow() {
             <ol className={styles.rightPanelList}>
               <li>
                 <strong>Fetch and parse</strong>
-                We fetch your HTML (no JavaScript execution). If an OpenAPI spec is auto-discovered, we parse it alongside.
+                We fetch your HTML (no JavaScript execution).
               </li>
               <li>
                 <strong>Layer 1: deterministic scan</strong>

@@ -35,6 +35,10 @@ Pending:
 
 - Input types. The public scan reads a URL today. Repo scanning and spec upload are gated as "Team tier" in the UI.
 
+## Known limitations and tradeoffs
+
+See [KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATIONS.md) for the deliberate decisions and deferred work. Tradeoffs include using JavaScript rather than TypeScript for the backend Lambda handlers, using in-memory container rate limiting instead of a full WAF-level configuration for the public demo, and serving a static snapshot of the 50-site benchmark rather than running live DynamoDB queries.
+
 ## The bet
 
 Before the engine scans anything, I wrote down what I expect it to find across the 50 sites, and committed it with a timestamp. Predictions first, data later. Read them in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md). The site list and the selection rationale are in [docs/BENCHMARK-SITES.md](docs/BENCHMARK-SITES.md).
@@ -135,6 +139,7 @@ perseus-clew/
 │   ├── FRONTEND-SPEC.md
 │   ├── BENCHMARK-HYPOTHESES.md      the pre-registered predictions
 │   ├── BENCHMARK-SITES.md           the 50 sites and selection rationale
+│   ├── KNOWN-LIMITATIONS.md         design and architectural tradeoffs
 │   └── benchmark-candidate-pool.md
 ├── mockups/                  locked visual design (landing, app, verdict hero)
 ├── .kiro/                    steering file and enforcement hooks

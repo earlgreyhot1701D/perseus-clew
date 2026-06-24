@@ -58,6 +58,24 @@ Full artifacts:
 - [After: report](docs/self-scan/after/self-scan-after-report.html) | [writeup](docs/self-scan/SELF-SCAN-AFTER.md)
 - [Build-in-public writeup (before)](docs/self-scan/SELF-SCAN-BEFORE.md)
 
+### Does it pass its own bar?
+
+A scanner that tells you what agents and assistive tech experience should hold up when you run the same tools on it. So here is the landing page, measured on Google PageSpeed Insights (Lighthouse), June 23, 2026:
+
+| Category | Score |
+| :--- | :--- |
+| Performance | 100 |
+| Accessibility | 95 |
+| Best Practices | 100 |
+| SEO | 100 |
+| Agentic Browsing (experimental) | 2 / 2 |
+
+The last row is the one I care about most. Google's experimental "Agentic Browsing" category checks whether a site is well-formed for AI agents, the exact thing AgentisLux measures. The landing page passes both of its audits.
+
+Run it yourself: https://pagespeed.web.dev/analysis?url=https://agentislux.io
+
+Two notes. This measures the landing page, not the post-scan results view, which has its own heading-hierarchy work left to do. And the 95, not 100, on accessibility is real: some of the small uppercase label text in the design does not meet contrast thresholds yet. Both are tracked, not hidden.
+
 ## Benchmark
 
 I scanned 50 sites to see what agents experience across the web: ten each in e-commerce, SaaS, content/media, US government, and indie/builder projects. The headline: indie builders scored highest (mean 77/100), beating government, SaaS, and e-commerce. Scores ran from 34 to 91, with no convergence on agent-readiness yet. Four sites blocked the scan at the door, including OpenAI. The complete dataset, every site, including the ones that blocked us, is in [docs/benchmark/](docs/benchmark/), and the predictions I made before scanning are timestamped in [docs/BENCHMARK-HYPOTHESES.md](docs/BENCHMARK-HYPOTHESES.md). I missed three of six, which is the point.

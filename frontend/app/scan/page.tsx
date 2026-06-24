@@ -117,6 +117,7 @@ function ScanFlow() {
   const [scanError, setScanError] = useState<ScanError | null>(null);
   const [scanDomain, setScanDomain] = useState('');
   const hasAutoScanned = useRef(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // URL prefill from ?url= (L-LAND-1)
   useEffect(() => {
@@ -133,6 +134,27 @@ function ScanFlow() {
       }
     }
   }, [searchParams]);
+
+  // Timed cosmetic cycle for scanning progress indicators (FIX 1)
+  useEffect(() => {
+    if (viewState !== 'scanning') {
+      setCurrentStep(1);
+      return;
+    }
+
+    const timer1 = setTimeout(() => {
+      setCurrentStep(2);
+    }, 1500);
+
+    const timer2 = setTimeout(() => {
+      setCurrentStep(3);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [viewState]);
 
   async function handleScan(urlOverride?: string | unknown) {
     const target = (typeof urlOverride === 'string' ? urlOverride : inputValue).trim();
@@ -331,20 +353,26 @@ function ScanFlow() {
                   This typically takes a few seconds. Results are stored for 24 hours, then automatically deleted.
                 </p>
                 <div className={styles.scanningProgress} role="status" aria-live="polite">
-                  <div className={styles.progressStep}>
+                  <div className={`${styles.progressStep} ${currentStep > 1 ? styles.progressComplete : ''} ${currentStep < 1 ? styles.progressPending : ''}`}>
                     <span className={styles.progressNum}>01</span>
                     <span>Fetching HTML</span>
-                    <span className={styles.progressStatus}>Active</span>
+                    <span className={styles.progressStatus}>
+                      {currentStep > 1 ? 'Complete' : currentStep === 1 ? 'Active' : 'Pending'}
+                    </span>
                   </div>
-                  <div className={`${styles.progressStep} ${styles.progressPending}`}>
+                  <div className={`${styles.progressStep} ${currentStep > 2 ? styles.progressComplete : ''} ${currentStep < 2 ? styles.progressPending : ''}`}>
                     <span className={styles.progressNum}>02</span>
                     <span>Running Layer 1 checks</span>
-                    <span className={styles.progressStatus}>Pending</span>
+                    <span className={styles.progressStatus}>
+                      {currentStep > 2 ? 'Complete' : currentStep === 2 ? 'Active' : 'Pending'}
+                    </span>
                   </div>
-                  <div className={`${styles.progressStep} ${styles.progressPending}`}>
+                  <div className={`${styles.progressStep} ${currentStep > 3 ? styles.progressComplete : ''} ${currentStep < 3 ? styles.progressPending : ''}`}>
                     <span className={styles.progressNum}>03</span>
                     <span>Generating agent narrative</span>
-                    <span className={styles.progressStatus}>Pending</span>
+                    <span className={styles.progressStatus}>
+                      {currentStep > 3 ? 'Complete' : currentStep === 3 ? 'Active' : 'Pending'}
+                    </span>
                   </div>
                 </div>
               </div>

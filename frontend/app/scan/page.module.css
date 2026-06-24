@@ -820,3 +820,12 @@
   vertical-align: middle;
 }
 
+.progressComplete {
+  background: transparent;
+  opacity: 0.85;
+}
+
+.progressComplete .progressStatus {
+  color: var(--teal-mid);
+}
+

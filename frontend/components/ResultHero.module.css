@@ -129,6 +129,11 @@
   transition: background var(--transition-fast);
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btnPrimary {
   background: var(--sienna);
   color: var(--cream);

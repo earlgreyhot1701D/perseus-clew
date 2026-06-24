@@ -34,7 +34,7 @@ interface ResultHeroProps {
   };
   domain: string;
   onDownloadReport?: () => void;
-  onDownloadCard?: () => void;
+  onDownloadCard?: () => Promise<void> | void;
 }
 
 function getRatingColor(rating: string): string {
@@ -61,6 +61,7 @@ export default function ResultHero({ score, heroLine, domain, onDownloadReport, 
   const ratingTextColor = getRatingTextColor(score.rating);
 
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Auto-clear error after 5 seconds
   useEffect(() => {
@@ -80,10 +81,13 @@ export default function ResultHero({ score, heroLine, domain, onDownloadReport, 
 
   const handleDownloadCard = useCallback(async () => {
     if (!onDownloadCard) return;
+    setIsDownloading(true);
     try {
       await onDownloadCard();
     } catch {
       setError('Card download unavailable. Your results are still on screen.');
+    } finally {
+      setIsDownloading(false);
     }
   }, [onDownloadCard]);
 
@@ -140,8 +144,9 @@ export default function ResultHero({ score, heroLine, domain, onDownloadReport, 
               type="button"
               onClick={handleDownloadCard}
               aria-label="Download social card image"
+              disabled={isDownloading}
             >
-              Download card
+              {isDownloading ? 'Generating card...' : 'Download card'}
             </button>
             <button
               className={`${styles.btn} ${styles.btnGhost}`}

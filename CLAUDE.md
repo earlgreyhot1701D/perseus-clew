@@ -125,7 +125,7 @@ A deferred ledger exists (managed externally, outside the repository). Respect i
 - **Refresh:** EventBridge + Lambda, monthly (benchmark dataset only).
 - **IaC:** AWS CDK (TypeScript), 4 stacks (Base, Data, Compute, Monitoring).
 - **Testing:** Vitest. **CI:** GitHub Actions (lint, test, build on every PR).
-- **Builder:** Kiro. **Analytics:** Plausible (activated near launch).
+- **Builder:** Kiro. **Analytics:** Vercel Web Analytics (activated near launch).
 - **License:** Apache 2.0.
 
 ---
@@ -142,7 +142,7 @@ A deferred ledger exists (managed externally, outside the repository). Respect i
 
 - **Phase 1+ (Scanning & Hardening): Shipped and Live.** The product is fully deployed. Real scanning is live, featuring a deterministic 6-category scan, AI-generated hero-line, and Layer 2 simulation. It is deployed and working at [agentislux.io](https://agentislux.io).
 - **Backend: live** at API Gateway (us-east-1) with ECR Lambda container images, DynamoDB database tables, and full security hardening (rate limiting, SSRF protection, IAM principles, dependency upgrades).
-- **Frontend: live** on Vercel, integrated with Plausible analytics, custom favicon mark, and Ephemeral scan mode.
+- **Frontend: live** on Vercel, integrated with Vercel Web Analytics, custom favicon mark, and Ephemeral scan mode.
 
 ---
 

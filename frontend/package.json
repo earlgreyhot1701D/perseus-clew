@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "@vercel/og": "0.6.5",
     "next": "^15.1.0",
     "react": "^19.0.0",

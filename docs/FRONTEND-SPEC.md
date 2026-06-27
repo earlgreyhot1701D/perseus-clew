@@ -125,7 +125,7 @@ Read top to bottom. Each component has a contract (props, state, events) but the
 â”‚   â”‚   â”œâ”€â”€ scan-storage.js     # localStorage for draft scans only (no results stored)
 â”‚   â”‚   â”œâ”€â”€ social-card.js      # Social card export to PNG by downloading the server-rendered /api/og image
 â”‚   â”‚   â”œâ”€â”€ report-export.js    # Report download (HTML or PDF)
-â”‚   â”‚   â””â”€â”€ analytics.js        # Plausible wrapper, no cookies, server-side only
+â”‚   â”‚   â””â”€â”€ analytics.js        # Vercel wrapper, no cookies, server-side only
 â”‚   â””â”€â”€ tests/
 â”‚       â”œâ”€â”€ routes/              # Route-level integration tests
 â”‚       â”œâ”€â”€ components/          # Component tests
@@ -575,7 +575,7 @@ Server-rendered social card PNG generated dynamically using query parameters (do
 `api-client.js` wraps fetch and provides:
 - **Timeout** (30 seconds for the scan fetch, 60 seconds for submit)
 - **Structured error mapping** (HTTP status codes → ErrorShape)
-- **Request duration logging** (anonymous, for Plausible / CloudWatch correlation)
+- **Request duration logging** (anonymous, for Vercel / CloudWatch correlation)
 - **AbortController support** (cancels in-flight requests when the component unmounts)
 
 Example:

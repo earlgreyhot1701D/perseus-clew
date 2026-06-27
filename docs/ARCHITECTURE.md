@@ -231,7 +231,7 @@ Locked in the product review. Reproduced here with architectural rationale.
 | Monitoring      | CloudWatch Logs                   | Lambda logs automatically. Alarms built in. Credits cover it. No custom metrics are emitted; logs are parsed for metrics. |
 | Alarm channel   | Email (via SNS)                   | Solo project, no on-call rotation. Simpler than Slack integration. Revisit if volume grows. |
 | Refresh agent   | EventBridge + Lambda              | Scheduled trigger, monthly cadence. Proven pattern from Clew Directive. |
-| Analytics       | Plausible                         | Privacy-first. No cookies. EU-hosted. Consistent with the measurement and privacy section of the product review. |
+| Analytics       | Vercel Web Analytics              | Privacy-first. No cookies. Hosted on Vercel infrastructure. Consistent with the measurement and privacy section of the product review. |
 | Testing         | Vitest                            | Fast, ESM-native, JavaScript-native test runner.           |
 | CI              | GitHub Actions                    | Lint, audit, test on every PR. Runs the self-scan as part of CI. |
 | IaC             | AWS CDK (TypeScript)              | AWS-native, matches stack language, no separate state backend. Portability not needed (AWS-only project). |
@@ -482,9 +482,9 @@ From the production-grade section of the product review:
 
 **Notification channel: email via SNS.** Solo project, no on-call rotation. Email is sufficient. Revisit if volume grows or a team forms.
 
-### Plausible
+### Vercel Web Analytics
 
-Plausible tracks page views, traffic sources, device/browser, country-level geography. It does not see scan events or scan content. It exists alongside CloudWatch, not inside it. The Plausible script is loaded from the frontend. No cookies. No fingerprinting.
+Vercel Web Analytics tracks page views, traffic sources, device/browser, and country-level geography. It does not see scan events or scan content. It exists alongside CloudWatch, not inside it. The script is loaded from the frontend. No cookies. No fingerprinting.
 
 ---
 
@@ -555,7 +555,7 @@ These behaviors are architecturally excluded. Some have stubs for future impleme
 - **No fix suggestions.** Anywhere in the system. Findings describe what an agent sees. The developer decides what to do.
 - **No multi-page crawling.** Single-page scans only at MVP.
 - **No continuous monitoring of user sites.** The refresh agent applies to the 50-site benchmark only, not to user-scanned sites.
-- **No third-party tracking.** No Google Analytics, no ads, no pixel trackers, no session replay, no heatmaps. Plausible is the only analytics tool, and it meets privacy-first criteria.
+- **No third-party tracking.** No Google Analytics, no ads, no pixel trackers, no session replay, no heatmaps. Vercel Web Analytics is the only analytics tool, and it meets privacy-first criteria.
 - **No AI-generated scores.** The score is deterministic, always. AI writes the hero narrative line (with a deterministic fallback) and runs the Layer 2 simulation. AI never produces the number, and never replaces deterministic findings; it sits alongside them.
 - **No hardcoded API keys, credentials, or secrets.** Ever. Anywhere.
 

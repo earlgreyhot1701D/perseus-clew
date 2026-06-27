@@ -128,7 +128,7 @@ export default function ScanCard() {
         </button>
       </form>
 
-      <p className={styles.cardFoot}>No account · No tracking · ~4s scan</p>
+      <p className={styles.cardFoot}>No account · No tracking · ~10s scan</p>
     </div>
   );
 }

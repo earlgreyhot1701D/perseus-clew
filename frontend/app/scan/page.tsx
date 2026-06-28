@@ -406,7 +406,7 @@ function ScanFlow() {
               </li>
               <li>
                 <strong>Layer 2: agent simulation</strong>
-                Three tasks attempted against your site as an agent would. Claude Haiku reports what it could and could not do. Linked back to Layer 1 findings.
+                A second layer runs an agent simulation: Claude Haiku reasons about what a retrieval agent would experience on the page, reporting what it could and could not accomplish and why. It is a simulation of the experience, not an autonomous agent acting on the page.
               </li>
             </ol>
           </div>
@@ -520,7 +520,7 @@ function ScanFlow() {
             {report.simulation?.available && report.simulation.tasks && report.simulation.tasks.length > 0 ? (
               <>
                 <p className={styles.simulationNote}>
-                  Three tasks attempted against the page as an agent would. Emits narrative details, outcomes, and links to determinant gaps.
+                  Layer 2 is an agent simulation: Claude Haiku reasons about what a retrieval agent would experience, not an autonomous agent acting on the page.
                 </p>
                 <div className={styles.tasksList}>
                   {report.simulation.tasks.map((task) => (

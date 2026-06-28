@@ -2,7 +2,7 @@
  * Agentis Lux: Social card image generation via @vercel/og.
  *
  * Renders a 1200x630 PNG social card with the scan result.
- * Editorial cream-background design matching the AgentisLux site.
+ * Editorial cream-background design matching the Agentis Lux site.
  * Uses Satori (via ImageResponse) for server-side rendering with
  * custom fonts (Instrument Serif, Archivo Black, JetBrains Mono).
  *
@@ -274,7 +274,7 @@ export async function GET(request: NextRequest) {
           backgroundColor: '#f1ebdc', color: '#0f3d42',
           fontSize: '24px', fontFamily: 'sans-serif'
         }}>
-          AgentisLux scan result card unavailable
+          Agentis Lux scan result card unavailable
         </div>
       ),
       { width: 1200, height: 630 }

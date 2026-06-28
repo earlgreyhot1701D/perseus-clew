@@ -161,7 +161,7 @@ export function generateReportHtml(data: ReportData): string {
     simulationSection = `
       <section class="simulation-section">
         <h2>Agent Simulation</h2>
-        <p class="section-note">Layer 2: what happened when an agent attempted common tasks on this page.</p>
+        <p class="section-note">Layer 2 is an agent simulation: Claude Haiku reasons about what a retrieval agent would experience, not an autonomous agent acting on the page.</p>
         <ul class="tasks">${taskRows}</ul>
       </section>`;
   }
@@ -470,7 +470,7 @@ export function generateReportHtml(data: ReportData): string {
 <main>
   <div class="topbar">
     <div class="meta">
-      <span class="eyebrow" style="font-weight:500;color:var(--teal);">AgentisLux</span>
+      <span class="eyebrow" style="font-weight:500;color:var(--teal);">Agentis Lux</span>
       <span class="eyebrow">Powered by the Perseus Clew engine</span>
     </div>
     <div class="meta">
@@ -524,7 +524,7 @@ export function generateReportHtml(data: ReportData): string {
   ${simulationSection}
 
   <div class="footnote">
-    <span>AgentisLux &middot; for your second audience</span>
+    <span>Agentis Lux &middot; for your second audience</span>
     <span>Score is deterministic &middot; narrative is ${heroSource === 'ai' ? 'AI written' : 'template generated'}</span>
   </div>
 </main>

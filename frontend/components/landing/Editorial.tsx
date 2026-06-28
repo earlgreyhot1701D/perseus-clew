@@ -46,7 +46,7 @@ export default function Editorial() {
             </figure>
 
             <p className={styles.columnsParagraph}>
-              AgentisLux scans your site and reports what an agent experiences. Six categories of deterministic checks. Findings written from the agent&#39;s perspective. No fixes suggested, because suggesting fixes implies we know your codebase, your constraints, and your reasons. We don&#39;t. We know what an agent sees.
+              Agentis Lux scans your site and reports what an agent experiences. Six categories of deterministic checks. Findings written from the agent&#39;s perspective. No fixes suggested, because suggesting fixes implies we know your codebase, your constraints, and your reasons. We don&#39;t. We know what an agent sees.
             </p>
             <p className={styles.columnsParagraph}>
               On accessibility: there&#39;s real overlap with WCAG. Semantic HTML, proper labels, ARIA roles, heading hierarchy, structured data: these help screen readers and agents alike. Building for accessibility moves you toward agent-readiness. But agents are their own audience with their own needs, not a subset of the accessibility audience. The overlap is a baseline, not the whole story.

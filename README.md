@@ -50,7 +50,7 @@ Pending:
 
 See [KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATIONS.md) for the deliberate decisions and deferred work. Tradeoffs include using JavaScript rather than TypeScript for the backend Lambda handlers, using in-memory container rate limiting instead of a full WAF-level configuration for the public demo, and serving a static snapshot of the 50-site benchmark rather than running live DynamoDB queries.
 
-Roadmap: where AgentisLux is going, in the open — see [docs/ROADMAP.md](docs/ROADMAP.md)
+Roadmap: where Agentis Lux is going, in the open — see [docs/ROADMAP.md](docs/ROADMAP.md)
 
 ## The bet
 
@@ -87,7 +87,7 @@ A scanner that tells you what agents and assistive tech experience should hold u
 | SEO | 100 |
 | Agentic Browsing (experimental) | 2 / 2 |
 
-The last row is the one I care about most. Google's experimental "Agentic Browsing" category checks whether a site is well-formed for AI agents, the exact thing AgentisLux measures. The landing page passes both of its audits.
+The last row is the one I care about most. Google's experimental "Agentic Browsing" category checks whether a site is well-formed for AI agents, the exact thing Agentis Lux measures. The landing page passes both of its audits.
 
 Run it yourself: https://pagespeed.web.dev/analysis?url=https://agentislux.io
 
@@ -99,7 +99,7 @@ I scanned 50 sites to see what agents experience across the web: ten each in e-c
 
 ## Architecture
 
-![AgentisLux architecture diagram](docs/architecture.png)
+![Agentis Lux architecture diagram](docs/architecture.png)
 
 Frontend on Vercel, backend on AWS Lambda + Bedrock, data in DynamoDB. The live scan path touches only ScanCache and ScanResults; the benchmark refresh runs on a separate schedule.
 
@@ -117,7 +117,9 @@ AWS services defined in the CDK stack:
 - **Lambda** (Docker image): the scan function, and a monthly benchmark-refresh function.
 - **API Gateway** (HTTP API): `POST /scan` and `GET /health`, CORS locked to agentislux.io.
 - **Bedrock:** Claude Haiku, called by the scan Lambda for the verdict and the simulation.
-- **DynamoDB:** five tables, for benchmark scans, scan counters, ephemeral results, a short-lived URL cache, and users.
+- **DynamoDB:** five tables. Two live on every scan (ScanCache, ScanResults), one holds the published
+  50-site benchmark dataset via scheduled refresh (BenchmarkScans), and two are reserved stubs for the v2
+  team tier (ScanCounters, Users).
 - **EventBridge:** a monthly rule to refresh the benchmark dataset.
 - **CloudWatch and SNS:** alarms on scan error rate and duration, wired to an alert topic.
 

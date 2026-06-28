@@ -26,7 +26,7 @@ export default function Topbar({ activePage = 'scan' }: TopbarProps) {
   return (
     <header className={styles.topbar} role="banner">
       <div className={styles.topbarInner}>
-        <Link className={styles.wordmark} href="/" aria-label="AgentisLux home">
+        <Link className={styles.wordmark} href="/" aria-label="Agentis Lux home">
           <svg className={styles.arcPunct} aria-hidden="true">
             <use href="#arcs-tr-small" />
           </svg>

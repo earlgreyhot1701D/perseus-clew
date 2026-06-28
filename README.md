@@ -88,6 +88,10 @@ I scanned 50 sites to see what agents experience across the web: ten each in e-c
 
 ## Architecture
 
+![AgentisLux architecture diagram](docs/architecture.png)
+
+Frontend on Vercel, backend on AWS Lambda + Bedrock, data in DynamoDB. The live scan path touches only ScanCache and ScanResults; the benchmark refresh runs on a separate schedule.
+
 Two ideas run through the whole build. The structure is deterministic, so the same input gives the same score every time. The flavor is AI, used only where judgment helps. The checks and the scoring are pattern matching, no model involved. Bedrock writes the one-line verdict and runs the agent simulation on top of that.
 
 Stack:

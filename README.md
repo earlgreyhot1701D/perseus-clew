@@ -161,6 +161,7 @@ perseus-clew/
 │   ├── BENCHMARK-HYPOTHESES.md      the pre-registered predictions
 │   ├── BENCHMARK-SITES.md           the 50 sites and selection rationale
 │   ├── KNOWN-LIMITATIONS.md         design and architectural tradeoffs
+│   ├── ROADMAP.md                   product and tier roadmap
 │   └── benchmark-candidate-pool.md
 ├── mockups/                  locked visual design (landing, app, verdict hero)
 ├── .kiro/                    steering file and enforcement hooks

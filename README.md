@@ -14,7 +14,7 @@ The web has a second audience now: AI retrieval agents. When someone asks ChatGP
 
 Agentis Lux scans a site and surfaces what an agent experiences when it tries to use it. It reports findings from the agent's point of view, like "an agent landing on this page can't tell which element starts checkout, because it's a styled div and not a button." It describes what the agent can and can't do. It does not suggest fixes, because fixes assume knowledge of your codebase. Awareness, not judgment.
 
-Built for the H0 Hackathon, B2B track.
+Built for the [H0 Hackathon](https://h01.devpost.com/), B2B track.
 
 ## On the landscape (because I did my homework)
 
@@ -29,7 +29,7 @@ The agentic web is new enough that Google only added experimental, unscored agen
 
 ## On timeline and provenance
 
-Agentis Lux (engine: Perseus Clew) was built during the hackathon window. The idea has older roots. It grew out of Hermes Clew, an agent-readiness scanner built for the GitLab AI hackathon earlier in 2026, and the thinking has developed since. What is new and built in-window is this product: the unified scanner, the AWS engine, the 50-site benchmark, and everything in this repo. Earlier dates in design notes reflect when the idea was being thought through, not when the product was built.
+Agentis Lux (engine: Perseus Clew) was built during the hackathon window. The idea has older roots. It grew out of [Hermes Clew](https://github.com/earlgreyhot1701D/hermes-clew), an agent-readiness scanner built for the GitLab AI hackathon earlier in 2026, and the thinking has developed since. What is new and built in-window is this product: the unified scanner, the AWS engine, the 50-site benchmark, and everything in this repo. Earlier dates in design notes reflect when the idea was being thought through, not when the product was built.
 
 ## What works today, and what's pending
 

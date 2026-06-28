@@ -10,7 +10,7 @@ Engine: Perseus Clew, part of the Clew suite. Public name: Agentis Lux. Domain: 
 
 ## What this is
 
-The web has a second audience now: AI retrieval agents. When someone asks ChatGPT, Perplexity, or Google AI Overviews a question, a retrieval agent fetches your page and reads its raw HTML to answer, before any JavaScript runs, not the rendered version a person sees. That is a different reader than the human you designed for, and most products were never tested for it. Agentis Lux scans a site and surfaces what that agent experiences when it tries to read and use it.
+The web has a second audience now: AI retrieval agents. When someone asks ChatGPT, Perplexity, or Google AI Overviews a question, a retrieval agent fetches your page and often reads its raw or minimally rendered HTML to answer, rather than running client-side JavaScript, not the visual version a person sees. That is a different reader than the human you designed for, and most products were never tested for it. Agentis Lux scans a site and surfaces what that agent experiences when it tries to read and use it.
 
 Agentis Lux scans a site and surfaces what an agent experiences when it tries to use it. It reports findings from the agent's point of view, like "an agent landing on this page can't tell which element starts checkout, because it's a styled div and not a button." It describes what the agent can and can't do. It does not suggest fixes, because fixes assume knowledge of your codebase. Awareness, not judgment.
 
@@ -18,12 +18,12 @@ Built for the [H0 Hackathon](https://h01.devpost.com/), B2B track.
 
 ## On the landscape (because I did my homework)
 
-Agentis Lux reads what an AI retrieval agent reads: your raw HTML, before any JavaScript runs, the way ChatGPT, Perplexity, and AI Overviews pull a page. It scores six categories of that experience and simulates an agent attempting tasks. That is its lane: agent operability on the retrieval surface.
+Agentis Lux reads what many AI retrieval agents read: your raw or minimally rendered HTML, often before client-side JavaScript runs, the way ChatGPT, Perplexity, and AI Overviews pull a page. It scores six categories of that experience and simulates an agent attempting tasks. That is its lane: agent operability on the retrieval surface.
 
 It is not alone in caring about agents, and it is worth being clear about who does what:
 
 - Scrunch (acquired by Sitecore) works on AI search visibility: whether your brand gets cited when someone asks an AI a question. That is about being found. Agentis Lux is about whether an agent can actually read and use what it finds. Visibility, not operability.
-- Google's experimental Agentic Browsing audit in Lighthouse (shipped May 2026) checks the agent-as-actor surface: WebMCP tool registration and whether a browser-driving agent can operate your page. Agentis Lux goes deeper on the agent-as-reader surface: the raw HTML a retrieval agent forms an impression from before it ever acts. Different door.
+- Google's experimental Agentic Browsing audit in Lighthouse (shipped May 2026) checks the agent-as-actor surface: WebMCP tool registration and whether a browser-driving agent can operate your page. Agentis Lux goes deeper on the agent-as-reader surface: the raw or minimally rendered HTML a retrieval agent often forms an impression from before it ever acts. Different door.
 
 The agentic web is new enough that Google only added experimental, unscored agent-readiness checks two months ago. That is not a reason this is unoriginal. It is evidence the problem is real and the lane is open. Agentis Lux is the transparent, findings-only, developer-facing diagnostic for the reading surface, with the API scan as a second axis nobody in the visibility crowd touches.
 

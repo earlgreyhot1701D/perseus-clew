@@ -26,6 +26,12 @@ timeout caps. The frontend `/api/scan` proxy does lighter regex checks for obvio
 backend is the authority; the duplicated partial check on the frontend is there for UX, and consolidating
 to one shared contract is a v2 cleanup.
 
+**Simulation input hardening.** The page content fetched during a scan is passed to the model for the
+Layer 2 simulation, and prompt-injection hardening on that input is light. The model's output is treated
+as untrusted and escaped on render (no innerHTML), but input-side defenses against a page crafted to
+manipulate the simulation narrative are a v2 item. The deterministic score is unaffected either way: no
+model output touches the number.
+
 **The backend "build" is a copy step.** `cp -r src dist` is not a real build because the JS Lambdas need
 no transpilation or bundling. It works; it is just honestly named as what it is.
 

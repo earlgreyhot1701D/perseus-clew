@@ -105,6 +105,8 @@ Frontend on Vercel, backend on AWS Lambda + Bedrock, data in DynamoDB. The live 
 
 Two ideas run through the whole build. The structure is deterministic, so the same input gives the same score every time. The flavor is AI, used only where judgment helps. The checks and the scoring are pattern matching, no model involved. Bedrock writes the one-line verdict and runs the agent simulation on top of that.
 
+The AI is constrained, not creative. Low temperature, capped tokens, and a system prompt that encodes the product's own rules: no fixes, no judgment words, no em dashes. The simulation returns structured JSON, and any finding it references is filtered against the deterministic findings, so the model can't invent something the math didn't catch. If it fails validation, it falls back to a template. Math for trust, and the AI is fenced into exactly the two jobs where judgment helps.
+
 Stack:
 
 - **Backend:** Node ESM Lambda source. Six frontend checks, six API checks, two scoring modules, two scan flows (one for frontend HTML, one for API specs), a scan handler, the simulation layer, and the benchmark engine.

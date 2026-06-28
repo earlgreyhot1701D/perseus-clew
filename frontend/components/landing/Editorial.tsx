@@ -31,10 +31,10 @@ export default function Editorial() {
 
           <div className={styles.columns}>
             <p className={styles.columnsFirstParagraph}>
-              The internet was built for human eyes. Websites use visual layouts, styled divs, and JavaScript-rendered content that humans navigate by sight. Agents don&#39;t have eyes. They parse the DOM. When a button is a styled div instead of a button element, an agent literally cannot find it.
+              The internet was built for human eyes. Websites use visual layouts, styled divs, and JavaScript-rendered content that humans navigate by sight. Agents don&#39;t have eyes. They parse the DOM. When a button is a styled div instead of a button element, an agent cannot find it.
             </p>
             <p className={styles.columnsParagraph}>
-              This is not a future problem. Production agents read the web right now. ChatGPT visits URLs. Perplexity reads pages. Google&#39;s AI overviews pull from live sites. These retrieval agents arrive by the million, read your HTML, and decide what your page is about, often without ever running your JavaScript. Most products were built for human readers and never tested for this second audience.
+              This is not a future problem. Retrieval agents read the web right now. ChatGPT visits URLs. Perplexity reads pages. Google&#39;s AI Overviews pull from live sites. They arrive by the million, read your HTML, and form an impression of your page, often without ever running your JavaScript. These retrieval agents are the second audience: a different reader than the human you designed for.
             </p>
 
             <figure className={styles.pullquote} role="group">
@@ -49,7 +49,7 @@ export default function Editorial() {
               AgentisLux scans your site and reports what an agent experiences. Six categories of deterministic checks. Findings written from the agent&#39;s perspective. No fixes suggested, because suggesting fixes implies we know your codebase, your constraints, and your reasons. We don&#39;t. We know what an agent sees.
             </p>
             <p className={styles.columnsParagraph}>
-              The overlap with WCAG accessibility is not a coincidence. It&#39;s the thesis. Semantic HTML, proper labels, ARIA roles, heading hierarchy, structured data: all of this helps screen readers and agents alike. Build for accessibility, build for agents. Same work.
+              On accessibility: there&#39;s real overlap with WCAG. Semantic HTML, proper labels, ARIA roles, heading hierarchy, structured data: these help screen readers and agents alike. Building for accessibility moves you toward agent-readiness. But agents are their own audience with their own needs, not a subset of the accessibility audience. The overlap is a baseline, not the whole story.
             </p>
           </div>
         </article>

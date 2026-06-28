@@ -26,7 +26,7 @@ export default function HeroSection() {
           </h1>
 
           <p className={styles.lede}>
-            Your site has a new audience: AI agents. When someone asks ChatGPT or Perplexity a question, it pulls up your page and reads the raw HTML to answer them, not the version you see. Most sites were never built for that reader. AgentisLux shows you what the agent can and can&apos;t read.
+            Your site has a new audience: AI agents. When someone asks ChatGPT or Perplexity a question, a retrieval agent pulls up your page and reads the raw HTML to answer them, not the version you see. AgentisLux shows you what that agent can and can&apos;t read.
           </p>
 
           <dl className={styles.metaRow} aria-label="Product attributes">

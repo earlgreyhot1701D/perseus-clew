@@ -57,6 +57,14 @@ const TASKS = [
 const MAX_HTML_CHARS = 40_000; // ~10K tokens
 const MAX_FINDINGS_IN_PROMPT = 8;
 
+// Output token ceiling for the simulation response.
+// The schema returns 3 tasks, each with narrative, reasoning, and linkedFindings.
+// On content-rich pages the JSON for all three exceeds 800 tokens and the response
+// truncates mid-object, which fails JSON.parse and forces a parse-error fallback.
+// 2000 fits the full 3-task schema with headroom. Input stays bounded by
+// MAX_HTML_CHARS above, so this does not unbound cost on complex sites.
+const MAX_SIMULATION_TOKENS = 2000;
+
 // Valid task IDs (module-level, derived from TASKS library)
 const VALID_TASK_IDS = new Set(TASKS.map(t => t.taskId));
 
@@ -103,7 +111,7 @@ export async function runSimulation(html, score, rating, findings, domain) {
     const userPrompt = buildUserPrompt(html, score, rating, findings, domain);
 
     const result = await invokeBedrock(SYSTEM_PROMPT, userPrompt, {
-      maxTokens: 800,
+      maxTokens: MAX_SIMULATION_TOKENS,
       temperature: 0.3
     });
 
